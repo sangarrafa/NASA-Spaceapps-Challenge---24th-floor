@@ -16,4 +16,14 @@ export class Module {
       this.bus.emit('decision:made', this.decisionId);
     });
   }
+
+  flagAlert(scene) {
+    scene.tweens.add({
+      targets: this.rect,
+      alpha: 0.4,
+      duration: 250,
+      yoyo: true,
+      repeat: 3,
+    });
+  }
 }

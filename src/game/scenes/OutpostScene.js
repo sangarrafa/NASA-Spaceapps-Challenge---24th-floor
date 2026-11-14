@@ -16,7 +16,7 @@ export class OutpostScene extends Phaser.Scene {
       color: '#eaf0ff',
     });
 
-    new Module(this, {
+    const shieldModule = new Module(this, {
       x: 200,
       y: 260,
       color: 0x33c6ff,
@@ -24,6 +24,8 @@ export class OutpostScene extends Phaser.Scene {
       decisionId: 'reinforceShielding',
       bus: this.bus,
     });
+
+    this.bus.on('event:spaceWeather', () => shieldModule.flagAlert(this));
 
     new Module(this, {
       x: 440,

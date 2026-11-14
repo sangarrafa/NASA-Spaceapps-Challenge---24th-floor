@@ -1,7 +1,7 @@
 import { bus } from '../core/EventBus.js';
 import { GameState } from '../core/GameState.js';
 import { RulesEngine } from '../core/RulesEngine.js';
-import { fetchSpaceWeather } from '../data/nasaClient.js';
+import { fetchCMEs } from '../data/nasaClient.js';
 import { Dashboard } from '../ui/Dashboard.js';
 import { EventLog } from '../ui/EventLog.js';
 import { DataBadge } from '../ui/DataBadge.js';
@@ -19,7 +19,18 @@ bus.emit('state:updated', gameState.resources);
 
 bus.on('decision:made', (decisionId) => rulesEngine.applyDecision(decisionId));
 
-fetchSpaceWeather().then((weather) => dataBadge.show(weather));
+fetchCMEs().then((weather) => {
+  dataBadge.show(weather);
+
+  const latest = weather.events[weather.events.length - 1];
+  if (latest) {
+    bus.emit('event:spaceWeather', latest);
+    bus.emit(
+      'log:message',
+      `☀️ Dato real de NASA: eyección de masa coronal (CME) detectada el ${latest.startTime.slice(0, 10)}. ¿Refuerzas el blindaje o arriesgas la energía?`
+    );
+  }
+});
 
 const game = new Phaser.Game({
   type: Phaser.AUTO,
