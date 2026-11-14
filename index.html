@@ -1,23 +1,54 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Puesto Avanzado - NASA Space Apps</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.80.1/phaser.min.js"></script>
-<link rel="stylesheet" href="src/ui/ui.css" />
+<title>Build Your Astronaut - Space Base</title>
+<link rel="stylesheet" href="src/onboarding/onboarding.css" />
 </head>
 <body>
 
-<div id="game-container">
-  <div id="ui-layer">
-    <div id="data-badge"></div>
-    <div id="dashboard"></div>
-    <div id="event-log"></div>
+<div id="onboarding-card">
+
+  <div id="step-avatar" class="step">
+    <h1>Build your astronaut</h1>
+    <p class="subtitle">Before you run the space base, let's meet you.</p>
+
+    <label for="avatar-name">What's your astronaut name?</label>
+    <input type="text" id="avatar-name" placeholder="e.g. Astro Mia" maxlength="20" />
+
+    <label>Pick a suit color</label>
+    <div id="avatar-colors" class="swatches"></div>
+
+    <label>Pick a helmet buddy</label>
+    <div id="avatar-icons" class="icon-options"></div>
+
+    <button id="avatar-continue" class="primary">Continue</button>
   </div>
+
+  <div id="step-quiz" class="step">
+    <h1>How do you like to play?</h1>
+    <p class="subtitle">Answer honestly, there's no wrong answer.</p>
+
+    <div id="quiz-progress" class="quiz-progress"></div>
+    <p id="quiz-prompt"></p>
+    <div id="quiz-options"></div>
+  </div>
+
+  <div id="step-badge" class="step">
+    <div id="badge-reveal">
+      <div id="avatar-preview"></div>
+      <div class="badge-icon"></div>
+      <div class="badge-title"></div>
+      <div class="badge-tagline"></div>
+      <div class="badge-description"></div>
+      <button id="start-mission" class="primary">Start Mission</button>
+    </div>
+  </div>
+
 </div>
 
-<script type="module" src="src/game/main.js"></script>
+<script type="module" src="src/onboarding/main.js"></script>
 
 </body>
 </html>

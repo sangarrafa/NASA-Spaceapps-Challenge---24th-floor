@@ -2,11 +2,23 @@ import { bus } from '../core/EventBus.js';
 import { GameState } from '../core/GameState.js';
 import { RulesEngine } from '../core/RulesEngine.js';
 import { fetchCMEs } from '../data/nasaClient.js';
+import { loadProfile } from '../core/profileStore.js';
+import { ARCHETYPES } from '../onboarding/archetypes.js';
 import { Dashboard } from '../ui/Dashboard.js';
 import { EventLog } from '../ui/EventLog.js';
 import { DataBadge } from '../ui/DataBadge.js';
 import { BootScene } from './scenes/BootScene.js';
 import { OutpostScene } from './scenes/OutpostScene.js';
+
+const profile = loadProfile();
+if (!profile) {
+  window.location.href = 'index.html';
+}
+
+const crewBadge = document.getElementById('crew-badge');
+const archetype = ARCHETYPES[profile.archetype];
+crewBadge.textContent = `${profile.helmetIcon} ${profile.name} the ${archetype.title} ${archetype.icon}`;
+crewBadge.style.color = profile.suitColor;
 
 const gameState = new GameState();
 const rulesEngine = new RulesEngine(gameState, bus);
@@ -27,7 +39,7 @@ fetchCMEs().then((weather) => {
     bus.emit('event:spaceWeather', latest);
     bus.emit(
       'log:message',
-      `☀️ Dato real de NASA: eyección de masa coronal (CME) detectada el ${latest.startTime.slice(0, 10)}. ¿Refuerzas el blindaje o arriesgas la energía?`
+      `☀️ Real NASA data: a coronal mass ejection (CME) was detected on ${latest.startTime.slice(0, 10)}. Reinforce shielding, or risk it for the energy?`
     );
   }
 });

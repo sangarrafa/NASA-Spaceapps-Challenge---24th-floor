@@ -4,7 +4,7 @@ export class DataBadge {
   }
 
   show({ source, live, retrievedAt }) {
-    const tag = live ? 'en vivo' : `dataset curado (${retrievedAt})`;
-    this.container.textContent = `Datos de NASA: ${source} — ${tag}`;
+    const tag = live ? 'live' : `curated dataset (${retrievedAt})`;
+    this.container.textContent = `NASA data: ${source} — ${tag}`;
   }
 }

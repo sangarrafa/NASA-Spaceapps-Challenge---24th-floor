@@ -1,7 +1,7 @@
 {
   "source": "NASA DONKI - Coronal Mass Ejection (CME)",
   "retrievedAt": "2026-11-14",
-  "note": "Dataset curado como respaldo offline; no representa una lectura en tiempo real.",
+  "note": "Curated dataset used as an offline fallback; does not represent a live reading.",
   "events": [
     {
       "activityID": "2026-10-15T20:24:00-CME-001",

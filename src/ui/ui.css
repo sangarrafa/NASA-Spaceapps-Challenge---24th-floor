@@ -38,6 +38,11 @@ body {
   transition: width 0.3s ease;
 }
 
+#crew-badge {
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
 #data-badge {
   font-size: 11px;
   color: #6f85b3;

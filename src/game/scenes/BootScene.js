@@ -8,7 +8,7 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload() {
-    // Aquí se cargarán los sprites de Kenney/NASA cuando los tengamos.
+    // Kenney/NASA sprites will be loaded here once we have them.
   }
 
   create() {

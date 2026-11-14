@@ -8,9 +8,9 @@ function lastNDaysRange(days) {
   return { startDate: fmt(start), endDate: fmt(end) };
 }
 
-// Trae eyecciones de masa coronal (CME) reales de NASA DONKI para los
-// últimos `days` días. Si falla (CORS, red, rate limit), cae a un dataset
-// curado local y lo marca como tal para no presentarlo como si fuera en vivo.
+// Fetches real Coronal Mass Ejection (CME) events from NASA DONKI for the
+// last `days` days. On failure (CORS, network, rate limit), falls back to a
+// local curated dataset and marks it as such instead of passing it off as live.
 export async function fetchCMEs(days = 30) {
   const { startDate, endDate } = lastNDaysRange(days);
   const url = `https://api.nasa.gov/DONKI/CME?startDate=${startDate}&endDate=${endDate}&api_key=${NASA_API_KEY}`;
@@ -21,7 +21,7 @@ export async function fetchCMEs(days = 30) {
     const events = await response.json();
     return { source: 'NASA DONKI - Coronal Mass Ejection (CME)', live: true, events };
   } catch (err) {
-    console.warn('Fallback a dataset curado de NASA DONKI CME:', err.message);
+    console.warn('Falling back to curated NASA DONKI CME dataset:', err.message);
     const curated = await (await fetch('./src/data/curated/sample-cme.json')).json();
     return {
       source: curated.source,

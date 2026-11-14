@@ -1,12 +1,12 @@
-// Mapea cada decisión jugable a su compensación real: ninguna decisión es gratis.
+// Maps each playable decision to its real trade-off: no decision is free.
 const DECISIONS = {
   reinforceShielding: {
     effects: { shield: +20, energy: -15 },
-    message: '🛡️ Reforzaste el blindaje. Ganaste protección, pero gastaste energía esta noche.',
+    message: '🛡️ You reinforced the shielding. More protection, but you burned energy tonight.',
   },
   boostEnergy: {
     effects: { energy: +20, shield: -10 },
-    message: '⚡ Priorizaste energía. Subiste potencia, pero bajó el blindaje disponible.',
+    message: '⚡ You prioritized energy. More power, but your shielding dropped.',
   },
 };
 
