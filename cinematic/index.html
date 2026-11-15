@@ -42,10 +42,13 @@
   <div id="toast" data-i18n="toast"></div>
 
   <div id="start">
+    <video id="startVid" class="on" src="resources/Luna_desde_tierra_1.webm" autoplay muted playsinline preload="auto" aria-hidden="true"></video>
+    <video id="startVid2" src="resources/Error-fatal-glitch.webm" muted playsinline preload="auto" aria-hidden="true"></video>
+    <div id="introSound" data-i18n="introSound" aria-live="polite"></div>
     <div class="kicker" data-i18n="kickerIn"></div>
     <h1>EQUILIBRIA</h1>
     <p data-i18n="startLine"></p>
-    <button class="big" id="bStart" data-i18n="receive"></button>
+    <button class="big" id="bStart" data-sfx="transmision" data-i18n="receive"></button>
     <div class="opts">
       <div class="seg" role="group" aria-labelledby="lLang">
         <span class="seglabel" id="lLang" data-i18n="language"></span>
@@ -68,6 +71,8 @@
 </div>
 
 <script src="../shared/language.js"></script>
+<script src="../audio/audio-ambiente.js" data-reiniciar data-sin-aviso data-volumen="0.5"></script>
+<script src="../audio/sfx.js"></script>
 <script src="cinematic.js"></script>
 </body>
 </html>
