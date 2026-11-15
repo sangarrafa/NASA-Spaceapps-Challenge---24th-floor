@@ -346,19 +346,6 @@ function apuntado() {
 const angTLI = () => juego.anguloBase + apuntado().dTheta - TRANSF.nuLlegada;   // dónde se enciende el motor hacia la Luna
 const anguloPad = () => angTLI() - ASC_RAD;                                      // plataforma: la subida termina justo en ese punto
 
-// Línea punteada con la elipse de Kepler que seguirá el cohete (se recalcula solo si cambia el tamaño o el nivel)
-function rutaPrevista() {
-  const key = `${W}x${H}:${juego.anguloBase.toFixed(4)}`;
-  if (rutaPrevista.key !== key) {
-    const pts = [], N = 240;
-    for (let i = 0; i <= N; i++) {
-      const nu = TRANSF.nuLlegada * Math.sin(i / N * Math.PI / 2);   // más puntos cerca del final, donde la elipse se abre
-      pts.push(polar(radioPantalla(TRANSF.p / (1 + TRANSF.e * Math.cos(nu))), angTLI() + nu));
-    }
-    rutaPrevista.key = key; rutaPrevista.pts = pts;
-  }
-  return rutaPrevista.pts;
-}
 
 // Posición en el mundo (en pantalla) de un punto relativo a la Luna: r en radios lunares y ángulo a (ver 3c);
 // phi es la dirección Luna→Tierra y el sentido de giro lo da la órbita
@@ -422,7 +409,7 @@ function decir(html) { burbuja.innerHTML = html; }
 
 function mensajeEspera() {
   const c = config();
-  if (c.zona) decir('Tu cohete subirá a la órbita baja y seguirá la <b>órbita punteada</b> hasta el <b>punto de encuentro</b>. Espera a que la Luna entre en la <b>zona verde</b>… ¡y despega!');
+  if (c.zona) decir('Tu cohete subirá a la órbita baja y viajará hasta el <b>punto de encuentro</b>. Espera a que la Luna entre en la <b>zona verde</b>… ¡y despega!');
   else if (c.fantasma) decir('La <b>Luna fantasma</b> muestra dónde estará la Luna al llegar. Despega cuando la Luna fantasma toque el <b>punto de encuentro</b>.');
   else decir('Sin ayudas, Comandante. El viaje dura <b>3 días</b> y en ese tiempo la Luna avanza unos <b>40°</b> de su vuelta.');
 }
@@ -738,13 +725,11 @@ function dibujar() {
   ctx.strokeStyle = 'rgba(169,182,230,.28)'; ctx.beginPath(); ctx.arc(cx, cy, Rl, 0, TAU); ctx.stroke();
   ctx.restore();
 
-  // órbita de espera, camino de Kepler del cohete (elipse punteada) y punto de encuentro
+  // órbita de espera y punto de encuentro
   const pe = polar(Rl, ab);
   if (esperando || juego.estado === 'viaje') {
     ctx.save(); ctx.setLineDash([2 * k, 6 * k]); ctx.strokeStyle = 'rgba(169,182,230,.35)'; ctx.lineWidth = 1.5 * k;
     ctx.beginPath(); ctx.arc(cx, cy, RsLEO, 0, TAU); ctx.stroke(); ctx.restore();
-    ctx.save(); ctx.setLineDash([3 * k, 7 * k]); ctx.strokeStyle = 'rgba(255,181,71,.55)'; ctx.lineWidth = 2 * k;
-    ctx.beginPath(); rutaPrevista().forEach((q, i) => i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y)); ctx.stroke(); ctx.restore();
   }
   if (esperando) {
     ctx.save(); ctx.strokeStyle = '#ffb547'; ctx.lineWidth = 2.5;
@@ -804,7 +789,7 @@ function dibujar() {
   // cohete y estela
   // La estela del viaje se guarda en el mundo; la de la fase lunar es otro trazo, porque ahí la cámara sigue a la Luna
   const co = cohete();
-  const guardar = (juego.estado === 'viaje' && cam.w < 0.02) || juego.estado === 'fallo' || juego.estado === 'aterrizaje';
+  const guardar = juego.estado === 'viaje' || juego.estado === 'fallo' || juego.estado === 'aterrizaje';
   if (guardar) {
     const ult = juego.estela[juego.estela.length - 1], lunar = juego.estado === 'aterrizaje';
     juego.estela.push({ x: co.x, y: co.y, lunar, corte: lunar && !(ult && ult.lunar) });
@@ -815,7 +800,8 @@ function dibujar() {
     for (const lunar of [false, true]) {
       const pts = juego.estela.filter(q => q.lunar === lunar);
       if (pts.length < 2) continue;
-      ctx.save(); ctx.strokeStyle = `rgba(255,181,71,${.6 * (lunar ? 1 - cam.wb : 1 - cam.w)})`; ctx.lineWidth = 2 * k;
+      // la estela del viaje se ve hasta que la cámara empieza a seguir a la nave
+      ctx.save(); ctx.strokeStyle = `rgba(255,181,71,${.6 * (lunar ? 1 - cam.wb : 1 - cam.wa)})`; ctx.lineWidth = 2 * k;
       ctx.beginPath(); pts.forEach((q, i) => (i && !q.corte) ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y)); ctx.stroke(); ctx.restore();
     }
   }
