@@ -14,3 +14,8 @@ button{font-family:inherit;cursor:pointer;border:0}
 .big{background:linear-gradient(135deg,var(--pink),var(--magenta));color:#fff;font-weight:900;font-size:calc(var(--s)*26px);padding:calc(var(--s)*15px) calc(var(--s)*42px);border-radius:999px;box-shadow:0 0 calc(var(--s)*28px) rgba(232,65,140,.55),inset 0 -4px 0 rgba(0,0,0,.2);transition:transform .15s}
 .big:hover{transform:scale(1.05)}
 .ghost{background:transparent;color:var(--aqua);font-weight:800;font-size:calc(var(--s)*16px);text-decoration:underline;text-underline-offset:4px}
+/* Velocidad de la cinemática (1x · 1.5x · 2x) */
+.vel{display:flex;border-radius:999px;overflow:hidden;background:rgba(11,15,58,.75);border:1px solid rgba(111,227,232,.3)}
+#ctrl .vel button{background:transparent;border:0;border-radius:0;padding:calc(var(--s)*8px) calc(var(--s)*11px)}
+#ctrl .vel button[aria-pressed="false"]{opacity:.55}
+#ctrl .vel button[aria-pressed="true"]{background:rgba(111,227,232,.28);opacity:1}

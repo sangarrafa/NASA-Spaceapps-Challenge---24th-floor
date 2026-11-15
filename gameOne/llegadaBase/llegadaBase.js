@@ -31,6 +31,7 @@ const BD={x:762,y:528,w:52,h:72};   // puerta de la base
 const HOPS_START=8.6, HOPS_END=13.0, X_START=RX+44, X_DOOR=BD.x+BD.w/2;
 
 let T=0, A=0, playing=true, ended=false;
+let speed=1;   // velocidad elegida (1 · 1.5 · 2): escala el reloj de la escena
 
 /* ---------------- Fondo precalculado ---------------- */
 const R=rng(7), stars=[]; for(let i=0;i<300;i++) stars.push({x:R()*W*1.4-100,y:R()*470,r:R()<.9?R()*1.2+.3:R()*1.6+1.1,p:R()*TAU,sp:.5+R()*2});
@@ -282,7 +283,7 @@ function render(){
 /* ---------------- Bucle ---------------- */
 let last=performance.now();
 function frame(now){
-  const dt=Math.min(.05,(now-last)/1000); last=now; A+=dt;
+  const dt=Math.min(.05,(now-last)/1000)*speed; last=now; A+=dt;
   if(playing && !ended){ const nt=Math.min(END,T+dt); fire(T,nt); T=nt; if(T>=END) finish(); }
   for(let i=parts.length-1;i>=0;i--){ const p=parts[i]; p.age+=dt; p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=12*dt; if(p.age>p.life) parts.splice(i,1); }  // poca gravedad: el polvo cae lento
   render(); requestAnimationFrame(frame);
@@ -297,6 +298,10 @@ initAudio(); stage.addEventListener('pointerdown',unlockAudio); addEventListener
 document.getElementById('bSnd').onclick=()=>{ sndOn=!sndOn; document.getElementById('bSnd').setAttribute('aria-pressed',sndOn); unlockAudio(); if(master) master.gain.setTargetAtTime(sndOn?.7:0,ac.currentTime,.05); };
 document.getElementById('bSkip').onclick=()=>{ T=END; finish(); };
 document.getElementById('bAgain').onclick=restart;
+// Velocidad: 1x · 1.5x · 2x (el colchón de música de fondo y los efectos no se aceleran)
+const velBtns=[...document.querySelectorAll('#vel button')];
+function setSpeed(v){ speed=v; velBtns.forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.v===v))); }
+velBtns.forEach(b=>b.onclick=()=>setSpeed(+b.dataset.v));
 const NEXT_SCREEN='../../bienvenidaLunia/index.html';
 document.getElementById('bNext').onclick=()=>{ dispatchEvent(new CustomEvent('llegada:siguiente')); try{ if(parent!==window) parent.postMessage({type:'llegada-fin'},'*'); }catch(e){} location.href=NEXT_SCREEN; };
 })();

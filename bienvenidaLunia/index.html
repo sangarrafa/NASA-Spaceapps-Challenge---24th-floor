@@ -18,7 +18,12 @@
     <div id="opciones"></div>
   </div>
   <div id="pasos"></div>
-  <div id="ctrl"><button id="bVoz">🔇 Silenciar</button></div>
+  <div id="ctrl">
+    <div class="vel" id="vel" role="group" aria-label="Velocidad" data-en-aria="Speed" title="Velocidad" data-en-title="Speed">
+      <button data-v="1" aria-pressed="true">1x</button><button data-v="1.5" aria-pressed="false">1.5x</button><button data-v="2" aria-pressed="false">2x</button>
+    </div>
+    <button id="bVoz">🔇 Silenciar</button>
+  </div>
 </div>
 
 <script src="../audio/sfx.js" data-sin-clic data-sin-hover></script>

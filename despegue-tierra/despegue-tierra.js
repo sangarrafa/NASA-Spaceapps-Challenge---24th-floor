@@ -39,6 +39,7 @@ const ELX=TW.x+TW.w/2;        // centro del ascensor
 const FREEZE=14.8;
 
 let T=0, A=0, frozen=false;
+let speed=1;                  // velocidad elegida (1 · 1.5 · 2): escala el reloj de la escena y el texto final
 
 const R=rng(4), stars=[]; for(let i=0;i<160;i++) stars.push({x:R()*W,y:R()*300,r:R()*1.2+.3,p:R()*TAU,sp:.6+R()*2});
 // público a lo lejos (en dos graderías)
@@ -272,12 +273,13 @@ function render(){
 }
 
 /* ---------------- Bucle ---------------- */
-let last=performance.now(), clapT=0;
+let last=performance.now(), clapT=0, smokeAcc=0;
 function frame(now){
-  const dt=Math.max(0,Math.min(.05,(now-last)/1000)); last=now;
+  const dt=Math.max(0,Math.min(.05,(now-last)/1000))*speed; last=now;
   if(!frozen){
     A+=dt; const nt=Math.min(FREEZE,T+dt); fire(T,nt); T=nt;
-    const power=easeOut(seg(T,12,13.6)); if(power>0) emitSmoke(power);
+    // humo: una tanda por cuadro a 1x; a más velocidad se emiten más tandas para que se vea igual de denso
+    const power=easeOut(seg(T,12,13.6)); if(power>0){ smokeAcc+=speed; while(smokeAcc>=1){ emitSmoke(power); smokeAcc-=1; } }
     updParts(dt);
     if(ac){ clapT-=dt; const cheer=Math.max(seg(T,7.4,8)*(1-seg(T,9,10)),seg(T,12,13)); if(clapT<=0){ clap(); clapT=.03+Math.random()*(.12-cheer*.08); }
       crowdGain.gain.setTargetAtTime(.04+cheer*.08,ac.currentTime,.2); engGain.gain.setTargetAtTime(power*.9,ac.currentTime,.1); }
@@ -289,20 +291,25 @@ requestAnimationFrame(frame);
 
 /* ---------------- Pausa final ---------------- */
 const pausa=document.getElementById('pausa'), txt=document.getElementById('txt'), bNext=document.getElementById('bNext');
-let typer=null;
+let typer=null, typed=0;
+function typeStep(){ typed++; txt.innerHTML=MENSAJE.slice(0,typed)+'<span class="cur"></span>'; if(typed>=MENSAJE.length){ clearInterval(typer); typer=null; bNext.classList.add('on'); } }
+function startTyper(){ clearInterval(typer); typer=setInterval(typeStep,38/speed); }
 function freeze(){
   frozen=true; T=FREEZE;
   if(ac){ engGain.gain.setTargetAtTime(0,ac.currentTime,.15); crowdGain.gain.setTargetAtTime(0,ac.currentTime,.15); tone(300,.5,.12,'square',120); }
   document.getElementById('bSkip').style.display='none';
-  pausa.classList.add('on'); let i=0; clearInterval(typer);
-  typer=setInterval(()=>{ i++; txt.innerHTML=MENSAJE.slice(0,i)+'<span class="cur"></span>'; if(i>=MENSAJE.length){ clearInterval(typer); bNext.classList.add('on'); } },38);
+  pausa.classList.add('on'); typed=0; startTyper();
 }
-function restart(){ clearInterval(typer); T=0; A=0; frozen=false; smoke.length=0; sparks.length=0; confetti.length=0; txt.innerHTML=''; bNext.classList.remove('on'); pausa.classList.remove('on'); document.getElementById('bSkip').style.display=''; }
+function restart(){ clearInterval(typer); typer=null; T=0; A=0; frozen=false; smoke.length=0; sparks.length=0; confetti.length=0; txt.innerHTML=''; bNext.classList.remove('on'); pausa.classList.remove('on'); document.getElementById('bSkip').style.display=''; }
 function unlockAudio(){ initAudio(); if(ac&&ac.state==='suspended') ac.resume().catch(()=>{}); }
 initAudio(); stage.addEventListener('pointerdown',unlockAudio); addEventListener('keydown',unlockAudio);
 document.getElementById('bSnd').onclick=()=>{ sndOn=!sndOn; document.getElementById('bSnd').setAttribute('aria-pressed',sndOn); unlockAudio(); if(master) master.gain.setTargetAtTime(sndOn?.7:0,ac.currentTime,.05); };
 document.getElementById('bSkip').onclick=()=>{ for(let t=T;t<FREEZE;t+=1/30){ if(t>12) emitSmoke(easeOut(seg(t,12,13.6))); updParts(1/30); } fire(T,FREEZE); T=FREEZE; freeze(); };
 document.getElementById('otra').onclick=restart;
+// Velocidad: 1x · 1.5x · 2x (la música de fondo y los efectos no se aceleran)
+const velBtns=[...document.querySelectorAll('#vel button')];
+function setSpeed(v){ speed=v; velBtns.forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.v===v))); if(typer) startTyper(); }
+velBtns.forEach(b=>b.onclick=()=>setSpeed(+b.dataset.v));
 const NEXT_SCREEN='../gameOne/bienvenida/index.html';
 bNext.onclick=()=>{ dispatchEvent(new CustomEvent('despegue:siguiente')); try{ if(parent!==window) parent.postMessage({type:'despegue-siguiente'},'*'); }catch(e){} location.href=NEXT_SCREEN; };
 })();

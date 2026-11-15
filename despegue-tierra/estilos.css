@@ -19,3 +19,8 @@ button{font-family:inherit;cursor:pointer;border:0}
 #bNext.on{opacity:1;transform:none}
 #bNext:hover{filter:brightness(1.1)}
 #otra{background:transparent;color:var(--aqua);font-weight:800;font-size:calc(var(--s)*15px);text-decoration:underline;text-underline-offset:4px;margin-top:calc(var(--s)*-18px)}
+/* Velocidad de la cinemática (1x · 1.5x · 2x) */
+.vel{display:flex;border-radius:999px;overflow:hidden;background:rgba(11,15,58,.75);border:1px solid rgba(111,227,232,.3)}
+#ctrl .vel button{background:transparent;border:0;border-radius:0;padding:calc(var(--s)*8px) calc(var(--s)*11px)}
+#ctrl .vel button[aria-pressed="false"]{opacity:.55}
+#ctrl .vel button[aria-pressed="true"]{background:rgba(111,227,232,.28);opacity:1}
