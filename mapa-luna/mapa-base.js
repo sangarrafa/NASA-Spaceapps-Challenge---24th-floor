@@ -139,17 +139,11 @@ function dome(x,y,r,c1,c2){ const g=ctx.createRadialGradient(x-r*.4,y-r*.6,2,x,y
 function cyl(x,y,w,h,c1,c2){ const g=ctx.createLinearGradient(x-w/2,0,x+w/2,0); g.addColorStop(0,c1); g.addColorStop(1,c2); ctx.fillStyle=g; ctx.fillRect(x-w/2,y-h,w,h); ell(x,y,w/2,w*.18); ctx.fill(); ell(x,y-h,w/2,w*.18); ctx.fillStyle=c1; ctx.fill(); }
 function drawStation(s,A,hover){
   // Señales solo visuales (sin texto):
-  // - Base bloqueada: conserva su color, pero se ve tenue, sin brillo y con el anillo punteado (barrera cerrada).
-  // - Base activa (desbloqueada y sin completar): halo de luz en el suelo y un pin de ubicación encima (ver más abajo).
+  // - Base bloqueada: conserva su color, sin brillo y con el anillo punteado (barrera cerrada).
+  // - Base activa (desbloqueada y sin completar): un pin de ubicación de neón encima (ver más abajo).
   const apagada=estacionBloqueada(s.id), activa=!apagada && !done[s.id];
   const {x,y}=s, glow=apagada?0:done[s.id]?1:.5+.5*Math.sin(A*2.5+x), sc=hover?1.06:1;
   ctx.save(); ctx.translate(x,y); ctx.scale(sc,sc); ctx.translate(-x,-y);
-  if(activa){   // halo tenue que respira despacio, como un foco sobre la base
-    const g=ctx.createRadialGradient(x,y,10,x,y,110); const a=.32+.12*Math.sin(A*2);
-    g.addColorStop(0,`rgba(111,227,232,${a})`); g.addColorStop(1,'rgba(111,227,232,0)');
-    ctx.save(); ctx.translate(x,y); ctx.scale(1,.42); ctx.translate(-x,-y); circle(x,y,110); ctx.fillStyle=g; ctx.fill(); ctx.restore();
-  }
-  if(apagada) ctx.globalAlpha=.7;
   plinth(x,y,62,done[s.id]?P.amber:s.col,glow);
   if(apagada){   // barrera: el borde de la base pasa a ser punteado
     ctx.save(); ctx.globalAlpha=1; ell(x,y,62,24.8); ctx.strokeStyle='#2a2c55'; ctx.lineWidth=4; ctx.stroke();
@@ -208,7 +202,7 @@ function drawStation(s,A,hover){
   }
   // etiqueta
   const ly=y+46;
-  ctx.save(); if(apagada) ctx.globalAlpha=.75;
+  ctx.save();
   ctx.font='900 15px Nunito, sans-serif'; const tw=ctx.measureText(s.nom).width;
   rr(x-tw/2-34,ly-14,tw+48,28,14); ctx.fillStyle='rgba(11,15,58,.9)'; ctx.fill(); ctx.strokeStyle=done[s.id]?P.amber:s.col; ctx.lineWidth=2; ctx.stroke();
   // Insignia sin número: candado abierto azul si se puede entrar (ámbar si ya está completada),
@@ -228,9 +222,6 @@ function drawStation(s,A,hover){
 }
 function drawHub(A){
   const {x,y}=HUB;
-  // módulos laterales
-  rr(x-118,y-34,70,34,12); ctx.fillStyle='#8e91b5'; ctx.fill(); rr(x+48,y-34,70,34,12); ctx.fillStyle='#7a7da3'; ctx.fill();
-  [x-100,x-74,x+66,x+92].forEach(wx=>{ circle(wx,y-17,5); ctx.fillStyle=`rgba(255,212,120,${.7+.3*Math.sin(A*3+wx)})`; ctx.fill(); });
   dome(x,y,70,'#F1F2FA','#7c80a8');
   ctx.strokeStyle='rgba(30,30,70,.25)'; ctx.lineWidth=2; [50,30].forEach(r=>{ctx.beginPath();ctx.arc(x,y,r,Math.PI,0);ctx.stroke();});
   // pantalla de LUNIA
