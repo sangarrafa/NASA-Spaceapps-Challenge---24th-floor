@@ -180,8 +180,18 @@
   };
   $('bCasco').onclick = () => { cfg.casco = !cfg.casco; decir(cfg.casco ? 'Casco puesto: listo para salir.' : 'Sin casco, solo dentro de la base.'); reproducirCambio(); pintar(false); triggerSalto(); };
 
-  // Botón "¡Listo, a la misión!" (#bGuardar): por ahora sin acción enlazada.
-  // Cuando se defina a dónde lleva, conectar aquí, p. ej.: $('bGuardar').onclick = () => { A.guardar(cfg); … };
+  // "¡Listo, a la misión!": guarda el avatar y pasa a la cinemática del despegue desde la Tierra
+  const CINEMATICA = '../despegue-tierra/index.html';
+  let tAviso;
+  $('bGuardar').onclick = () => {
+    const ok = A.guardar(cfg);
+    const aviso = $('aviso');
+    aviso.textContent = ok ? '✅ ¡Avatar guardado! Te acompañará en todo el juego.' : 'No se pudo guardar en este navegador, pero puedes seguir jugando.';
+    aviso.classList.add('on');
+    $('bGuardar').disabled = true;   // evita dobles clics mientras se muestra el aviso
+    clearTimeout(tAviso);
+    tAviso = setTimeout(() => { location.href = CINEMATICA; }, 1600);
+  };
 
   // Nombre del astronauta (del test) y una pista según su especialidad
   $('placaNombre').textContent = A.nombre().toUpperCase();
