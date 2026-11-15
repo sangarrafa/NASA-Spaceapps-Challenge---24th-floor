@@ -269,7 +269,7 @@ let estrellas = [];
 function redimensionar() {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   dprActual = dpr;
-  W = window.innerWidth; H = window.innerHeight;
+  W = lienzo.clientWidth || window.innerWidth; H = lienzo.clientHeight || window.innerHeight;
   lienzo.width = W * dpr; lienzo.height = H * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   cx = W / 2; cy = H * 0.45;

@@ -53,3 +53,9 @@ canvas{display:block;width:100%;height:100%}
 .fuentes{text-align:left;font-size:14px;line-height:1.5}
 .fuentes li{margin:6px 0 6px 18px}
 .fuentes a{color:var(--azul)}
+
+/* Pantallas anchas: el mensaje va a la derecha, sobre el fondo, para ver la animación completa; el botón sigue abajo al centro */
+#panelLateral{display:contents}
+@media (min-width:820px) and (min-aspect-ratio:1/1){
+  #burbuja{left:auto;right:18px;bottom:auto;top:50%;transform:translateY(-50%);width:300px;max-width:300px}
+}
