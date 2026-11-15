@@ -857,7 +857,7 @@ function advance(dt){
 let last=performance.now();
 function frame(now){
   const dt=Math.min(.05,(now-last)/1000); last=now;
-  if(playing && !paused){ const sdt=dt*speed; A+=sdt; updParts(sdt); if(!ended) advance(sdt); audioTick(); }
+  if(playing && !paused){ const sdt=dt*speed; A+=sdt; updParts(sdt); if(!ended) advance(sdt); else T+=sdt; audioTick(); }
   else if(!playing){ A+=dt; }
   render();
   requestAnimationFrame(frame);
@@ -927,7 +927,7 @@ $('bNext').onclick=()=>{
   try{ if(window.parent!==window) window.parent.postMessage({type:'cinematica-fin', lang},'*'); }catch(e){}
   const el=$('toast'); el.classList.add('on'); setTimeout(()=>el.classList.remove('on'),2600);
 };
-$('bFull').onclick=()=>{ try{ const r=document.fullscreenElement?document.exitFullscreen():stage.requestFullscreen(); r&&r.catch&&r.catch(()=>{}); }catch(e){} };
+$('bFull').onclick=()=>{ try{ const r=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen(); r&&r.catch&&r.catch(()=>{}); }catch(e){} };
 let hideT=null;
 function showCtrl(){ if(!playing||ended) return; ctrl.classList.add('show'); clearTimeout(hideT); hideT=setTimeout(()=>{ if(!paused) ctrl.classList.remove('show'); },2600); }
 stage.addEventListener('mousemove',showCtrl); stage.addEventListener('touchstart',showCtrl,{passive:true});
