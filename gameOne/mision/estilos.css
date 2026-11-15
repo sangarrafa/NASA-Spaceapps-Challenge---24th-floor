@@ -1,0 +1,55 @@
+:root{
+  --fondo:#070b1a; --panel:rgba(16,24,52,.92); --borde:#2b3b73;
+  --texto:#eef2ff; --suave:#a9b6e6; --verde:#3ee68f; --naranja:#ffb547; --rojo:#ff6b6b; --azul:#5aa8ff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--fondo);color:var(--texto);
+  font-family:"Trebuchet MS","Segoe UI",Roboto,system-ui,sans-serif;overflow:hidden;
+  -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#app{position:relative;width:100%;height:100%}
+canvas{display:block;width:100%;height:100%}
+
+/* HUD */
+#hud{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;pointer-events:none}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--panel);border:1px solid var(--borde);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:bold}
+.chip.ayuda{border-color:var(--naranja);color:var(--naranja)}
+#btnDatos{pointer-events:auto;cursor:pointer;background:var(--panel);color:var(--texto);border:1px solid var(--borde);
+  border-radius:999px;padding:6px 12px;font:inherit;font-size:14px;font-weight:bold}
+#btnDatos:hover{border-color:var(--azul)}
+
+/* Burbuja de Control de Misión */
+#burbuja{position:absolute;left:50%;transform:translateX(-50%);bottom:104px;max-width:min(560px,92vw);
+  background:var(--panel);border:1px solid var(--borde);border-radius:16px;padding:10px 16px;font-size:16px;line-height:1.35;text-align:center}
+#burbuja b{color:var(--naranja)}
+
+/* Botón principal */
+#btnMotor{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);min-width:260px;
+  font:inherit;font-size:22px;font-weight:bold;letter-spacing:.5px;color:#1a0f00;cursor:pointer;
+  background:linear-gradient(#ffd27a,#ff9f1c);border:none;border-radius:999px;padding:16px 28px;
+  box-shadow:0 6px 0 #b86a00,0 10px 24px rgba(255,159,28,.35);transition:transform .08s}
+#btnMotor:active{transform:translateX(-50%) translateY(4px);box-shadow:0 2px 0 #b86a00}
+#btnMotor:disabled{filter:grayscale(1) brightness(.6);cursor:default}
+#btnMotor.ahora{background:linear-gradient(#8dffc0,#22c96f);box-shadow:0 6px 0 #138a4a,0 0 30px rgba(62,230,143,.7);animation:latido .5s infinite alternate}
+@keyframes latido{to{transform:translateX(-50%) scale(1.06)}}
+
+/* Pantallas superpuestas */
+.capa{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(4,7,18,.72);padding:16px}
+.capa.visible{display:flex}
+.tarjeta{background:var(--panel);border:2px solid var(--borde);border-radius:22px;max-width:560px;width:100%;
+  padding:24px 24px 20px;text-align:center;max-height:92vh;overflow:auto}
+.tarjeta h1{font-size:28px;margin-bottom:10px}
+.tarjeta h2{font-size:24px;margin-bottom:8px}
+.tarjeta p{font-size:17px;line-height:1.45;margin:8px 0;color:var(--texto)}
+.tarjeta .nota{font-size:14px;color:var(--suave)}
+.tarjeta .dato{background:rgba(90,168,255,.12);border-left:4px solid var(--azul);border-radius:10px;padding:10px 12px;text-align:left;font-size:15px;margin:12px 0}
+.tarjeta .dato b{color:var(--azul)}
+.grande{font-size:56px;line-height:1;margin:4px 0 8px}
+.botones{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.btn{font:inherit;font-size:18px;font-weight:bold;cursor:pointer;border:none;border-radius:999px;padding:12px 22px}
+.btn.primario{background:linear-gradient(#ffd27a,#ff9f1c);color:#1a0f00;box-shadow:0 4px 0 #b86a00}
+.btn.secundario{background:transparent;color:var(--texto);border:2px solid var(--borde)}
+.btn:active{transform:translateY(3px)}
+.fuentes{text-align:left;font-size:14px;line-height:1.5}
+.fuentes li{margin:6px 0 6px 18px}
+.fuentes a{color:var(--azul)}
