@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa de la base lunar — Misión Equilibria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<div id="stage">
+  <canvas id="c" width="1280" height="720" aria-label="Mapa de la base lunar con cinco estaciones de misión y un camino bloqueado hacia Marte"></canvas>
+
+  <div id="panel">
+    <div class="k">BASE LUNIA · POLO SUR</div>
+    <h1>Mapa de misiones</h1>
+    <div class="barra"><i id="barra"></i></div>
+    <div id="prog">Misiones completadas: 0 de 5</div>
+  </div>
+
+  <div id="tip"><h3 id="tNom"></h3><p id="tDesc"></p><div class="estado" id="tEst"></div><button id="tGo">Entrar ▶</button></div>
+  <div id="aviso">🚀 ¡Tu cohete ya puede viajar a Marte!</div>
+
+  <div id="demo">
+    <button id="dComp" title="Solo para la presentación">Demo: completar misiones</button>
+    <button id="dReset">Reiniciar</button>
+  </div>
+</div>
+
+<script src="mapa-base.js"></script>
+</body>
+</html>
