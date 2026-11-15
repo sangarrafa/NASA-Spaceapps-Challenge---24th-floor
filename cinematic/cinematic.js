@@ -168,7 +168,14 @@ function pickVoices(){
   const pref=VOICE_PREF[lang];
   const rios=prefer(pref.rios,[],FEMALE_FALLBACK);
   const narr=prefer(pref.narr,[rios],MALE_FALLBACK);
-  const lunia=prefer(pref.lunia,[rios,narr],FEMALE_FALLBACK);
+  // In English LUNIA prefers a voice installed on the device: online ("Natural") voices make a network
+  // request for every chunk she speaks, which leaves long silences between her short phrases.
+  const preferLocal=(names,exclude,fallback)=>{
+    const local=pool.filter(x=>x.localService && !exclude.includes(x));
+    for(const nm of names){ const v=local.find(x=>new RegExp('\\b'+nm+'\\b','i').test(x.name)); if(v) return v; }
+    return local.find(x=>fallback.test(x.name)) || null;
+  };
+  const lunia=(lang==='en' && preferLocal(pref.lunia,[rios,narr],FEMALE_FALLBACK)) || prefer(pref.lunia,[rios,narr],FEMALE_FALLBACK);
   voices={narr:narr||rios, lunia:lunia||rios, rios};
   refreshVoiceInfo();
 }
@@ -284,14 +291,18 @@ function robotChirp(closing){
   else { tone(1046,.06,.035,'square',0,null,voiceFx); tone(1568,.07,.03,'square',.07,null,voiceFx); }
 }
 function robotBlip(){ if(!ac || !voiceOn) return; tone(1900,.035,.02,'square',0,null,voiceFx); }
-/* LUNIA speaks in short, evenly spaced chunks (about 4 words) so her cadence is flat and
-   machine-like. Browsers do not let a page process speech-synthesis audio, so this plus the
-   electronic hum and blips is how the robotic character is built. */
+/* LUNIA speaks in short, evenly spaced chunks so her cadence is flat and machine-like.
+   Browsers do not let a page process speech-synthesis audio, so this plus the electronic hum
+   and blips is how the robotic character is built.
+   Spanish: about 4 words per chunk. English: only at punctuation, and a phrase is split only if it
+   has more than 10 words, because 4-word chunks cut English mid-phrase ("And I am | all alone")
+   and every chunk adds the voice's start-up delay. */
+const CHUNK_WORDS = {es:4, en:10};
 function robotChunks(text){
-  const out=[];
+  const out=[], max=CHUNK_WORDS[lang]||4;
   for(const p of (text.match(/[^.,;:?!…]+[.,;:?!…]*/g)||[text])){
     const w=p.trim().split(/\s+/).filter(Boolean); if(!w.length) continue;
-    const n=Math.ceil(w.length/4), size=Math.ceil(w.length/n);
+    const n=Math.ceil(w.length/max), size=Math.ceil(w.length/n);
     for(let i=0;i<w.length;i+=size) out.push(w.slice(i,i+size).join(' '));
   }
   return out;
