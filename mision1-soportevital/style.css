@@ -288,9 +288,6 @@ main { max-width: 1120px; margin: 0 auto; padding: 18px 16px 50px; }
 .sello { font-size: .7rem; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; padding: 3px 9px; border-radius: 999px; display: inline-block; float: right; }
 .sello-real { background: rgba(61,220,151,.18); color: var(--bien); }
 .sello-simple { background: rgba(255,201,77,.18); color: var(--acento); }
-.adaptacion summary { cursor: pointer; font-weight: 900; }
-.adaptacion table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: .9rem; }
-.adaptacion th, .adaptacion td { border-bottom: 1px solid var(--borde); padding: 6px 8px; text-align: left; vertical-align: top; }
 
 #confeti { position: fixed; inset: 0; pointer-events: none; z-index: 50; width: 100%; height: 100%; }
 
@@ -382,10 +379,8 @@ main { max-width: 1120px; margin: 0 auto; padding: 18px 16px 50px; }
   #pantalla-repaso > .tarjeta.centrada .icono-grande { grid-row: span 2; font-size: 2.6rem; margin: 0; }
   #pantalla-repaso > .tarjeta.centrada h2 { margin: 0; }
   #pantalla-repaso > .tarjeta.centrada p { margin: 4px 0 0; }
-  /* Fuentes (cerrado) a la izquierda y botones a la derecha, en la misma fila */
-  #pantalla-repaso > details.adaptacion { grid-column: 1; align-self: center; }
-  #pantalla-repaso > .fila { grid-column: 2; align-self: center; flex-wrap: nowrap; }
-  #pantalla-repaso > details.adaptacion[open] { grid-column: 1 / -1; grid-row: 4; }
+  /* Botones finales en su propia fila, centrados */
+  #pantalla-repaso > .fila { grid-column: 1 / -1; align-self: center; flex-wrap: nowrap; }
   #pantalla-repaso .subtitulo { margin: 0 0 10px; }
   #pantalla-repaso .btn-grande { margin-top: 0; padding: 10px 22px; font-size: 1.05rem; white-space: nowrap; }
   .tus-dias { gap: 10px; }

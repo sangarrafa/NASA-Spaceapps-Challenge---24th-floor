@@ -1191,7 +1191,6 @@
        S.dilemaAceptado === false ? L(" Decidiste cuidar el oxígeno en vez de salir: también es una buena decisión.", " You chose to save oxygen instead of going out: that’s a good decision too.") : "");
     construirTusDias();
     construirReflexion();
-    construirAdaptacion();
     guardarResultado();
     mostrarPantalla("pantalla-repaso");
     Voz.hablar(L("¡Misión cumplida! ", "Mission accomplished! ") + $("repaso-resumen").textContent);
@@ -1242,31 +1241,6 @@
       });
       cont.appendChild(b);
     });
-  }
-
-  function construirAdaptacion() {
-    const filas = S.registroAdaptacion.map((r) => `<tr><td>${L("Día", "Day")} ${r.dia}</td><td>${r.nota}</td></tr>`).join("");
-    $("adaptacion-detalle").innerHTML = EN ? `
-      <p>Starting level: <strong>${NIVELES[nivelInicial].nombre}</strong> (from the profile test). Final level: <strong>${NIVELES[S.nivel].nombre}</strong>.</p>
-      <p>The mission quietly measures whether the player <em>anticipates</em> (turns on a machine while the tank is still OK)
-      or <em>reacts late</em> (when it’s already in danger), and how long they keep the tanks green. With that it adjusts
-      the next day: number of systems, speed and LUNIA’s warnings (stealth assessment, Shute; scaffolding that is
-      removed, Wood, Bruner and Ross, 1976). The guided practice, the voice and the icons follow Universal Design for
-      Learning (CAST, 2024).</p>
-      <table><thead><tr><th>Day</th><th>What happened and what was adjusted</th></tr></thead><tbody>${filas}</tbody></table>
-      <p class="nota">Total: anticipated ${S.metricas.anticipa} times, reacted late ${S.metricas.reacciona} times, ${S.intentos} retries, ${S.muestrasTotal} samples.</p>
-      <h4>Real data used in the mission</h4>
-      <ul class="fuentes-lista">${FICHAS.map((f) => `<li><strong>${f.titulo}.</strong> ${f.texto} <em>${f.url ? `<a href="${f.url}" target="_blank" rel="noopener">${f.fuente}</a>` : f.fuente}</em></li>`).join("")}</ul>` : `
-      <p>Nivel inicial: <strong>${NIVELES[nivelInicial].nombre}</strong> (del test de perfil). Nivel final: <strong>${NIVELES[S.nivel].nombre}</strong>.</p>
-      <p>La misión mide en silencio si el jugador <em>anticipa</em> (enciende una máquina cuando el tanque aún está bien)
-      o <em>reacciona tarde</em> (cuando ya está en peligro), y cuánto tiempo mantiene los tanques en verde. Con eso ajusta
-      el día siguiente: número de sistemas, velocidad y avisos de LUNIA (evaluación invisible, Shute; andamiaje que se
-      retira, Wood, Bruner y Ross, 1976). La práctica guiada, la voz y los íconos siguen el Diseño Universal para el
-      Aprendizaje (CAST, 2024).</p>
-      <table><thead><tr><th>Día</th><th>Qué pasó y qué se ajustó</th></tr></thead><tbody>${filas}</tbody></table>
-      <p class="nota">Total: anticipó ${S.metricas.anticipa} veces, reaccionó tarde ${S.metricas.reacciona} veces, ${S.intentos} reintentos, ${S.muestrasTotal} muestras.</p>
-      <h4>Datos reales usados en la misión</h4>
-      <ul class="fuentes-lista">${FICHAS.map((f) => `<li><strong>${f.titulo}.</strong> ${f.texto} <em>${f.url ? `<a href="${f.url}" target="_blank" rel="noopener">${f.fuente}</a>` : f.fuente}</em></li>`).join("")}</ul>`;
   }
 
   function guardarResultado() {
