@@ -886,13 +886,19 @@
   }
 
   // Avanza solo cuando se cumple la condición, terminó la voz y pasó un tiempo mínimo.
+  // Chrome y Edge a veces se quedan creyendo que siguen hablando (speechSynthesis.speaking no vuelve a
+  // false): por eso, cumplida la condición, se espera a la voz como máximo unos segundos y se sigue igual.
+  // Sin ese límite la guía se quedaba trabada (por ejemplo en "Mira el anillo…") y bloqueaba la pantalla.
+  const ESPERA_MAX_VOZ = 6000;
   function avanzarCuandoListo(g, sig, minMs = 2500) {
     const inicio = performance.now();
-    let listo = false;
-    g.marcarListo = () => { listo = true; };
+    let listo = false, listoDesde = 0;
+    g.marcarListo = () => { if (!listo) { listo = true; listoDesde = performance.now(); } };
     const revisar = setInterval(() => {
       if (S.guia !== g) { clearInterval(revisar); return; }
-      if (listo && !Voz.hablando() && performance.now() - inicio >= minMs) { clearInterval(revisar); sig(); }
+      const ahora = performance.now();
+      const vozLibre = !Voz.hablando() || ahora - listoDesde >= ESPERA_MAX_VOZ;
+      if (listo && vozLibre && ahora - inicio >= minMs) { clearInterval(revisar); sig(); }
     }, 200);
   }
 

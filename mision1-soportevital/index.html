@@ -142,17 +142,17 @@
           </li>
         </ol>
 
-        <button data-en="Start!" id="btn-empezar-practica" class="btn btn-grande">¡Empezar!</button>
-
-        <details class="selector-demo">
-          <summary data-en="Starting level">Nivel inicial</summary>
-          <p data-en="In the full game, the profile test picks the level.">En el juego completo, el nivel lo elige el test de perfil.</p>
-          <div class="fila" role="radiogroup" aria-label="Nivel inicial" data-en-aria="Starting level">
+        <!-- Nivel inicial siempre visible, en la misma fila que ¡Empezar! (sin desplegable que empuje la página) -->
+        <div class="fila-inicio">
+          <div class="selector-nivel" role="radiogroup" aria-label="Nivel inicial" data-en-aria="Starting level"
+               title="En el juego completo, el nivel lo elige el test de perfil." data-en-title="In the full game, the profile test picks the level.">
+            <span class="selector-titulo" data-en="Level:">Nivel:</span>
             <button class="btn btn-chico" data-nivel="1" data-en="Explorer · ages 7–8">Explorador · 7–8 años</button>
             <button class="btn btn-chico" data-nivel="2" data-en="Engineer">Ingeniero</button>
             <button class="btn btn-chico" data-nivel="3" data-en="Commander">Comandante</button>
           </div>
-        </details>
+          <button data-en="Start!" id="btn-empezar-practica" class="btn btn-grande">¡Empezar!</button>
+        </div>
       </div>
     </section>
 
