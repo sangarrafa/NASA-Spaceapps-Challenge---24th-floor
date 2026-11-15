@@ -297,5 +297,6 @@ initAudio(); stage.addEventListener('pointerdown',unlockAudio); addEventListener
 document.getElementById('bSnd').onclick=()=>{ sndOn=!sndOn; document.getElementById('bSnd').setAttribute('aria-pressed',sndOn); unlockAudio(); if(master) master.gain.setTargetAtTime(sndOn?.7:0,ac.currentTime,.05); };
 document.getElementById('bSkip').onclick=()=>{ T=END; finish(); };
 document.getElementById('bAgain').onclick=restart;
-document.getElementById('bNext').onclick=()=>{ dispatchEvent(new CustomEvent('llegada:siguiente')); try{ if(parent!==window) parent.postMessage({type:'llegada-fin'},'*'); }catch(e){} };
+const NEXT_SCREEN='../../mapa-luna/index.html';
+document.getElementById('bNext').onclick=()=>{ dispatchEvent(new CustomEvent('llegada:siguiente')); try{ if(parent!==window) parent.postMessage({type:'llegada-fin'},'*'); }catch(e){} location.href=NEXT_SCREEN; };
 })();
