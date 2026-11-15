@@ -159,11 +159,8 @@
 
   /* ---------- Pantalla 2: elección de traje ---------- */
   function mostrarPantalla(id) {
-    document.querySelectorAll('.pantalla').forEach((s) => { s.hidden = s.id !== id; s.classList.toggle('activa', s.id === id); });
+    document.querySelectorAll('.pantalla').forEach((s) => s.hidden = s.id !== id);
     if (id === 'pantalla-traje') refrescarTraje();
-    window.scrollTo(0, 0);
-    const titulo = document.querySelector(`#${id} h1, #${id} h2`);
-    if (titulo) { titulo.tabIndex = -1; titulo.focus({ preventScroll: true }); }
   }
 
   function refrescarTraje() {
@@ -172,8 +169,7 @@
     });
   }
 
-  $('bSiguiente').onclick = () => mostrarPantalla('pantalla-traje');
-  $('bVolver').onclick = () => mostrarPantalla('pantalla-avatar');
+  $('bSiguiente').onclick = () => { mostrarPantalla('pantalla-traje'); window.scrollTo(0,0); };
 
   /* ---------- Botones generales ---------- */
   const azar = (lista) => lista[Math.floor(Math.random() * lista.length)].id;
@@ -190,7 +186,7 @@
   $('bCasco').onclick = () => { cfg.casco = !cfg.casco; decir(cfg.casco ? L('Casco puesto: listo para salir.', 'Helmet on: ready to go out.') : L('Sin casco, solo dentro de la base.', 'No helmet, only inside the base.')); reproducirCambio(); pintar(false); triggerSalto(); };
 
   // "¡Listo, a la misión!": guarda el avatar y pasa a la cinemática del despegue desde la Tierra
-  const CINEMATICA = '../despegueTierra/index.html';
+  const CINEMATICA = '../despegue-tierra/index.html';
   let tAviso;
   $('bGuardar').onclick = () => {
     const ok = A.guardar(cfg);

@@ -12,21 +12,7 @@ button:focus-visible{outline:3px solid var(--aqua);outline-offset:3px}
 #subs .who{display:block;font-weight:900;font-size:calc(var(--s)*14px);letter-spacing:.1em;text-transform:uppercase;margin-bottom:calc(var(--s)*3px)}
 #subs .txt{font-weight:700;font-size:calc(var(--s)*26px);line-height:1.3}
 
-#start{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--s)*16px);background:#05061a;isolation:isolate;overflow:hidden;text-align:center;transition:opacity .5s}
-/* Video de fondo de la portada + capa semitransparente encima para que el título siga legible */
-#startVid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;pointer-events:none}
-#start::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 50% 40%,rgba(30,27,110,.55),rgba(11,15,58,.72) 60%,rgba(5,6,26,.88));transition:opacity 1.4s ease}
-/* Intro: al abrir solo se ve el video; al terminar, la capa y la portada emergen encima */
-#start>:not(#startVid):not(#bIntroSkip):not(#introSound){transition:opacity 1s ease .5s,transform 1s ease .5s}
-#start.intro::before{opacity:0}
-#start.intro>:not(#startVid):not(#bIntroSkip):not(#introSound){opacity:0;transform:translateY(calc(var(--s)*14px));pointer-events:none}
-#bIntroSkip{position:absolute;right:calc(var(--s)*24px);bottom:calc(var(--s)*22px);font-weight:800;font-size:calc(var(--s)*16px);color:var(--white,#E8E9F2);background:rgba(11,15,58,.55);border:1px solid rgba(111,227,232,.35);border-radius:999px;padding:calc(var(--s)*8px) calc(var(--s)*18px);opacity:0;pointer-events:none;transition:opacity .4s}
-#start.intro .hint{opacity:0!important}
-#start.intro #bIntroSkip{opacity:.85;pointer-events:auto}
-#start.intro #bIntroSkip:hover{opacity:1}
-/* Aviso discreto cuando el navegador bloquea el sonido hasta la primera interacción */
-#introSound{position:absolute;left:calc(var(--s)*24px);bottom:calc(var(--s)*26px);font-family:"Space Mono",monospace;font-weight:700;font-size:calc(var(--s)*13px);letter-spacing:.08em;color:var(--aqua);opacity:0;pointer-events:none;transition:opacity .4s}
-#introSound.on{opacity:.75}
+#start{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--s)*16px);background:radial-gradient(ellipse at 50% 40%,rgba(30,27,110,.85),rgba(11,15,58,.95) 60%,#05061a);text-align:center;transition:opacity .5s}
 #start.off{opacity:0;pointer-events:none}
 .kicker{font-family:"Space Mono",monospace;font-weight:700;color:var(--aqua);font-size:calc(var(--s)*16px);letter-spacing:.3em}
 #start h1{font-weight:900;font-size:calc(var(--s)*92px);line-height:1;background:linear-gradient(90deg,var(--aqua),#fff 45%,var(--amber));-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.04em;text-wrap:balance}

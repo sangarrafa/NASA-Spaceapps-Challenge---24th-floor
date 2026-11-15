@@ -12,7 +12,7 @@ const STR = {
     kickerIn:'TRANSMISIÓN ENTRANTE', startLine:'Algo nos está llamando desde el polo sur de la Luna.', receive:'▶ Recibir transmisión',
     language:'Idioma', speed:'Velocidad', togVoice:'🗣 Voz narrada', togSfx:'🔊 Música y efectos', hint:'Mejor con sonido · Espacio: pausa · S: saltar',
     pause:'⏸ Pausa', resume:'▶ Seguir', sound:'🔊 Sonido', voice:'🗣 Voz', skip:'Saltar ⏭',
-    tPause:'Pausa (espacio)', tSfx:'Música y efectos', tVoice:'Voz narrada', tSpeed:'Velocidad del audio', tFull:'Pantalla completa', tSkip:'Saltar cinemática', skipIntro:'Saltar intro ⏭', introSound:'🔊 Toca la pantalla o pulsa una tecla para activar el sonido',
+    tPause:'Pausa (espacio)', tSfx:'Música y efectos', tVoice:'Voz narrada', tSpeed:'Velocidad del audio', tFull:'Pantalla completa', tSkip:'Saltar cinemática',
     academy:'ACADEMIA DE ASTRONAUTAS', question:'¿Cuál será tu súper habilidad?', next:'Siguiente ▶', replay:'↺ Ver de nuevo',
     credits:'Datos reales citados: NASA LRO (cráteres en sombra permanente del polo sur lunar) · NASA DONKI (registro de fulguraciones solares)',
     toast:'¡Listo, astronauta! Aquí empieza el test de súper habilidades.', canvasLabel:'Cinemática Equilibria',
@@ -27,7 +27,7 @@ const STR = {
     kickerIn:'INCOMING TRANSMISSION', startLine:'Something is calling us from the Moon’s south pole.', receive:'▶ Receive transmission',
     language:'Language', speed:'Speed', togVoice:'🗣 Narration', togSfx:'🔊 Music & effects', hint:'Best with sound · Space: pause · S: skip',
     pause:'⏸ Pause', resume:'▶ Resume', sound:'🔊 Sound', voice:'🗣 Voice', skip:'Skip ⏭',
-    tPause:'Pause (space)', tSfx:'Music & effects', tVoice:'Narration', tSpeed:'Audio speed', tFull:'Full screen', tSkip:'Skip cinematic', skipIntro:'Skip intro ⏭', introSound:'🔊 Tap the screen or press a key to turn on sound',
+    tPause:'Pause (space)', tSfx:'Music & effects', tVoice:'Narration', tSpeed:'Audio speed', tFull:'Full screen', tSkip:'Skip cinematic',
     academy:'ASTRONAUT ACADEMY', question:'What will your superpower be?', next:'Next ▶', replay:'↺ Watch again',
     credits:'Real data cited: NASA LRO (permanently shadowed craters at the lunar south pole) · NASA DONKI (solar flare records)',
     toast:'Ready, astronaut! The superpower test starts here.', canvasLabel:'Equilibria cinematic',
@@ -194,11 +194,7 @@ function say(cue){
   speaking=true; speakingWho=cue.who; speakingCue=cue;
   const text = cue[lang], spoken = cue[lang+'Speak'] || text;
   const rate = Math.min(2, PROF[cue.who].rate*speed);
-  // Safety net in case the browser never finishes a line. It is re-armed every time a piece of
-  // speech actually starts, so slow voices (or LUNIA's many short chunks) are never cut short.
-  const estimate = txt => (txt.length*0.09/rate + 2.5)*1000;
-  const arm = ms => { clearTimeout(safety); safety = setTimeout(done, ms); };
-  arm(estimate(text) + 4000);
+  safety = setTimeout(done, (text.length*0.085/rate + 2.5 + (isLunia ? text.split(/\s+/).length*.06 : 0))*1000);
   if(isLunia) robotChirp(false);
   const file = VOICE_FILES[lang][cue.id];
   if(file){
@@ -215,20 +211,13 @@ function say(cue){
     u.pitch = pitchFor(cue.who); u.rate = rate; u.volume = 1;
     return u;
   };
-  if(!isLunia){
-    const u = make(spoken);
-    u.onstart = () => { if(tok===speakTok) arm(estimate(spoken)); };
-    u.onend = done; u.onerror = done; speechSynthesis.speak(u); return;
-  }
+  if(!isLunia){ const u = make(spoken); u.onend = done; u.onerror = done; speechSynthesis.speak(u); return; }
   const chunks = robotChunks(spoken);
   const next = i => {
     if(tok!==speakTok) return;
     if(i>=chunks.length){ done(); return; }
     robotBlip();
     const u = make(chunks[i]);
-    // Before each chunk starts the browser may take a moment; once it starts, give it its own time
-    arm(estimate(chunks[i]) + 3000);
-    u.onstart = () => { if(tok===speakTok) arm(estimate(chunks[i])); };
     u.onend = () => setTimeout(() => next(i+1), 150/speed); u.onerror = done;
     speechSynthesis.speak(u);
   };
@@ -897,7 +886,7 @@ function syncToggles(){
   if(ac){ master.gain.setTargetAtTime(sfxOn?.8:0,ac.currentTime,.05); voiceFx.gain.setTargetAtTime(voiceOn?1:0,ac.currentTime,.05); }
 }
 const toggleVoice=()=>{ voiceOn=!voiceOn; if(!voiceOn) stopVoice(); syncToggles(); };
-const toggleSfx=()=>{ sfxOn=!sfxOn; syncToggles(); if(window.AudioAmbiente) AudioAmbiente.silenciar(!sfxOn); };
+const toggleSfx=()=>{ sfxOn=!sfxOn; syncToggles(); };
 const setSpeed=v=>{ speed=v; syncToggles(); };
 $('tVoice').onclick=toggleVoice; $('bVoice').onclick=toggleVoice;
 $('tSfx').onclick=toggleSfx; $('bSfx').onclick=toggleSfx;
@@ -912,59 +901,9 @@ function start(){
   if(voiceOn && 'speechSynthesis' in window){ try{ const u=new SpeechSynthesisUtterance(' '); u.volume=0; speechSynthesis.speak(u);}catch(e){} }
   T=0; ended=false; paused=false; playing=true; parts.length=0; subShown=null;
   startEl.classList.add('off'); endEl.classList.remove('on'); $('toast').classList.remove('on');
-  if(window.AudioAmbiente) AudioAmbiente.atenuar(.4,1500);
   $('bPause').textContent=t('pause'); showCtrl();
 }
 $('bStart').onclick=start;
-// Intro: el video de la Luna es lo primero que se ve y dura INTRO_MS (9 s) pase lo que pase:
-// el video se ajusta de velocidad para llenar ese tiempo y la portada EQUILIBRIA emerge al final.
-// Solo se salta con el botón "Saltar intro" o con Esc / S; un clic o tecla cualquiera solo activa el sonido.
-// La música (intro_equilibria.wav) suena en bucle en la intro y en la portada, y se apaga con un fundido
-// al pulsar "Recibir transmisión".
-const INTRO_MS=9000;
-const startVid=$('startVid'), introSoundEl=$('introSound');
-const introMusic=new Audio('resources/intro_equilibria.wav');
-introMusic.loop=true; introMusic.volume=.8; introMusic.preload='auto';
-let introOn=startEl.classList.contains('intro'), musicOn=false, introTimer=null;
-function tryMusic(){
-  if(musicOn) return;
-  introMusic.play().then(()=>{ musicOn=true; introSoundEl.classList.remove('on'); },
-                         ()=>{ introSoundEl.classList.add('on'); });
-}
-function unlockMusic(){ if(!musicOn && !playing) tryMusic(); }
-function fadeOutMusic(){
-  if(!musicOn) { introMusic.pause(); return; }
-  musicOn=false; const v0=introMusic.volume, t0=performance.now();
-  (function step(){ const k=Math.min(1,(performance.now()-t0)/800); introMusic.volume=v0*(1-k);
-    if(k<1) requestAnimationFrame(step); else { introMusic.pause(); introMusic.volume=v0; } })();
-}
-function fitVideo(){ if(startVid && isFinite(startVid.duration) && startVid.duration>0) startVid.playbackRate=Math.min(4,Math.max(.25,startVid.duration*1000/INTRO_MS)); }
-function endIntro(){
-  if(!introOn) return; introOn=false; clearTimeout(introTimer);
-  startEl.classList.remove('intro');
-  setTimeout(()=>{ if(!playing) $('bStart').focus({preventScroll:true}); },1500);
-}
-['pointerdown','touchstart','click'].forEach(ev=>addEventListener(ev,unlockMusic,true));
-addEventListener('keydown',e=>{
-  unlockMusic();
-  if(!introOn) return;
-  e.preventDefault(); e.stopImmediatePropagation();
-  if(e.key==='Escape'||e.key==='s'||e.key==='S') endIntro();
-},true);
-$('bIntroSkip').onclick=e=>{ e.stopPropagation(); unlockMusic(); endIntro(); };
-$('bStart').addEventListener('click',()=>{ fadeOutMusic(); introSoundEl.classList.remove('on'); if(startVid) setTimeout(()=>startVid.pause(),600); });
-tryMusic();
-// El video se ve SIEMPRE en movimiento y en bucle (intro y detrás de la portada), aunque Windows tenga
-// desactivados los efectos de animación (prefers-reduced-motion): es el fondo de la escena, no un adorno.
-if(startVid){
-  startVid.loop=true; startVid.muted=true;
-  if(startVid.readyState>=1) fitVideo(); else startVid.addEventListener('loadedmetadata',fitVideo,{once:true});
-  const playVid=()=>{ if(!playing) startVid.play().catch(()=>{}); };
-  playVid();
-  startVid.addEventListener('canplay',playVid,{once:true});
-  ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{ if(startVid.paused) playVid(); },true));
-}
-if(introOn) introTimer=setTimeout(endIntro, INTRO_MS);
 function setPause(p){
   if(!playing||ended) return; paused=p;
   $('bPause').textContent=t(p?'resume':'pause');
@@ -975,7 +914,6 @@ function setPause(p){
 $('bPause').onclick=()=>setPause(!paused);
 function finish(){
   ended=true; stopVoice(); ctrl.classList.remove('show');
-  if(window.AudioAmbiente) AudioAmbiente.atenuar(1,2500);
   setTimeout(()=>{ if(ended) endEl.classList.add('on'); },900);
 }
 function skip(){
@@ -988,7 +926,7 @@ $('bReplay').onclick=()=>{ endEl.classList.remove('on'); setPad([110,164.81,220,
 $('bNext').onclick=()=>{
   window.dispatchEvent(new CustomEvent('cinematica:siguiente', {detail:{lang, speed}}));
   try{ if(window.parent!==window) window.parent.postMessage({type:'cinematica-fin', lang},'*'); }catch(e){}
-  window.location.href='../testHabilidades/index.html';
+  window.location.href='../test-habilidades/test-habilidades/index.html';
 };
 $('bFull').onclick=()=>{ try{ const r=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen(); r&&r.catch&&r.catch(()=>{}); }catch(e){} };
 let hideT=null;

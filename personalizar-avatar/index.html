@@ -31,6 +31,10 @@
           <button id="bAzar" class="tog" type="button" data-en="🎲 Random">🎲 Al azar</button>
           <button id="bCasco" class="tog" type="button" aria-pressed="true" data-en="🫧 Helmet">🫧 Casco</button>
         </div>
+        <div class="comandante">
+          <div class="retrato" aria-hidden="true">👩🏽‍🚀<span class="placa">RÍOS</span></div>
+          <p class="burbuja" id="mensaje" data-en="This is how you’ll look on every mission! Pick what you like best.">¡Así te verás en todas las misiones! Elige lo que más te guste.</p>
+        </div>
       </div>
 
       <!-- Menú -->
@@ -69,17 +73,10 @@
           <h3 data-en="Hair color">Color de cabello</h3>
           <div class="cuadricula muestras" data-grupo="colorCabello"></div>
         </div>
-
-        <!-- Ríos y el botón quedan en esta columna para que se vean sin bajar -->
-        <div class="pie-menu">
-          <div class="comandante">
-            <div class="retrato" aria-hidden="true">👩🏽‍🚀<span class="placa">RÍOS</span></div>
-            <p class="burbuja" id="mensaje" data-en="This is how you’ll look on every mission! Pick what you like best.">¡Así te verás en todas las misiones! Elige lo que más te guste.</p>
-          </div>
-          <button id="bSiguiente" class="big" data-en="Next: choose your suit ▶">Siguiente: elige tu traje ▶</button>
-        </div>
       </div>
     </div>
+
+    <button id="bSiguiente" class="big" data-en="Next: choose your suit ▶">Siguiente: elige tu traje ▶</button>
   </section>
 
   <!-- Pantalla 2: selección de traje -->
@@ -93,17 +90,14 @@
       <div class="retrato" aria-hidden="true">👩🏽‍🚀<span class="placa">RÍOS</span></div>
       <p class="burbuja" id="mensaje-traje" data-en="Each suit has its advantages. Which one do you like most?">Cada traje tiene sus ventajas. ¿Cuál te llama más?</p>
     </div>
-    <div class="fila-final">
-      <button id="bVolver" class="ghost" type="button" data-en="◀ Back to my astronaut">◀ Volver a mi astronauta</button>
-      <button id="bGuardar" class="big" data-en="Ready, to the mission! ▶">¡Listo, a la misión! ▶</button>
-    </div>
+    <button id="bGuardar" class="big" style="margin-top:20px" data-en="Ready, to the mission! ▶">¡Listo, a la misión! ▶</button>
     <div id="aviso" class="aviso" role="status" aria-live="polite"></div>
   </section>
 </main>
-<script src="../audio/audio-ambiente.js"></script>
+<script src="../shared/language.js"></script>
 <script src="lib/three.r186.min.js"></script>
 <script src="js/avatar.js"></script>
-<script src="js/profundidadAvatar.js"></script>
+<script src="js/profundidad-avatar.js"></script>
 <script src="js/menu.js"></script>
 </body>
 </html>

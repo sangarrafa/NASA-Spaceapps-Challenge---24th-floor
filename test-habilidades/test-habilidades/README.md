@@ -41,7 +41,7 @@ Abrir `index.html` (funciona con doble clic, sin servidor). Con `?debug` se ve e
 ## Archivos
 
 - `preguntas.js`: las 10 pruebas, las 4 especialidades y las reacciones de la Comandante.
-- `perfilAstronauta.js`: cálculo, guardado y API para el juego (`window.EquilibriaPerfil`).
+- `perfil-astronauta.js`: cálculo, guardado y API para el juego (`window.EquilibriaPerfil`).
 - `test.js` y `test.css`: interfaz, con la paleta y tipografías de la cinemática.
 
 ## Especialidades y Bartle
@@ -64,7 +64,7 @@ Al niño solo se le muestra la especialidad.
 ## Uso desde el juego
 
 ```html
-<script src="../testHabilidades/perfilAstronauta.js"></script>
+<script src="../test-habilidades/perfil-astronauta.js"></script>
 <script>
   const perfil = EquilibriaPerfil.cargar();     // null si no hizo el test
   perfil.especialidad.id;                       // 'E' | 'T' | 'G' | 'S'
