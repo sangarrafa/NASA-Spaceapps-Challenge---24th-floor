@@ -297,5 +297,6 @@ initAudio(); stage.addEventListener('pointerdown',unlockAudio); addEventListener
 document.getElementById('bSnd').onclick=()=>{ sndOn=!sndOn; document.getElementById('bSnd').setAttribute('aria-pressed',sndOn); unlockAudio(); if(master) master.gain.setTargetAtTime(sndOn?.7:0,ac.currentTime,.05); };
 document.getElementById('bSkip').onclick=()=>{ for(let t=T;t<FREEZE;t+=1/30){ if(t>12) emitSmoke(easeOut(seg(t,12,13.6))); updParts(1/30); } fire(T,FREEZE); T=FREEZE; freeze(); };
 document.getElementById('otra').onclick=restart;
-bNext.onclick=()=>{ dispatchEvent(new CustomEvent('despegue:siguiente')); try{ if(parent!==window) parent.postMessage({type:'despegue-siguiente'},'*'); }catch(e){} };
+const NEXT_SCREEN='../gameOne/bienvenida/index.html';
+bNext.onclick=()=>{ dispatchEvent(new CustomEvent('despegue:siguiente')); try{ if(parent!==window) parent.postMessage({type:'despegue-siguiente'},'*'); }catch(e){} location.href=NEXT_SCREEN; };
 })();
