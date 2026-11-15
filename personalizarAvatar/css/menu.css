@@ -24,7 +24,9 @@
 .fila-botones{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .fila-botones .tog{font-size:16px;padding:8px 16px}
 #bCasco[aria-pressed="false"]{opacity:.6}
-.vitrina .comandante .burbuja{font-size:17px;min-height:64px}
+.pie-menu{display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:auto;padding-top:4px}
+.pie-menu .comandante .burbuja{font-size:17px;min-height:0}
+.pie-menu .retrato{width:60px;height:60px;font-size:32px}
 
 /* ---------- Salto del astronauta ---------- */
 @keyframes salto-av-frame {
@@ -92,7 +94,10 @@
   background:var(--amber);color:var(--navy);font-size:12px;display:grid;place-items:center}
 
 /* ---------- Segunda pantalla: fila de trajes ---------- */
+/* Solo se ve una pantalla a la vez: "hidden" debe ganarle al display de cada pantalla */
+.pantalla[hidden]{display:none!important}
 .traje-pantalla{padding:28px 28px 32px;display:flex;flex-direction:column;align-items:center;gap:20px}
+.fila-final{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center}
 .traje-fila{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;width:100%;max-width:900px}
 .traje-fila .eleccion{flex-direction:column;padding:14px 10px}
 .traje-fila .mini{aspect-ratio:164/230;width:100%}
@@ -117,4 +122,34 @@
 }
 @media (prefers-reduced-motion: reduce){
   .avatar-svg *,.halo-vitrina,.vista.pop .avatar-svg{animation:none!important}
+}
+
+/* Pantallas anchas: todo el taller cabe en la pantalla, sin bajar. Va al final para ganarle
+   a las reglas generales. El astronauta se ajusta a la altura disponible y la columna derecha
+   ocupa el mismo alto, con Ríos y el botón al final. */
+@media (min-width:901px){
+  .taller{gap:12px;padding:20px 28px 22px}
+  .taller h1{font-size:clamp(30px,5.2vh,50px)}
+  .taller-grid{align-items:stretch}
+  .escenario{max-width:clamp(200px,calc((100vh - 280px) * .713),380px)}
+  .menu{min-height:100%}
+  /* Opciones más compactas para que Cara y Cabello también quepan */
+  .panel{padding:14px 16px;gap:8px}
+  .panel h3{font-size:16px;margin-top:0}
+  .tarjetas.tres{grid-template-columns:repeat(6,1fr)}
+  .tarjetas[data-vista="cabeza"] .mini{max-width:72px}
+  .tarjetas[data-vista="cabeza"] .eleccion{padding:8px 4px;font-size:13px}
+  .muestras{grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px}
+  .muestras .eleccion{padding:8px 4px}
+  .muestra{width:32px;height:32px}
+  /* Pantalla de trajes: los trajes se ajustan a la altura disponible */
+  .traje-pantalla{gap:14px;padding:20px 28px 22px}
+  .traje-fila{max-width:min(900px,calc((100vh - 330px) * 2.4))}
+}
+/* Laptops bajas (720–760 px de alto): un poco más compacto todavía */
+@media (min-width:901px) and (max-height:760px){
+  .tarjetas[data-vista="cabeza"] .mini{max-width:56px}
+  .chips .eleccion{padding:8px 6px;font-size:15px}
+  .traje-fila{max-width:min(900px,calc((100vh - 360px) * 2.2))}
+  .traje-fila .eleccion{padding:10px 8px}
 }

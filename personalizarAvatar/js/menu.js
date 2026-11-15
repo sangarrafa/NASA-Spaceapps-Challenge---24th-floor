@@ -159,8 +159,11 @@
 
   /* ---------- Pantalla 2: elección de traje ---------- */
   function mostrarPantalla(id) {
-    document.querySelectorAll('.pantalla').forEach((s) => s.hidden = s.id !== id);
+    document.querySelectorAll('.pantalla').forEach((s) => { s.hidden = s.id !== id; s.classList.toggle('activa', s.id === id); });
     if (id === 'pantalla-traje') refrescarTraje();
+    window.scrollTo(0, 0);
+    const titulo = document.querySelector(`#${id} h1, #${id} h2`);
+    if (titulo) { titulo.tabIndex = -1; titulo.focus({ preventScroll: true }); }
   }
 
   function refrescarTraje() {
@@ -169,7 +172,8 @@
     });
   }
 
-  $('bSiguiente').onclick = () => { mostrarPantalla('pantalla-traje'); window.scrollTo(0,0); };
+  $('bSiguiente').onclick = () => mostrarPantalla('pantalla-traje');
+  $('bVolver').onclick = () => mostrarPantalla('pantalla-avatar');
 
   /* ---------- Botones generales ---------- */
   const azar = (lista) => lista[Math.floor(Math.random() * lista.length)].id;
