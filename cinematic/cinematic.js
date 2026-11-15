@@ -12,7 +12,7 @@ const STR = {
     kickerIn:'TRANSMISIÓN ENTRANTE', startLine:'Algo nos está llamando desde el polo sur de la Luna.', receive:'▶ Recibir transmisión',
     language:'Idioma', speed:'Velocidad', togVoice:'🗣 Voz narrada', togSfx:'🔊 Música y efectos', hint:'Mejor con sonido · Espacio: pausa · S: saltar',
     pause:'⏸ Pausa', resume:'▶ Seguir', sound:'🔊 Sonido', voice:'🗣 Voz', skip:'Saltar ⏭',
-    tPause:'Pausa (espacio)', tSfx:'Música y efectos', tVoice:'Voz narrada', tSpeed:'Velocidad del audio', tFull:'Pantalla completa', tSkip:'Saltar cinemática',
+    tPause:'Pausa (espacio)', tSfx:'Música y efectos', tVoice:'Voz narrada', tSpeed:'Velocidad del audio', tFull:'Pantalla completa', tSkip:'Saltar cinemática', introSound:'🔊 Toca la pantalla o pulsa una tecla para activar el sonido',
     academy:'ACADEMIA DE ASTRONAUTAS', question:'¿Cuál será tu súper habilidad?', next:'Siguiente ▶', replay:'↺ Ver de nuevo',
     credits:'Datos reales citados: NASA LRO (cráteres en sombra permanente del polo sur lunar) · NASA DONKI (registro de fulguraciones solares)',
     toast:'¡Listo, astronauta! Aquí empieza el test de súper habilidades.', canvasLabel:'Cinemática Equilibria',
@@ -27,7 +27,7 @@ const STR = {
     kickerIn:'INCOMING TRANSMISSION', startLine:'Something is calling us from the Moon’s south pole.', receive:'▶ Receive transmission',
     language:'Language', speed:'Speed', togVoice:'🗣 Narration', togSfx:'🔊 Music & effects', hint:'Best with sound · Space: pause · S: skip',
     pause:'⏸ Pause', resume:'▶ Resume', sound:'🔊 Sound', voice:'🗣 Voice', skip:'Skip ⏭',
-    tPause:'Pause (space)', tSfx:'Music & effects', tVoice:'Narration', tSpeed:'Audio speed', tFull:'Full screen', tSkip:'Skip cinematic',
+    tPause:'Pause (space)', tSfx:'Music & effects', tVoice:'Narration', tSpeed:'Audio speed', tFull:'Full screen', tSkip:'Skip cinematic', introSound:'🔊 Tap the screen or press a key to turn on sound',
     academy:'ASTRONAUT ACADEMY', question:'What will your superpower be?', next:'Next ▶', replay:'↺ Watch again',
     credits:'Real data cited: NASA LRO (permanently shadowed craters at the lunar south pole) · NASA DONKI (solar flare records)',
     toast:'Ready, astronaut! The superpower test starts here.', canvasLabel:'Equilibria cinematic',
@@ -897,7 +897,7 @@ function syncToggles(){
   if(ac){ master.gain.setTargetAtTime(sfxOn?.8:0,ac.currentTime,.05); voiceFx.gain.setTargetAtTime(voiceOn?1:0,ac.currentTime,.05); }
 }
 const toggleVoice=()=>{ voiceOn=!voiceOn; if(!voiceOn) stopVoice(); syncToggles(); };
-const toggleSfx=()=>{ sfxOn=!sfxOn; syncToggles(); };
+const toggleSfx=()=>{ sfxOn=!sfxOn; syncToggles(); if(window.AudioAmbiente) AudioAmbiente.silenciar(!sfxOn); };
 const setSpeed=v=>{ speed=v; syncToggles(); };
 $('tVoice').onclick=toggleVoice; $('bVoice').onclick=toggleVoice;
 $('tSfx').onclick=toggleSfx; $('bSfx').onclick=toggleSfx;
@@ -912,9 +912,55 @@ function start(){
   if(voiceOn && 'speechSynthesis' in window){ try{ const u=new SpeechSynthesisUtterance(' '); u.volume=0; speechSynthesis.speak(u);}catch(e){} }
   T=0; ended=false; paused=false; playing=true; parts.length=0; subShown=null;
   startEl.classList.add('off'); endEl.classList.remove('on'); $('toast').classList.remove('on');
+  if(window.AudioAmbiente) AudioAmbiente.atenuar(.4,1500);
   $('bPause').textContent=t('pause'); showCtrl();
 }
 $('bStart').onclick=start;
+// Portada: la Luna (y el glitch) se ven de fondo desde el primer momento, detrás del título.
+// La música (intro_equilibria.wav) suena en bucle en la portada y se apaga con un fundido
+// al pulsar "Recibir transmisión". Si el navegador bloquea el sonido, arranca con el primer clic o tecla.
+const startVid=$('startVid'), startVid2=$('startVid2'), introSoundEl=$('introSound');
+const introMusic=new Audio('resources/intro_equilibria.wav');
+introMusic.loop=true; introMusic.volume=.8; introMusic.preload='auto';
+let musicOn=false;
+function tryMusic(){
+  if(musicOn) return;
+  introMusic.play().then(()=>{ musicOn=true; introSoundEl.classList.remove('on'); },
+                         ()=>{ introSoundEl.classList.add('on'); });
+}
+function unlockMusic(){ if(!musicOn && !playing) tryMusic(); }
+function fadeOutMusic(){
+  if(!musicOn) { introMusic.pause(); return; }
+  musicOn=false; const v0=introMusic.volume, t0=performance.now();
+  (function step(){ const k=Math.min(1,(performance.now()-t0)/800); introMusic.volume=v0*(1-k);
+    if(k<1) requestAnimationFrame(step); else { introMusic.pause(); introMusic.volume=v0; } })();
+}
+const sfx=n=>{ try{ window.dispatchEvent(new CustomEvent('eq:sfx',{detail:n})); }catch(e){} };   // efectos de sonido (audio/sfx.js)
+['pointerdown','touchstart','click','keydown'].forEach(ev=>addEventListener(ev,unlockMusic,true));
+$('bStart').addEventListener('click',()=>{ fadeOutMusic(); introSoundEl.classList.remove('on'); setTimeout(()=>{ if(startVid) startVid.pause(); if(startVid2) startVid2.pause(); },600); });
+tryMusic();
+// El video se ve SIEMPRE en movimiento y en bucle detrás de la portada, aunque Windows tenga
+// desactivados los efectos de animación (prefers-reduced-motion): es el fondo de la escena, no un adorno.
+// El fondo es un bucle de DOS videos que se alternan para siempre: Luna → glitch → Luna → glitch…
+// Los dos están cargados y apilados; al terminar uno, el otro pasa a primer plano al instante (sin parpadeo).
+if(startVid && startVid2){
+  const vids=[startVid,startVid2]; let vi=0;
+  vids.forEach(v=>{ v.loop=false; v.muted=true; });
+  startVid2.defaultPlaybackRate = startVid2.playbackRate = 2;   // glitch 50 % más corto (10 s → 5 s); para otro valor: 1 / (1 - porcentaje reducido)
+  const playVid=()=>{ if(!playing) vids[vi].play().catch(()=>{}); };
+  const siguiente=()=>{
+    const a=vids[vi], b=vids[1-vi]; vi=1-vi;
+    try{ b.currentTime=0; }catch(e){}
+    b.classList.add('on'); a.classList.remove('on');
+    if(vi===1) sfx('glitch');   // al entrar el video del glitch
+    if(!playing) b.play().catch(()=>{});
+    a.pause(); try{ a.currentTime=0; }catch(e){}
+  };
+  vids.forEach((v,i)=>v.addEventListener('ended',()=>{ if(i===vi) siguiente(); }));
+  playVid();
+  startVid.addEventListener('canplay',playVid,{once:true});
+  ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{ if(vids[vi].paused) playVid(); },true));
+}
 function setPause(p){
   if(!playing||ended) return; paused=p;
   $('bPause').textContent=t(p?'resume':'pause');
@@ -925,6 +971,7 @@ function setPause(p){
 $('bPause').onclick=()=>setPause(!paused);
 function finish(){
   ended=true; stopVoice(); ctrl.classList.remove('show');
+  if(window.AudioAmbiente) AudioAmbiente.atenuar(1,2500);
   setTimeout(()=>{ if(ended) endEl.classList.add('on'); },900);
 }
 function skip(){
