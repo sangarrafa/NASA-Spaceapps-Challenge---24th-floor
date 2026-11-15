@@ -116,6 +116,12 @@ function render(){
 
 /* ------------- Narración ------------- */
 let started=false, idx=-1, voice=null, tok=0, safety=null, curAudio=null, wantFuture=false;
+let speed=1;   // velocidad elegida (1 · 1.5 · 2): voz, tiempos de la narración y animación
+// Temporizador de respaldo que respeta la velocidad: si cambia a mitad de la frase, se reprograma el tiempo que falta
+let safetyFn=null, safetyLeft=0, safetyAt=0;
+function armSafety(fn,ms){ clearTimeout(safety); safetyFn=fn; safetyLeft=ms; safetyAt=performance.now(); safety=setTimeout(fn,ms/speed); }
+function rearmSafety(oldSpeed){ if(!safetyFn) return; const now=performance.now(); safetyLeft=Math.max(0,safetyLeft-(now-safetyAt)*oldSpeed); safetyAt=now; clearTimeout(safety); safety=setTimeout(safetyFn,safetyLeft/speed); }
+function clearSafety(){ clearTimeout(safety); safetyFn=null; }
 function pickVoice(){
   if(!('speechSynthesis' in window)) return;
   const EN=window.EqLang&&EqLang.get()==='en';
@@ -132,38 +138,43 @@ function markBlocked(){ if(blocked||heard) return; blocked=true; hint.classList.
 function speakLine(i){
   idx=i; highlight(i); if(i===4) wantFuture=true;
   if(i>=LINES.length){ finish(); return; }
-  const my=++tok, next=()=>{ if(my!==tok) return; clearTimeout(safety); setTimeout(()=>{ if(my===tok) speakLine(i+1); },450); };
+  const my=++tok, next=()=>{ if(my!==tok) return; clearSafety(); setTimeout(()=>{ if(my===tok) speakLine(i+1); },450/speed); };
   // si no hay voz (o el navegador la bloquea), el texto avanza solo con este tiempo
-  safety=setTimeout(next,(LINES[i].length*.075+1.8)*1000);
+  armSafety(next,(LINES[i].length*.075+1.8)*1000);
   if(blocked) return;
-  if(VOICE_FILES[i]){ curAudio=new Audio(VOICE_FILES[i]); curAudio.onplaying=()=>{heard=true;}; curAudio.onended=next; curAudio.onerror=next;
+  if(VOICE_FILES[i]){ curAudio=new Audio(VOICE_FILES[i]); curAudio.playbackRate=speed; curAudio.onplaying=()=>{heard=true;}; curAudio.onended=next; curAudio.onerror=next;
     curAudio.play().catch(e=>{ if(e&&e.name==='NotAllowedError') markBlocked(); }); return; }
   if(!('speechSynthesis' in window)) return;
   const u=new SpeechSynthesisUtterance(LINES[i]); if(voice){u.voice=voice;u.lang=voice.lang;} else u.lang=window.EqLang?EqLang.speechLang():'es-MX';
-  u.rate=.93; u.pitch=1.05;
+  u.rate=Math.min(2,.93*speed); u.pitch=1.05;
   u.onstart=()=>{ heard=true; };
   u.onend=()=>{ if(heard) next(); };
   u.onerror=e=>{ if(my!==tok) return; if(e.error==='not-allowed'){ markBlocked(); return; } if(heard) next(); };
   speechSynthesis.speak(u);
   if(i===0) setTimeout(()=>{ if(my===tok && !heard) markBlocked(); },1500);
 }
-function stopVoice(){ tok++; clearTimeout(safety); if('speechSynthesis' in window) speechSynthesis.cancel(); if(curAudio){curAudio.pause();curAudio=null;} }
+function stopVoice(){ tok++; clearSafety(); if('speechSynthesis' in window) speechSynthesis.cancel(); if(curAudio){curAudio.pause();curAudio=null;} }
 function finish(){ stopVoice(); idx=99; els.forEach(e=>{e.classList.remove('activa');e.classList.add('vista');}); wantFuture=true;
   hint.classList.remove('on'); document.getElementById('saltar').classList.remove('on'); document.getElementById('cta').classList.add('on'); }
 function begin(){
   started=true; heard=false; document.getElementById('cta').classList.remove('on');
   document.getElementById('saltar').classList.add('on'); wantFuture=false; pickVoice(); stopVoice();
-  setTimeout(()=>speakLine(0),600);
+  setTimeout(()=>speakLine(0),600/speed);
 }
 // Si el navegador bloqueó el sonido, el primer toque en cualquier parte reinicia la narración con voz
 function unlock(e){
   if(!blocked) return;
-  if(e.target.closest && e.target.closest('#bGo,#saltar')) return;
+  if(e.target.closest && e.target.closest('#bGo,#saltar,#vel')) return;
   blocked=false; hint.classList.remove('on'); begin();
 }
 stage.addEventListener('pointerdown',unlock); addEventListener('keydown',unlock);
 document.getElementById('bOtra').onclick=begin;
 document.getElementById('saltar').onclick=finish;
+// Velocidad: 1x · 1.5x · 2x. La frase que ya se está diciendo sigue a su ritmo; la siguiente sale con la nueva velocidad.
+const velBtns=[...document.querySelectorAll('#vel button')];
+function setSpeed(v){ const old=speed; speed=v; velBtns.forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.v===v)));
+  if(curAudio) curAudio.playbackRate=v; rearmSafety(old); }
+velBtns.forEach(b=>b.onclick=()=>setSpeed(+b.dataset.v));
 document.getElementById('bGo').addEventListener('click',()=>{ stopVoice(); dispatchEvent(new CustomEvent('intro-mision1:fin')); try{ if(parent!==window) parent.postMessage({type:'intro-mision1-fin'},'*'); }catch(e){} });
 
 // Arranca sola en cuanto se abre la pantalla
@@ -174,7 +185,7 @@ if('speechSynthesis' in window && !speechSynthesis.getVoices().length){
 
 let last=performance.now();
 function frame(now){
-  const dt=Math.min(.05,(now-last)/1000); last=now; A+=dt;
+  const dt=Math.min(.05,(now-last)/1000)*speed; last=now; A+=dt;
   ang+=dt*.42; if(ang>Math.PI*1.5) ang-=TAU;
   const m=moonPos(ang); trail.push(m); if(trail.length>40) trail.shift();
   showFuture+=((wantFuture?1:0)-showFuture)*Math.min(1,dt*3);

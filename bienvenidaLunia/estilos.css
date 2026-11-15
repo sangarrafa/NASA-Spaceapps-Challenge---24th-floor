@@ -28,3 +28,9 @@ button{font-family:inherit;cursor:pointer;border:0}
 #ctrl button[aria-pressed="false"]{opacity:.5}
 #bVoz{font-size:calc(var(--s)*17px)!important;padding:calc(var(--s)*10px) calc(var(--s)*18px)!important}
 #bVoz.mute{background:rgba(232,65,140,.85)!important;border-color:transparent!important}
+/* Velocidad de la escena (1x · 1.5x · 2x) */
+#ctrl{align-items:center}
+.vel{display:flex;border-radius:999px;overflow:hidden;background:rgba(11,15,58,.75);border:1px solid rgba(111,227,232,.3)}
+#ctrl .vel button{background:transparent;border:0;border-radius:0;padding:calc(var(--s)*8px) calc(var(--s)*11px)}
+#ctrl .vel button[aria-pressed="false"]{opacity:.55}
+#ctrl .vel button[aria-pressed="true"]{background:rgba(111,227,232,.28);opacity:1}

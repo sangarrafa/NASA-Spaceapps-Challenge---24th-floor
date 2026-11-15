@@ -181,6 +181,9 @@ function drawMonitor(){
 const dlg=document.getElementById('dialogo'), txt=document.getElementById('texto'), ops=document.getElementById('opciones'), pasosEl=document.getElementById('pasos');
 PASOS.forEach(()=>pasosEl.appendChild(document.createElement('i')));
 let lineas=[], li=0, ci=0, typing=null, terminado=false;
+let speed=1;   // velocidad elegida (1 · 1.5 · 2): escritura, voz, pausas y animación (la música de fondo no se acelera)
+let tipeo=null;   // paso de escritura de la línea actual, para reprogramarlo si cambia la velocidad
+function arrancarTipeo(){ clearInterval(typing); typing=setInterval(tipeo,24/speed); }
 function irA(n){
   Sonido.animo(PASOS[n].animo);
   paso=n; pasoT=0; lineas=PASOS[n].lineas(); li=0; terminado=false; txt.innerHTML=''; ops.innerHTML='';
@@ -192,13 +195,13 @@ let listo={escrito:false,hablado:false};
 function decirLinea(){
   ci=0; const t=lineas[li]; const el=document.createElement('span'); el.className='p'; txt.appendChild(el);
   const my=listo={escrito:false,hablado:false};
-  clearInterval(typing); typing=setInterval(()=>{ ci++; el.textContent=t.slice(0,ci); if(ci>=t.length){ clearInterval(typing); typing=null; marcar(my,'escrito'); } },24);
+  tipeo=()=>{ ci++; el.textContent=t.slice(0,ci); if(ci>=t.length){ clearInterval(typing); typing=null; marcar(my,'escrito'); } }; arrancarTipeo();
   hablar(t, ()=>marcar(my,'hablado'));
 }
 // la línea avanza cuando terminó de escribirse Y de decirse
 function marcar(my,k){
   if(my!==listo) return; my[k]=true;
-  if(k==='escrito' && (!vozOn||vozBloqueada) && !my.hablado){ setTimeout(()=>marcar(my,'hablado'),650); return; }
+  if(k==='escrito' && (!vozOn||vozBloqueada) && !my.hablado){ setTimeout(()=>marcar(my,'hablado'),650/speed); return; }
   if(my.escrito && my.hablado) sigLinea();
 }
 function sigLinea(){
@@ -213,7 +216,7 @@ function mostrarOpciones(){
       if(o.fin){ Sonido.animo(2); Sonido.efecto('activar');   // LUNIA siente esperanza: la música pasa a acordes mayores
  dispatchEvent(new CustomEvent('lunia:mapa')); try{ if(parent!==window) parent.postMessage({type:'lunia-mapa'},'*'); }catch(err){} b.textContent='Abriendo el mapa…'; setTimeout(()=>{ location.href=MAPA; },700); return; }
       Sonido.efecto('siguiente'); irA(paso+1); };
-    ops.appendChild(b); setTimeout(()=>b.classList.add('on'),80+i*120); });
+    ops.appendChild(b); setTimeout(()=>b.classList.add('on'),(80+i*120)/speed); });
 }
 // tocar el cuadro de diálogo: completa el texto que se está escribiendo
 dlg.addEventListener('click',()=>{ if(typing){ clearInterval(typing); typing=null; txt.lastChild.textContent=lineas[li]; marcar(listo,'escrito'); } });
@@ -249,21 +252,21 @@ if('speechSynthesis' in window){ pickVoice(); speechSynthesis.addEventListener('
 function detenerVoz(){ tok++; hablando=false; if('speechSynthesis' in window) speechSynthesis.cancel(); if(curAudio){curAudio.pause();curAudio=null;} }
 function hablar(t,fin){
   const my=++tok; hablando=true;
-  const done=()=>{ if(my!==tok) return; hablando=false; setTimeout(()=>{ if(my===tok) fin(); },250); };
-  if(!vozOn||vozBloqueada){ setTimeout(()=>{ if(my===tok) hablando=false; }, t.length*32+200); return; }   // avanza por tiempo (ver marcar)
+  const done=()=>{ if(my!==tok) return; hablando=false; setTimeout(()=>{ if(my===tok) fin(); },250/speed); };
+  if(!vozOn||vozBloqueada){ setTimeout(()=>{ if(my===tok) hablando=false; }, (t.length*32+200)/speed); return; }   // avanza por tiempo (ver marcar)
   const key=`p${paso}-${li}`;
-  if(VOZ[key]){ curAudio=new Audio(VOZ[key]); curAudio.onplaying=()=>oyo=true; curAudio.onended=done; curAudio.onerror=done; curAudio.play().catch(()=>bloqueada()); return; }
-  if(!('speechSynthesis' in window)){ vozBloqueada=true; setTimeout(()=>{ if(my===tok) hablando=false; }, t.length*32+200); return; }
+  if(VOZ[key]){ curAudio=new Audio(VOZ[key]); curAudio.playbackRate=speed; curAudio.onplaying=()=>oyo=true; curAudio.onended=done; curAudio.onerror=done; curAudio.play().catch(()=>bloqueada()); return; }
+  if(!('speechSynthesis' in window)){ vozBloqueada=true; setTimeout(()=>{ if(my===tok) hablando=false; }, (t.length*32+200)/speed); return; }
   const u=new SpeechSynthesisUtterance(t.replace(/LUNIA/g,'Lunia').replace(/…/g,'... ')); if(voice){u.voice=voice;u.lang=voice.lang;} else u.lang='es-MX';
-  u.pitch=luniaPitch; u.rate=LUNIA_TONO.rate;   // la misma voz de LUNIA que en la cinemática
+  u.pitch=luniaPitch; u.rate=Math.min(2,LUNIA_TONO.rate*speed);   // la misma voz de LUNIA que en la cinemática
   u.onstart=()=>oyo=true; u.onend=()=>{ if(oyo) done(); }; u.onerror=e=>{ if(e.error==='not-allowed') bloqueada(); else if(oyo) done(); };
   speechSynthesis.speak(u);
   setTimeout(()=>{ if(my===tok && !oyo) bloqueada(); },1500);
 }
 // Si el navegador bloquea el sonido hasta el primer toque, la voz arranca sola en cuanto el jugador toque la pantalla
-function bloqueada(){ if(vozBloqueada) return; vozBloqueada=true; hablando=false; const my=listo; if(my.escrito) setTimeout(()=>marcar(my,'hablado'),900); }
+function bloqueada(){ if(vozBloqueada) return; vozBloqueada=true; hablando=false; const my=listo; if(my.escrito) setTimeout(()=>marcar(my,'hablado'),900/speed); }
 function desbloquear(e){ if(!vozBloqueada||!vozOn) return;
-  if(e&&e.target.closest&&e.target.closest('#bVoz')) return;
+  if(e&&e.target.closest&&e.target.closest('#bVoz,#vel')) return;
   vozBloqueada=false; oyo=false; pickVoice();
   if(e&&e.target.closest&&e.target.closest('.op')) return;   // el botón ya pasa a la siguiente pantalla, que sí tendrá voz
   detenerVoz(); irA(Math.max(0,paso)); }
@@ -273,8 +276,17 @@ addEventListener('keydown',()=>{ if(vozOn) Sonido.desbloquear(); });
 const bVoz=document.getElementById('bVoz');
 bVoz.onclick=e=>{ e.stopPropagation(); vozOn=!vozOn; bVoz.textContent=vozOn?'🔇 Silenciar':'🔊 Activar sonido'; bVoz.classList.toggle('mute',!vozOn);
   if(Sonido.activo!==vozOn) Sonido.alternar();
-  if(!vozOn){ detenerVoz(); const my=listo; if(my.escrito) setTimeout(()=>marcar(my,'hablado'),600); }
+  if(!vozOn){ detenerVoz(); const my=listo; if(my.escrito) setTimeout(()=>marcar(my,'hablado'),600/speed); }
   else { vozBloqueada=false; oyo=false; pickVoice(); } };
+
+/* ---------- Velocidad: 1x · 1.5x · 2x ---------- */
+// La línea que ya se está diciendo sigue a su ritmo; la escritura y lo que sigue usan la nueva velocidad.
+const velBtns=[...document.querySelectorAll('#vel button')];
+const L=window.EqLang?window.EqLang.L:(es)=>es;
+document.getElementById('vel').setAttribute('aria-label',L('Velocidad','Speed'));
+function setSpeed(v){ speed=v; velBtns.forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.v===v)));
+  if(typing) arrancarTipeo(); if(curAudio) curAudio.playbackRate=v; }
+velBtns.forEach(b=>b.onclick=e=>{ e.stopPropagation(); setSpeed(+b.dataset.v); });
 
 /* ---------- Audio ambiente ---------- */
 let ac=null;
@@ -284,7 +296,7 @@ function boot(){ try{ ac=new (window.AudioContext||window.webkitAudioContext)();
 /* ---------- Bucle ---------- */
 let last=performance.now();
 function frame(now){
-  const dt=Math.max(0,Math.min(.05,(now-last)/1000)); last=now; A+=dt; pasoT+=dt;
+  const dt=Math.max(0,Math.min(.05,(now-last)/1000))*speed; last=now; A+=dt; pasoT+=dt;
   encendido=A<.8?0:A<1.4?(Math.random()<.5?.7:.1):Math.min(1,encendido+dt*2);
   energiaVis+=(energia-energiaVis)*Math.min(1,dt*1.5);
   ctx.setTransform(dpr,0,0,dpr,0,0);
