@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estación lunar 3D</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #03041a; overflow: hidden; font-family: system-ui, sans-serif; }
+  #info { position: fixed; left: 16px; bottom: 12px; color: #E8E9F2; font-size: 13px; opacity: .8; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="info">Arrastra para girar · rueda para acercar</div>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module" src="estacionLunar.js"></script>
+</body>
+</html>
