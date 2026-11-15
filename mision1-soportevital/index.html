@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Misión Equilibria · Misión 1: Soporte vital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ===== Fondo: interior del cuarto de soporte vital (sobrio, poco contraste) ===== -->
+  <svg id="fondo-nave" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="f-pared" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0e1434"/><stop offset=".55" stop-color="#121a42"/><stop offset="1" stop-color="#0a0f2a"/>
+      </linearGradient>
+      <radialGradient id="f-luz" cx=".5" cy="0" r=".7">
+        <stop offset="0" stop-color="#4fd1ff" stop-opacity=".10"/><stop offset="1" stop-color="#4fd1ff" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="f-espacio" cx=".5" cy=".5" r=".6">
+        <stop offset="0" stop-color="#16205a"/><stop offset="1" stop-color="#050816"/>
+      </radialGradient>
+    </defs>
+    <rect width="1600" height="1000" fill="url(#f-pared)"/>
+    <rect width="1600" height="1000" fill="url(#f-luz)"/>
+    <g stroke="#ffffff" stroke-opacity=".045" stroke-width="2">
+      <path d="M200 0V1000M400 0V1000M600 0V1000M800 0V1000M1000 0V1000M1200 0V1000M1400 0V1000"/>
+      <path d="M0 330H1600M0 820H1600"/>
+    </g>
+    <g fill="#ffffff" fill-opacity=".05">
+      <circle cx="210" cy="340" r="4"/><circle cx="390" cy="340" r="4"/><circle cx="1210" cy="340" r="4"/><circle cx="1390" cy="340" r="4"/>
+      <circle cx="210" cy="810" r="4"/><circle cx="390" cy="810" r="4"/><circle cx="1210" cy="810" r="4"/><circle cx="1390" cy="810" r="4"/>
+    </g>
+    <!-- Ojos de buey laterales -->
+    <g transform="translate(110,560)">
+      <circle r="62" fill="#1b2452" stroke="#2a3672" stroke-width="10"/>
+      <circle r="50" fill="url(#f-espacio)"/>
+      <circle cx="-14" cy="-16" r="1.6" fill="#fff" opacity=".7"/><circle cx="18" cy="10" r="1.2" fill="#fff" opacity=".6"/><circle cx="6" cy="-28" r="1" fill="#fff" opacity=".6"/>
+      <path d="M-40 -20 A50 50 0 0 1 -10 -46" stroke="#fff" stroke-opacity=".12" stroke-width="6" fill="none"/>
+    </g>
+    <g transform="translate(1490,560)">
+      <circle r="62" fill="#1b2452" stroke="#2a3672" stroke-width="10"/>
+      <circle r="50" fill="url(#f-espacio)"/>
+      <circle cx="10" cy="-6" r="13" fill="#2e6fc7" opacity=".85"/>
+      <circle cx="-22" cy="20" r="1.4" fill="#fff" opacity=".7"/><circle cx="-10" cy="-30" r="1.1" fill="#fff" opacity=".6"/>
+      <path d="M-40 -20 A50 50 0 0 1 -10 -46" stroke="#fff" stroke-opacity=".12" stroke-width="6" fill="none"/>
+    </g>
+    <rect y="960" width="1600" height="40" fill="#0a0e26"/>
+    <path d="M0 962H1600" stroke="#4fd1ff" stroke-opacity=".12" stroke-width="3"/>
+  </svg>
+
+  <!-- ===== Barra superior: componentes compartidos por todas las misiones ===== -->
+  <header class="hud">
+    <div class="hud-titulo">
+      <span class="hud-etiqueta">Misión 1</span>
+      <strong>Soporte vital</strong>
+    </div>
+    <div class="hud-bloque" aria-label="Progreso de la misión">
+      <div class="hud-dias" aria-hidden="true"><span class="dia-punto"></span><span class="dia-punto"></span><span class="dia-punto"></span></div>
+      <span id="progreso-texto" class="hud-texto">Práctica</span>
+    </div>
+    <div class="hud-bloque" aria-label="Puntos de ciencia">
+      <span class="hud-icono" aria-hidden="true">🔬</span>
+      <span id="puntos" class="hud-numero">0</span>
+    </div>
+    <div class="hud-bloque" aria-label="Estrellas de equilibrio">
+      <span id="estrellas" class="hud-estrellas">☆☆☆</span>
+    </div>
+    <div class="hud-botones">
+      <button id="btn-voz" class="btn-redondo" aria-pressed="false" title="Leer en voz alta">🔇<span class="sr">Leer en voz alta</span></button>
+      <button id="btn-sonido" class="btn-redondo" aria-pressed="true" title="Sonidos">🔊<span class="sr">Sonidos</span></button>
+      <button id="btn-pausa" class="btn-redondo" title="Pausa" hidden>⏸<span class="sr">Pausa</span></button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== 1. ENCARGO ===== -->
+    <section id="pantalla-encargo" class="pantalla activa">
+      <div class="encargo">
+        <div class="persona">
+          <div class="avatar" aria-hidden="true">
+            <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="38" fill="#ffd27a"/><circle cx="40" cy="36" r="22" fill="#f1f4ff"/><ellipse cx="40" cy="36" rx="16" ry="13" fill="#2b3566"/><circle cx="34" cy="34" r="2.5" fill="#fff"/><circle cx="46" cy="34" r="2.5" fill="#fff"/><path d="M34 41 Q40 45 46 41" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/><rect x="24" y="58" width="32" height="16" rx="8" fill="#f1f4ff"/></svg>
+          </div>
+          <div>
+            <p class="quien">Comandante Ríos</p>
+            <h2 class="encargo-titulo">Tu misión: que la tripulación pueda respirar y beber agua durante 3 días.</h2>
+          </div>
+        </div>
+
+        <ol class="pasos">
+          <li class="paso">
+            <svg class="paso-ilustracion" viewBox="0 0 200 120" aria-hidden="true">
+              <!-- tanque bien -->
+              <rect x="30" y="14" width="50" height="80" rx="12" fill="#0d1336" stroke="#5465b8" stroke-width="3"/>
+              <rect x="33" y="28" width="44" height="63" rx="9" fill="#2bb8e0"/>
+              <path d="M33 30 q11 -5 22 0 t22 0 v4 h-44z" fill="#7ee6f5"/>
+              <rect x="31" y="100" width="48" height="16" rx="8" fill="rgba(61,220,151,.22)" stroke="#3ddc97" stroke-width="2"/>
+              <text x="55" y="112" text-anchor="middle" font-size="11" font-weight="900" fill="#3ddc97">✔ Bien</text>
+              <!-- tanque mal -->
+              <rect x="120" y="14" width="50" height="80" rx="12" fill="#0d1336" stroke="#ff5c6c" stroke-width="3"/>
+              <rect x="123" y="78" width="44" height="13" rx="6" fill="#2bb8e0"/>
+              <path d="M123 79 q11 -4 22 0 t22 0 v3 h-44z" fill="#7ee6f5"/>
+              <rect x="117" y="100" width="56" height="16" rx="8" fill="rgba(255,92,108,.22)" stroke="#ff5c6c" stroke-width="2"/>
+              <text x="145" y="112" text-anchor="middle" font-size="11" font-weight="900" fill="#ff5c6c">✖ Peligro</text>
+              <text x="145" y="60" text-anchor="middle" font-size="22" font-weight="900" fill="#ffb020">▼</text>
+            </svg>
+            <span>Mira los <strong>tanques</strong>. Si bajan mucho, hay peligro.</span>
+          </li>
+          <li class="paso">
+            <svg class="paso-ilustracion" viewBox="0 0 200 120" aria-hidden="true">
+              <rect x="10" y="26" width="96" height="70" rx="14" fill="#133a43" stroke="#3ddc97" stroke-width="3"/>
+              <circle cx="36" cy="54" r="15" fill="#0d1336" stroke="#3ddc97" stroke-width="4"/>
+              <text x="36" y="60" text-anchor="middle" font-size="16">⚗️</text>
+              <rect x="58" y="62" width="38" height="20" rx="10" fill="#3ddc97"/>
+              <circle cx="86" cy="72" r="7" fill="#fff"/>
+              <text x="58" y="48" font-size="11" font-weight="900" fill="#f2f4ff">ON</text>
+              <path d="M106 60 H134" stroke="#0d1336" stroke-width="10" stroke-linecap="round"/>
+              <path d="M106 60 H134" stroke="#7fc4ff" stroke-width="5" stroke-dasharray="2 8" stroke-linecap="round"/>
+              <rect x="138" y="14" width="50" height="86" rx="12" fill="#0d1336" stroke="#5465b8" stroke-width="3"/>
+              <rect x="141" y="44" width="44" height="53" rx="9" fill="rgba(120,185,255,.45)"/>
+              <circle cx="152" cy="62" r="3" fill="#dff0ff"/><circle cx="170" cy="76" r="2.5" fill="#dff0ff"/><circle cx="160" cy="86" r="2" fill="#dff0ff"/>
+              <text x="163" y="38" text-anchor="middle" font-size="20" font-weight="900" fill="#3ddc97">▲</text>
+            </svg>
+            <span>Enciende las <strong>máquinas</strong> para llenar los tanques.</span>
+          </li>
+          <li class="paso">
+            <svg class="paso-ilustracion" viewBox="0 0 200 120" aria-hidden="true">
+              <rect x="66" y="6" width="68" height="26" rx="7" fill="#0f1538" stroke="#ffc94d" stroke-width="3"/>
+              <rect x="134" y="13" width="5" height="12" rx="2" fill="#ffc94d"/>
+              <rect x="71" y="11" width="58" height="16" rx="4" fill="#ffc94d"/>
+              <text x="100" y="24" text-anchor="middle" font-size="12" font-weight="900" fill="#3a2400">⚡</text>
+              <path d="M100 32 V44 H50 V58" stroke="#ffc94d" stroke-width="3" fill="none" stroke-dasharray="5 5"/>
+              <path d="M100 44 H150 V58" stroke="#39427a" stroke-width="3" fill="none"/>
+              <rect x="16" y="58" width="68" height="50" rx="12" fill="#133a43" stroke="#3ddc97" stroke-width="3"/>
+              <text x="50" y="90" text-anchor="middle" font-size="20">⚗️</text>
+              <rect x="116" y="58" width="68" height="50" rx="12" fill="#141c47" stroke="#4a5aa8" stroke-width="3" opacity=".6"/>
+              <text x="150" y="90" text-anchor="middle" font-size="20" opacity=".5">♻️</text>
+              <circle cx="176" cy="60" r="11" fill="#ff5c6c"/><text x="176" y="65" text-anchor="middle" font-size="13" font-weight="900" fill="#fff">?</text>
+            </svg>
+            <span>La <strong>energía</strong> no alcanza para todos los tanques. Tienes que elegir el más importante.</span>
+          </li>
+        </ol>
+
+        <button id="btn-empezar-practica" class="btn btn-grande">¡Empezar!</button>
+
+        <details class="selector-demo">
+          <summary>Nivel inicial</summary>
+          <p>En el juego completo, el nivel lo elige el test de perfil.</p>
+          <div class="fila" role="radiogroup" aria-label="Nivel inicial">
+            <button class="btn btn-chico" data-nivel="1">Explorador · 7–8 años</button>
+            <button class="btn btn-chico" data-nivel="2">Ingeniero</button>
+            <button class="btn btn-chico" data-nivel="3">Comandante</button>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- ===== 2 y 3. PRÁCTICA Y DÍAS ===== -->
+    <section id="pantalla-juego" class="pantalla">
+      <div class="barra-mision">
+        <div class="lunia-mensaje">
+          <div class="avatar-mini avatar-lunia" aria-hidden="true">L</div>
+          <p id="mensaje-lunia" aria-live="polite">Hola, soy LUNIA.</p>
+          <button id="btn-repetir" class="btn-texto" title="Escuchar otra vez">🔁<span class="sr">Escuchar otra vez</span></button>
+        </div>
+        <div class="reloj" aria-label="Tiempo del día">
+          <span id="titulo-dia" class="reloj-dia">Práctica</span>
+          <div class="reloj-barra"><div id="reloj-relleno" class="reloj-relleno"></div><span id="reloj-sol" class="reloj-sol" aria-hidden="true">☀️</span></div>
+        </div>
+      </div>
+
+      <div id="aviso-evento" class="aviso-evento" role="status" hidden></div>
+
+      <div class="escena-marco">
+        <svg id="escena" viewBox="0 0 1000 580" role="group" aria-label="Cuarto de soporte vital de la base LUNIA">
+          <defs>
+            <linearGradient id="g-pared" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#1c2558"/><stop offset="1" stop-color="#141b44"/>
+            </linearGradient>
+            <linearGradient id="g-piso" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#2a3266"/><stop offset="1" stop-color="#151b40"/>
+            </linearGradient>
+            <linearGradient id="g-cielo" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#03050f"/><stop offset="1" stop-color="#101845"/>
+            </linearGradient>
+            <linearGradient id="g-suelo" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#a4a8bd"/><stop offset="1" stop-color="#5c617d"/>
+            </linearGradient>
+            <radialGradient id="g-tierra" cx=".35" cy=".35" r=".7">
+              <stop offset="0" stop-color="#7cc6ff"/><stop offset="1" stop-color="#1e5fb8"/>
+            </radialGradient>
+            <!-- Agua: más densa y profunda -->
+            <linearGradient id="g-agua" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#3fd3ee"/><stop offset=".5" stop-color="#1693c9"/><stop offset="1" stop-color="#0b5d9a"/>
+            </linearGradient>
+            <!-- Gases: transparentes -->
+            <linearGradient id="g-o2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#9fd2ff" stop-opacity=".18"/><stop offset="1" stop-color="#6fb6ff" stop-opacity=".5"/>
+            </linearGradient>
+            <linearGradient id="g-co2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#d7bcff" stop-opacity=".18"/><stop offset="1" stop-color="#a77cf0" stop-opacity=".55"/>
+            </linearGradient>
+            <linearGradient id="g-bruma-o2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#9fd2ff" stop-opacity="0"/><stop offset="1" stop-color="#9fd2ff" stop-opacity=".22"/>
+            </linearGradient>
+            <linearGradient id="g-bruma-co2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#d7bcff" stop-opacity="0"/><stop offset="1" stop-color="#d7bcff" stop-opacity=".22"/>
+            </linearGradient>
+            <clipPath id="clip-tq"><rect width="100" height="180" rx="18"/></clipPath>
+            <clipPath id="clip-nivel-agua"><rect id="nivel-agua" width="100" y="90" height="90"/></clipPath>
+            <clipPath id="clip-nivel-o2"><rect id="nivel-o2" width="100" y="90" height="90"/></clipPath>
+            <clipPath id="clip-nivel-co2"><rect id="nivel-co2" width="100" y="90" height="90"/></clipPath>
+            <clipPath id="clip-ventana"><rect x="44" y="22" width="912" height="132" rx="18"/></clipPath>
+          </defs>
+
+          <!-- Pared del cuarto -->
+          <rect width="1000" height="580" fill="url(#g-pared)"/>
+          <g stroke="#ffffff" stroke-opacity=".05" stroke-width="2">
+            <path d="M125 176V548M250 176V548M375 176V548M500 176V548M625 176V548M750 176V548M875 176V548"/>
+            <path d="M0 176H1000"/>
+          </g>
+          <circle cx="932" cy="196" r="4" fill="#3ddc97" opacity=".7"/>
+          <circle cx="948" cy="196" r="4" fill="#4fd1ff" opacity=".5"/>
+
+          <!-- Ventanal al exterior -->
+          <g id="ventana">
+            <rect x="34" y="12" width="932" height="152" rx="26" fill="#0b1030" stroke="#45549e" stroke-width="6"/>
+            <g clip-path="url(#clip-ventana)">
+              <rect x="44" y="22" width="912" height="132" fill="url(#g-cielo)"/>
+              <g id="estrellas-cielo"></g>
+              <g transform="translate(888,52)">
+                <circle r="20" fill="url(#g-tierra)"/>
+                <path d="M-10 -8 q7 -5 12 2 q-2 7 -9 5 z M4 5 q7 -2 8 5 q-5 5 -10 2 z" fill="#5fc27a" opacity=".85"/>
+              </g>
+              <path d="M44 112 Q160 100 300 110 T560 104 T820 112 T960 106 V160 H44 Z" fill="url(#g-suelo)"/>
+              <ellipse cx="420" cy="138" rx="40" ry="6" fill="#6d728e" opacity=".7"/>
+              <ellipse cx="760" cy="146" rx="52" ry="7" fill="#6d728e" opacity=".6"/>
+              <!-- Esclusa de salida -->
+              <g transform="translate(44,72)">
+                <rect width="46" height="70" rx="6" fill="#2a3470" stroke="#5465b8" stroke-width="2"/>
+                <rect x="10" y="20" width="26" height="46" rx="5" fill="#141c47" stroke="#ffc94d" stroke-width="2"/>
+                <circle cx="23" cy="10" r="3" fill="#3ddc97"/>
+              </g>
+              <g id="exterior"></g>
+              <!-- Reflejos del vidrio -->
+              <path d="M180 22 L260 22 L170 154 L90 154 Z" fill="#fff" opacity=".045"/>
+              <path d="M600 22 L640 22 L550 154 L510 154 Z" fill="#fff" opacity=".035"/>
+            </g>
+            <rect x="343" y="22" width="8" height="132" fill="#45549e"/>
+            <rect x="649" y="22" width="8" height="132" fill="#45549e"/>
+            <text x="500" y="176" text-anchor="middle" class="etiqueta-ventana" hidden>Exterior</text>
+          </g>
+
+          <!-- Piso -->
+          <rect y="548" width="1000" height="32" fill="url(#g-piso)"/>
+          <path d="M0 549H1000" stroke="#4fd1ff" stroke-opacity=".25" stroke-width="2"/>
+
+          <!-- Equipos del cuarto -->
+          <g id="equipos" transform="translate(0,90)">
+            <text x="66" y="114" class="etiqueta-base">LUNIA</text>
+
+            <g class="cables">
+              <path id="cable-gen" class="cable" d="M500 124 V133 H340 V160"/>
+              <path id="cable-limp" class="cable solo-co2" d="M500 124 V133 H712 V160"/>
+              <path id="cable-rec" class="cable" d="M500 124 V133 H462 V370 H430"/>
+            </g>
+
+            <g id="bateria" transform="translate(410,88)">
+              <text x="-12" y="24" text-anchor="end" class="etiqueta-bateria">⚡ Energía</text>
+              <rect width="180" height="36" rx="10" class="bateria-cuerpo"/>
+              <rect x="180" y="10" width="8" height="16" rx="3" class="bateria-cuerpo"/>
+              <g id="bateria-celdas"></g>
+            </g>
+
+            <g class="tubos">
+              <g id="tubo-agua-gen" class="tubo tubo-agua"><path class="tubo-base" d="M190 215 H250"/><path class="tubo-flujo" d="M190 215 H250"/></g>
+              <g id="tubo-gen-o2" class="tubo tubo-o2"><path class="tubo-base" d="M430 215 H490"/><path class="tubo-flujo" d="M430 215 H490"/></g>
+              <g id="tubo-rec-agua" class="tubo tubo-agua"><path class="tubo-base" d="M250 370 H140 V346"/><path class="tubo-flujo" d="M250 370 H140 V346"/></g>
+              <g id="tubo-co2-limp" class="tubo tubo-co2 solo-co2"><path class="tubo-base" d="M820 215 H800"/><path class="tubo-flujo" d="M820 215 H800"/></g>
+              <g id="tubo-o2-crew" class="tubo tubo-o2 activo"><path class="tubo-base" d="M590 316 H624 V376"/><path class="tubo-flujo" d="M590 316 H624 V376"/></g>
+              <g id="tubo-crew-co2" class="tubo tubo-co2 activo solo-co2"><path class="tubo-base" d="M812 430 H942 V262 H920"/><path class="tubo-flujo" d="M812 430 H942 V262 H920"/></g>
+            </g>
+            <!-- Zona invisible para la guía: agua → generador → oxígeno -->
+            <rect id="zona-agua-o2" x="84" y="140" width="512" height="214" fill="transparent" pointer-events="none"/>
+            <g id="demo-flujo"></g>
+
+            <!-- Tanques -->
+            <g id="tq-agua" class="tanque" data-tanque="agua" transform="translate(90,166)">
+              <text class="tq-titulo" x="50" y="-14">💧 Agua</text>
+              <rect class="tq-cuerpo" width="100" height="180" rx="18"/>
+              <g clip-path="url(#clip-tq)">
+                <g clip-path="url(#clip-nivel-agua)">
+                  <rect width="100" height="180" fill="url(#g-agua)"/>
+                  <g class="particulas" data-tipo="agua"></g>
+                </g>
+                <g class="ola" transform="translate(0,84)"><path class="ola-path" d="M-100 7 Q-75 1 -50 7 T0 7 T50 7 T100 7 T150 7 T200 7 V16 H-100 Z" fill="#46d6ef"/></g>
+              </g>
+              <line class="tq-linea" x1="6" x2="94" y1="108" y2="108"/>
+              <rect class="tq-reflejo" x="12" y="12" width="10" height="150" rx="5"/>
+              <text class="tq-tendencia" x="108" y="24">•</text>
+              <text class="tq-valor" x="50" y="208">70%</text>
+              <g class="tq-estado" transform="translate(50,232)"><rect x="-50" y="-15" width="100" height="28" rx="14"/><text y="5">Bien</text></g>
+            </g>
+
+            <g id="tq-o2" class="tanque" data-tanque="o2" transform="translate(490,166)">
+              <text class="tq-titulo" x="50" y="-14">🫧 Oxígeno</text>
+              <rect class="tq-cuerpo" width="100" height="180" rx="18"/>
+              <g clip-path="url(#clip-tq)">
+                <g clip-path="url(#clip-nivel-o2)">
+                  <rect width="100" height="180" fill="url(#g-o2)"/>
+                  <g class="particulas" data-tipo="o2"></g>
+                </g>
+                <rect class="bruma" width="100" height="18" y="72" fill="url(#g-bruma-o2)"/>
+              </g>
+              <line class="tq-linea" x1="6" x2="94" y1="108" y2="108"/>
+              <rect class="tq-reflejo" x="12" y="12" width="10" height="150" rx="5"/>
+              <text class="tq-tendencia" x="108" y="24">•</text>
+              <text class="tq-valor" x="50" y="208">70%</text>
+              <g class="tq-estado" transform="translate(50,232)"><rect x="-50" y="-15" width="100" height="28" rx="14"/><text y="5">Bien</text></g>
+            </g>
+
+            <g id="tq-co2" class="tanque solo-co2" data-tanque="co2" transform="translate(820,166)">
+              <text class="tq-titulo" x="50" y="-14">🌫️ CO₂</text>
+              <rect class="tq-cuerpo" width="100" height="180" rx="18"/>
+              <g clip-path="url(#clip-tq)">
+                <g clip-path="url(#clip-nivel-co2)">
+                  <rect width="100" height="180" fill="url(#g-co2)"/>
+                  <g class="particulas" data-tipo="co2"></g>
+                </g>
+                <rect class="bruma" width="100" height="18" y="72" fill="url(#g-bruma-co2)"/>
+              </g>
+              <line class="tq-linea" x1="6" x2="94" y1="72" y2="72"/>
+              <rect class="tq-reflejo" x="12" y="12" width="10" height="150" rx="5"/>
+              <text class="tq-tendencia" x="106" y="24">•</text>
+              <text class="tq-valor" x="50" y="208">30%</text>
+              <g class="tq-estado" transform="translate(50,232)"><rect x="-50" y="-15" width="100" height="28" rx="14"/><text y="5">Bien</text></g>
+            </g>
+
+            <!-- Máquinas -->
+            <g id="mq-gen" class="maquina" data-maquina="gen" role="button" tabindex="0" aria-pressed="false" aria-label="Generador de oxígeno. Tecla 1" transform="translate(250,160)">
+              <rect class="mq-cuerpo" width="180" height="110" rx="18"/>
+              <circle class="mq-anillo-fondo" cx="42" cy="46" r="27"/>
+              <circle class="mq-anillo" cx="42" cy="46" r="27" transform="rotate(-90 42 46)"/>
+              <text class="mq-icono" x="42" y="56">⚗️</text>
+              <text class="mq-nombre" x="80" y="36">Generador</text>
+              <text class="mq-nombre2" x="80" y="56">de oxígeno</text>
+              <g class="mq-switch" transform="translate(80,70)"><rect width="58" height="28" rx="14"/><circle class="mq-knob" cx="14" cy="14" r="10"/></g>
+              <text class="mq-estado" x="42" y="100">Apagada</text>
+              <g class="mq-tecla" transform="translate(160,86)"><rect x="-11" y="-11" width="22" height="22" rx="6"/><text y="5">1</text></g>
+            </g>
+
+            <g id="mq-rec" class="maquina" data-maquina="rec" role="button" tabindex="0" aria-pressed="false" aria-label="Reciclador de agua. Tecla 2" transform="translate(250,318)">
+              <rect class="mq-cuerpo" width="180" height="110" rx="18"/>
+              <circle class="mq-anillo-fondo" cx="42" cy="46" r="27"/>
+              <circle class="mq-anillo" cx="42" cy="46" r="27" transform="rotate(-90 42 46)"/>
+              <text class="mq-icono" x="42" y="56">♻️</text>
+              <text class="mq-nombre" x="80" y="36">Reciclador</text>
+              <text class="mq-nombre2" x="80" y="56">de agua</text>
+              <g class="mq-switch" transform="translate(80,70)"><rect width="58" height="28" rx="14"/><circle class="mq-knob" cx="14" cy="14" r="10"/></g>
+              <text class="mq-estado" x="42" y="100">Apagada</text>
+              <g class="mq-tecla" transform="translate(160,86)"><rect x="-11" y="-11" width="22" height="22" rx="6"/><text y="5">2</text></g>
+            </g>
+
+            <g id="mq-limp" class="maquina solo-co2" data-maquina="limp" role="button" tabindex="0" aria-pressed="false" aria-label="Limpiador de aire. Tecla 3" transform="translate(625,160)">
+              <rect class="mq-cuerpo" width="175" height="110" rx="18"/>
+              <circle class="mq-anillo-fondo" cx="42" cy="46" r="27"/>
+              <circle class="mq-anillo" cx="42" cy="46" r="27" transform="rotate(-90 42 46)"/>
+              <text class="mq-icono" x="42" y="56">🌀</text>
+              <text class="mq-nombre" x="80" y="36">Limpiador</text>
+              <text class="mq-nombre2" x="80" y="56">de aire</text>
+              <g class="mq-switch" transform="translate(80,70)"><rect width="58" height="28" rx="14"/><circle class="mq-knob" cx="14" cy="14" r="10"/></g>
+              <text class="mq-estado" x="42" y="100">Apagada</text>
+              <g class="mq-tecla" transform="translate(155,86)"><rect x="-11" y="-11" width="22" height="22" rx="6"/><text y="5">3</text></g>
+            </g>
+
+            <!-- Tripulación -->
+            <g id="tripulacion">
+              <text x="718" y="452" text-anchor="middle" class="etiqueta-tubo">tripulación</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <button id="btn-continuar-practica" class="btn btn-grande llamativo" hidden>¡Ir al día 1!</button>
+    </section>
+
+    <!-- ===== FIN DE DÍA ===== -->
+    <section id="pantalla-fin-dia" class="pantalla">
+      <div class="tarjeta centrada">
+        <h2 id="fin-dia-titulo">¡Día completado!</h2>
+        <p id="fin-dia-estrellas" class="estrellas-enormes" aria-label="Estrellas del día">★☆☆</p>
+        <div class="resumen-dia">
+          <div class="dato-dia"><span class="dato-dia-num" id="fin-verde">0%</span><span>del tiempo con todo en verde</span></div>
+          <div class="dato-dia"><span class="dato-dia-num" id="fin-muestras">0</span><span>muestras recogidas</span></div>
+          <div class="dato-dia"><span class="dato-dia-num" id="fin-ciencia">0</span><span>puntos de ciencia</span></div>
+        </div>
+        <p id="fin-dia-texto" class="mensaje-lunia-fin"></p>
+        <button id="btn-siguiente-dia" class="btn btn-grande">Siguiente día</button>
+      </div>
+    </section>
+
+    <!-- ===== MODO AHORRO ===== -->
+    <section id="pantalla-ahorro" class="pantalla">
+      <div class="tarjeta centrada">
+        <div class="icono-grande" aria-hidden="true">🛟</div>
+        <h2>Modo ahorro</h2>
+        <p id="ahorro-texto"></p>
+        <p id="ahorro-cuando" class="nota-fuerte"></p>
+        <p class="consejo"><span aria-hidden="true">💡</span> <span id="ahorro-consejo"></span></p>
+        <button id="btn-reintentar" class="btn btn-grande">Intentar otra vez</button>
+      </div>
+    </section>
+
+    <!-- ===== 4. REPASO FINAL ===== -->
+    <section id="pantalla-repaso" class="pantalla">
+      <div class="tarjeta centrada">
+        <div class="icono-grande" aria-hidden="true">🏅</div>
+        <h2>¡Misión cumplida!</h2>
+        <p id="repaso-resumen"></p>
+      </div>
+
+      <div class="tarjeta">
+        <h3 class="subtitulo">Tus 3 días en LUNIA</h3>
+        <div id="tus-dias" class="tus-dias"></div>
+      </div>
+
+      <div class="tarjeta">
+        <h3 class="subtitulo">Pregunta</h3>
+        <p class="pregunta">¿Por qué baja el agua cuando el generador fabrica oxígeno?</p>
+        <div id="reflexion" class="opciones"></div>
+        <p id="reflexion-respuesta" class="respuesta" aria-live="polite"></p>
+      </div>
+
+      <details class="tarjeta adaptacion">
+        <summary>Fuentes y adaptación (para docentes y jueces)</summary>
+        <div id="adaptacion-detalle"></div>
+      </details>
+
+      <div class="fila centro">
+        <button id="btn-jugar-otra" class="btn btn-grande">Jugar otra vez</button>
+        <a id="btn-mapa" class="btn btn-secundario btn-grande" href="../index.html">Volver al mapa de misiones</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Guía paso a paso ===== -->
+  <div id="guia" class="guia" hidden>
+    <div id="guia-foco" class="guia-foco"></div>
+    <div id="guia-burbuja" class="guia-burbuja" role="dialog" aria-live="polite">
+      <p id="guia-texto"></p>
+      <button id="guia-siguiente" class="btn-chico-principal">Siguiente</button>
+    </div>
+  </div>
+
+  <!-- ===== Dilema: muestra especial ===== -->
+  <div id="modal-dilema" class="modal" role="dialog" aria-modal="true" aria-labelledby="dilema-titulo" hidden>
+    <div class="tarjeta modal-tarjeta">
+      <p class="quien" id="dilema-titulo">Comandante Ríos</p>
+      <svg class="dilema-ilustracion" viewBox="0 0 320 110" aria-hidden="true">
+        <rect width="320" height="110" rx="16" fill="#0b1030"/>
+        <path d="M0 70 Q80 60 160 68 T320 66 V110 H0 Z" fill="#8f94ac"/>
+        <circle cx="290" cy="22" r="11" fill="#2e6fc7"/>
+        <g transform="translate(200,74)">
+          <circle r="26" fill="#7ef0ff" opacity=".18"/>
+          <path d="M-14 8 L-8 -14 L2 -20 L12 -10 L14 8 L0 12 Z" fill="#6fe6ff" stroke="#e6fdff" stroke-width="2"/>
+          <path d="M-8 -14 L0 4 L12 -10 M0 4 L0 12" stroke="#e6fdff" stroke-width="1.5" fill="none"/>
+        </g>
+        <g transform="translate(110,70)">
+          <rect x="-11" y="2" width="22" height="26" rx="8" fill="#f1f4ff"/>
+          <circle r="13" fill="#f1f4ff"/><ellipse rx="9" ry="7" fill="#d9a441"/>
+          <rect x="11" y="6" width="16" height="4" rx="2" fill="#c9cff0" transform="rotate(20 11 6)"/>
+        </g>
+        <g transform="translate(60,72)">
+          <rect x="-11" y="2" width="22" height="26" rx="8" fill="#f1f4ff"/>
+          <circle r="13" fill="#f1f4ff"/><ellipse rx="9" ry="7" fill="#d9a441"/>
+        </g>
+      </svg>
+      <h2 class="modal-titulo">¡Por la ventana se ve una roca especial! ¿Salimos a buscarla?</h2>
+      <div class="dilema-opciones">
+        <div class="dilema-lado gana"><span aria-hidden="true">🔬</span><strong>+40 puntos</strong><span>de ciencia</span></div>
+        <div class="dilema-lado cuesta"><span aria-hidden="true">🫧</span><strong>Más oxígeno</strong><span>Con esfuerzo se respira más. Durante 15 segundos el oxígeno bajará rápido.</span></div>
+      </div>
+      <p class="dato">Dato real: con ejercicio, un astronauta respira unas 11 veces más oxígeno que durmiendo (NASA, 2017).</p>
+      <div class="fila centro">
+        <button id="btn-dilema-si" class="btn btn-grande">Sí, vamos</button>
+        <button id="btn-dilema-no" class="btn btn-secundario btn-grande">Hoy no</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Pausa ===== -->
+  <div id="modal-pausa" class="modal" hidden>
+    <div class="tarjeta centrada modal-tarjeta">
+      <h2>En pausa</h2>
+      <button id="btn-reanudar" class="btn btn-grande">Seguir</button>
+    </div>
+  </div>
+
+  <canvas id="confeti" aria-hidden="true"></canvas>
+
+  <script src="mision1.js"></script>
+</body>
+</html>
