@@ -1,5 +1,5 @@
 /* Personaje secreto
-   1. Silueta oscura de un astronauta que se llena 10 % por respuesta, con un
+   1. Silueta oscura de un astronauta que se llena un poco con cada respuesta, con un
       líquido vibrante y destellos dorados (tercio derecho de la pantalla).
    2. Los 4 astronautas finales, uno por especialidad.
    3. La gran revelación: tocar rápido para despejar el vapor. */

@@ -16,7 +16,15 @@
       <span class="chip" id="chipIntento" data-en="Attempt 1">Intento 1</span>
       <span class="chip ayuda" id="chipAyuda" style="display:none" data-en="🛟 Help on">🛟 Ayuda activada</span>
     </div>
-    <button id="btnDatos" data-en="🔬 Real NASA data">🔬 Datos reales NASA</button>
+    <div class="hud-der">
+      <div class="velocidad" role="group" aria-labelledby="lblVel">
+        <span id="lblVel" data-en="⏩ Speed">⏩ Velocidad</span>
+        <button class="vel activa" data-vel="1" data-sfx="seleccion" aria-pressed="true">1x</button>
+        <button class="vel" data-vel="3" data-sfx="seleccion" aria-pressed="false">3x</button>
+        <button class="vel" data-vel="5" data-sfx="seleccion" aria-pressed="false">5x</button>
+      </div>
+      <button id="btnDatos" data-en="🔬 Real NASA data">🔬 Datos reales NASA</button>
+    </div>
   </div>
 
   <div id="panelLateral">

@@ -26,5 +26,5 @@ button{font-family:inherit;cursor:pointer;border:0}
 #ctrl{position:absolute;top:calc(var(--s)*16px);right:calc(var(--s)*16px);display:flex;gap:calc(var(--s)*8px)}
 #ctrl button{background:rgba(11,15,58,.75);color:var(--white);font-weight:800;font-size:calc(var(--s)*15px);padding:calc(var(--s)*8px) calc(var(--s)*14px);border-radius:999px;border:1px solid rgba(111,227,232,.3)}
 #ctrl button[aria-pressed="false"]{opacity:.5}
-#sonido{position:absolute;top:calc(var(--s)*16px);left:50%;transform:translateX(-50%);background:rgba(232,65,140,.9);color:#fff;font-weight:900;font-size:calc(var(--s)*16px);padding:calc(var(--s)*8px) calc(var(--s)*20px);border-radius:999px;display:none}
-#sonido.on{display:block}
+#bVoz{font-size:calc(var(--s)*17px)!important;padding:calc(var(--s)*10px) calc(var(--s)*18px)!important}
+#bVoz.mute{background:rgba(232,65,140,.85)!important;border-color:transparent!important}

@@ -6,7 +6,7 @@ const ESP = window.EQ_ESPECIALIDADES;
 const REACCIONES = window.EQ_REACCIONES;
 
 /* Adónde va el botón "Ir a la misión". Se puede cambiar con ?siguiente=ruta */
-const SIGUIENTE = new URLSearchParams(location.search).get('siguiente') || '../../personalizar-avatar/index.html';
+const SIGUIENTE = new URLSearchParams(location.search).get('siguiente') || '../personalizar-avatar/index.html';
 const DEPURAR = new URLSearchParams(location.search).has('debug');
 const PAUSA_REACCION = 2000;
 const reducirMovimiento = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -138,11 +138,11 @@ function proyectar(p) {
   }, 34);
 }
 
-/* El personaje secreto se llena 10 % por respuesta. */
-const PISTAS = L({ 1: 'Algo empieza a brillar...', 3: '¡Ya se ven sus botas!', 5: '¡Vas por la mitad!',
-  7: 'Ya casi se ve quién es...', 9: '¡Falta solo una respuesta!', 10: '¡Listo para la gran revelación!' },
-  { 1: 'Something is starting to glow...', 3: 'You can see its boots!', 5: 'You’re halfway there!',
-  7: 'You can almost see who it is...', 9: 'Just one answer left!', 10: 'Ready for the big reveal!' });
+/* El personaje secreto se llena un poco con cada respuesta (con 5 preguntas, 20 % por respuesta). */
+const PISTAS = L({ 1: 'Algo empieza a brillar...', 2: '¡Ya se ven sus botas!',
+  3: 'Ya casi se ve quién es...', 4: '¡Falta solo una respuesta!', 5: '¡Listo para la gran revelación!' },
+  { 1: 'Something is starting to glow...', 2: 'You can see its boots!',
+  3: 'You can almost see who it is...', 4: 'Just one answer left!', 5: 'Ready for the big reveal!' });
 function llenarSilueta() {
   const n = respuestas.length;
   window.EqPersonajes.silueta.fijar(n / PREGUNTAS.length);

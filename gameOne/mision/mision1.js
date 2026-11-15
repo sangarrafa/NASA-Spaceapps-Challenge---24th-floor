@@ -950,10 +950,21 @@ window.addEventListener('keydown', e => {
 $('btnDatos').onclick = () => $('capaDatos').classList.add('visible');
 $('btnCerrarDatos').onclick = () => $('capaDatos').classList.remove('visible');
 
+// Velocidad de la simulación (1x / 3x / 5x): acelera TODO a la vez (Luna, viaje y aterrizaje), así el
+// encuentro con la Luna sigue funcionando igual. Se hacen N pasos normales por cuadro en vez de un paso N veces
+// más grande, para que la física y los cambios de fase se comporten exactamente igual que a 1x.
+let velocidad = 1;
+const botonesVel = document.querySelectorAll('.vel');
+botonesVel.forEach(b => b.addEventListener('click', () => {
+  velocidad = Number(b.dataset.vel) || 1;
+  botonesVel.forEach(o => { const on = o === b; o.classList.toggle('activa', on); o.setAttribute('aria-pressed', on); });
+  b.blur();   // la barra espaciadora sigue siendo para despegar, no para volver a pulsar este botón
+}));
+
 let antes = performance.now();
 function bucle(ahora) {
   const dt = Math.min((ahora - antes) / 1000, 0.05); antes = ahora;
-  if (!$('capaDatos').classList.contains('visible')) actualizar(dt);
+  if (!$('capaDatos').classList.contains('visible')) for (let i = 0; i < velocidad; i++) actualizar(dt);
   dibujar();
   requestAnimationFrame(bucle);
 }
