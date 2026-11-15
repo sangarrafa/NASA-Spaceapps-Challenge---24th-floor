@@ -54,6 +54,24 @@
       { id: '#E0B45A', nombre: 'Rubio' }, { id: '#C9473E', nombre: 'Rojo' }, { id: '#7A5CE0', nombre: 'Galaxia' }, { id: '#E8E9F2', nombre: 'Plata' }
     ]
   };
+  // En inglés se cambian solo los nombres que ve el jugador (los ids no cambian)
+  if (window.EqLang && window.EqLang.get() === 'en') {
+    const EN = {
+      clasico: ['Explorer', 'Classic, with stripes'], ligero: ['Agile', 'Slim and fast'], blindado: ['Armored', 'Shoulder and knee pads'], piloto: ['Pilot', 'Jumpsuit with collar and zipper'],
+      suave: ['Soft'],
+      '#6FE3E8': ['Aqua'], '#E8418C': ['Pink'], '#FFB547': ['Amber'], '#A78BFA': ['Violet'], '#FF7A5C': ['Coral'], '#5FD08A': ['Green'], '#4C8DFF': ['Blue'], '#F4F1E8': ['White'],
+      estrella: ['Star'], cohete: ['Rocket'], luna: ['Moon'], planeta: ['Planet'], sol: ['Sun'], corazon: ['Heart'], rayo: ['Lightning'], telescopio: ['Telescope'], trofeo: ['Trophy'], escudo: ['Shield'],
+      alegre: ['Cheerful'], serio: ['Serious'], decidido: ['Determined'], rabioso: ['Fierce'],
+      femenino: ['Female'], masculino: ['Male'], neutro: ['Neutral'],
+      '#F2CBA8': ['Light'], '#D9A27A': ['Medium light'], '#B07A55': ['Medium'], '#8A5A3B': ['Tan'], '#5E3A26': ['Dark'],
+      corto: ['Short'], 'corto-liso': ['Short straight'], 'corto-afro': ['Short afro'], 'largo-liso': ['Long straight'], 'largo-rizado': ['Long curly'], 'largo-afro': ['Long afro'],
+      '#2B1B14': ['Black'], '#5A3520': ['Brown'], '#A8642E': ['Copper'], '#E0B45A': ['Blond'], '#C9473E': ['Red'], '#7A5CE0': ['Galaxy'], '#E8E9F2': ['Silver']
+    };
+    Object.keys(OPCIONES).forEach((g) => OPCIONES[g].forEach((o) => {
+      const t = (g === 'colorCabello' || g === 'piel' || g === 'acento') ? EN[o.id] : EN[o.id];
+      if (t) { o.nombre = t[0]; if (t[1]) o.desc = t[1]; }
+    }));
+  }
   const MAX_INSIGNIAS = 3;
   // Insignia y color sugeridos según la especialidad del test
   const POR_ESPECIALIDAD = {
@@ -228,7 +246,7 @@
 
     const vb = op.recorte === 'cabeza' ? '-56 -240 112 112' : '-82 -250 164 260';
     const fondo = op.fondo === false ? '' : `<ellipse class="av-sombra" cx="0" cy="2" rx="46" ry="7" fill="#000" opacity=".35"/>`;
-    return `<svg class="avatar-svg ${op.clase || ''}" viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${op.etiqueta || 'Tu astronauta'}">
+    return `<svg class="avatar-svg ${op.clase || ''}" viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${op.etiqueta || (window.EqLang ? window.EqLang.L('Tu astronauta', 'Your astronaut') : 'Tu astronauta')}">
       <defs><radialGradient id="${id}-vidrio" cx=".35" cy=".3" r=".8">
         <stop offset="0" stop-color="#ffffff" stop-opacity=".22"/><stop offset=".6" stop-color="${C.aqua}" stop-opacity=".08"/><stop offset="1" stop-color="${C.aqua}" stop-opacity=".22"/></radialGradient></defs>
       ${fondo}
@@ -306,7 +324,7 @@
 
   function nombre() {
     const p = leer('equilibria:perfil');
-    return (p && p.nombre) || 'Astronauta';
+    return (p && p.nombre) || (window.EqLang ? window.EqLang.L('Astronauta', 'Astronaut') : 'Astronauta');
   }
 
   window.EqAvatar = { OPCIONES, PREDETERMINADO, MAX_INSIGNIAS, POR_ESPECIALIDAD, svg, cargar, guardar, sugerido, montar, nombre, limpiar };

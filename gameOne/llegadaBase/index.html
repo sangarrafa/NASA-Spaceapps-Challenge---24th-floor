@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Llegada a la base — Cinemática</title>
+<title data-en="Arriving at the base — Cinematic">Llegada a la base — Cinemática</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
@@ -11,17 +11,18 @@
 </head>
 <body>
 <div id="stage">
-  <canvas id="c" width="1280" height="720" aria-label="El cohete llega junto a la base lunar y el astronauta entra"></canvas>
+  <canvas id="c" width="1280" height="720" aria-label="El cohete llega junto a la base lunar y el astronauta entra" data-en-aria="The rocket arrives next to the lunar base and the astronaut goes in"></canvas>
   <div id="ctrl">
-    <button id="bSnd" aria-pressed="true">🔊 Sonido</button>
-    <button id="bSkip">Saltar ⏭</button>
+    <button id="bSnd" aria-pressed="true" data-en="🔊 Sound">🔊 Sonido</button>
+    <button id="bSkip" data-en="Skip ⏭">Saltar ⏭</button>
   </div>
   <div id="end">
-    <button class="big" id="bNext">Siguiente ▶</button>
-    <button class="ghost" id="bAgain">↺ Ver de nuevo</button>
+    <button class="big" id="bNext" data-en="Next ▶">Siguiente ▶</button>
+    <button class="ghost" id="bAgain" data-en="↺ Watch again">↺ Ver de nuevo</button>
   </div>
 </div>
 
+<script src="../../shared/language.js"></script>
 <script src="llegadaBase.js"></script>
 </body>
 </html>

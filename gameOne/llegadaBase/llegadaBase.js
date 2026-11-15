@@ -270,7 +270,7 @@ function render(){
   for(const p of parts){ ctx.fillStyle=`rgba(190,190,210,${.6*(1-p.age/p.life)})`; circle(p.x,p.y,p.r); ctx.fill(); }
   ctx.restore();
   // rótulo
-  const s='POLO SUR LUNAR · BASE LUNIA · SIN ENERGÍA', n=Math.floor(clamp((T-.6)*28,0,s.length));
+  const s=(window.EqLang?window.EqLang.L:(es)=>es)('POLO SUR LUNAR · BASE LUNIA · SIN ENERGÍA','LUNAR SOUTH POLE · LUNIA BASE · NO POWER'), n=Math.floor(clamp((T-.6)*28,0,s.length));
   ctx.globalAlpha=1-seg(T,5,6); ctx.font='700 20px "Space Mono", monospace'; ctx.textAlign='left'; ctx.fillStyle=P.aqua; ctx.shadowColor=P.aqua; ctx.shadowBlur=10;
   ctx.fillText(s.slice(0,n),40,56); ctx.shadowBlur=0; ctx.globalAlpha=1;
   // viñeta y fundidos

@@ -16,6 +16,7 @@ addEventListener('resize',resize); resize();
 
 const P={navy:'#0B0F3A',indigo:'#1E1B6E',pink:'#E8418C',magenta:'#A0279E',aqua:'#6FE3E8',cyan:'#21C1E0',amber:'#FFB547',coral:'#FF7A5C',white:'#E8E9F2',green:'#3FD17A',violet:'#9B7BFF'};
 const TAU=Math.PI*2;
+const L=window.EqLang?window.EqLang.L:(es)=>es;
 const clamp=(v,a=0,b=1)=>v<a?a:v>b?b:v;
 const lerp=(a,b,k)=>a+(b-a)*k;
 const easeOut=k=>1-Math.pow(1-k,3);
@@ -28,11 +29,11 @@ function q(p0,c,p1,t){const u=1-t;return{x:u*u*p0.x+2*u*t*c.x+t*t*p1.x,y:u*u*p0.
 /* ---------------- Datos del mapa ---------------- */
 const HUB={x:620,y:452};
 const ST=[
-  {id:'soporte',  nom:'Soporte vital',        icon:'O₂', col:P.aqua,   x:300,y:548, c:{x:430,y:560}, desc:'Mantén el oxígeno y el agua para que todos puedan respirar y vivir en la base.'},
-  {id:'energia',  nom:'Energía',              icon:'⚡', col:P.amber,  x:395,y:350, c:{x:470,y:420}, desc:'Reparte la energía de los paneles solares entre todo lo que la necesita.'},
-  {id:'alimentos',nom:'Alimentos',            icon:'🌱', col:P.green,  x:640,y:628, c:{x:560,y:560}, desc:'Cultiva plantas en el invernadero lunar para tener comida fresca.'},
-  {id:'blindaje', nom:'Blindaje contra radiación', icon:'🛡', col:P.pink, x:935,y:572, c:{x:800,y:560}, desc:'Protege a la tripulación cuando el Sol lanza radiación.'},
-  {id:'comunica', nom:'Comunicaciones',       icon:'📡', col:P.violet, x:860,y:355, c:{x:760,y:380}, desc:'Envía y recibe mensajes de la Tierra… aunque tarden en llegar.'},
+  {id:'soporte',  nom:L('Soporte vital','Life support'),        icon:'O₂', col:P.aqua,   x:300,y:548, c:{x:430,y:560}, desc:L('Mantén el oxígeno y el agua para que todos puedan respirar y vivir en la base.','Keep the oxygen and water going so everyone can breathe and live at the base.')},
+  {id:'energia',  nom:L('Energía','Energy'),              icon:'⚡', col:P.amber,  x:395,y:350, c:{x:470,y:420}, desc:L('Reparte la energía de los paneles solares entre todo lo que la necesita.','Share the solar panels’ energy among everything that needs it.')},
+  {id:'alimentos',nom:L('Alimentos','Food'),            icon:'🌱', col:P.green,  x:640,y:628, c:{x:560,y:560}, desc:L('Cultiva plantas en el invernadero lunar para tener comida fresca.','Grow plants in the lunar greenhouse to have fresh food.')},
+  {id:'blindaje', nom:L('Blindaje contra radiación','Radiation shielding'), icon:'🛡', col:P.pink, x:935,y:572, c:{x:800,y:560}, desc:L('Protege a la tripulación cuando el Sol lanza radiación.','Protect the crew when the Sun throws out radiation.')},
+  {id:'comunica', nom:L('Comunicaciones','Communications'),       icon:'📡', col:P.violet, x:860,y:355, c:{x:760,y:380}, desc:L('Envía y recibe mensajes de la Tierra… aunque tarden en llegar.','Send and receive messages from Earth… even if they take a while to arrive.')},
 ];
 // Pantalla a la que lleva "Entrar" en cada estación (las que aún no tienen misión solo emiten el evento)
 const MISSION_SCREENS={ soporte:'../mision1-soportevital/index.html' };
@@ -59,7 +60,7 @@ function drawSky(A){
   circle(ex,ey,er); ctx.fillStyle='#2f6fd0'; ctx.fill(); ctx.save(); ctx.clip(); ctx.fillStyle='#3fae6a'; const o=(A*4)%60;
   ell(ex-20+o,ey-5,10,7); ctx.fill(); ell(ex-40+o,ey+8,7,5); ctx.fill(); ell(ex+5+o-60,ey+4,8,6); ctx.fill(); ell(ex+5+o,ey+4,8,6); ctx.fill();
   ctx.fillStyle='rgba(255,255,255,.5)'; ell(ex-6,ey-12,9,3); ctx.fill(); ctx.fillStyle='rgba(4,5,30,.55)'; ctx.fillRect(ex+8,ey-er,er,er*2); ctx.restore();
-  ctx.font='800 13px Nunito, sans-serif'; ctx.textAlign='center'; ctx.fillStyle='rgba(232,233,242,.65)'; ctx.fillText('Tierra',ex,ey+er+18);
+  ctx.font='800 13px Nunito, sans-serif'; ctx.textAlign='center'; ctx.fillStyle='rgba(232,233,242,.65)'; ctx.fillText(L('Tierra','Earth'),ex,ey+er+18);
   // estrellas fugaces
   nextMet-=1/60; if(nextMet<=0){ meteors.push({x:300+Math.random()*900,y:-10,vx:-(300+Math.random()*250),vy:150+Math.random()*120,life:0,max:1+Math.random()*.6}); nextMet=1.2+Math.random()*2.2; }
   for(let i=meteors.length-1;i>=0;i--){ const m=meteors[i]; m.life+=1/60; m.x+=m.vx/60; m.y+=m.vy/60; if(m.life>m.max||m.y>280){meteors.splice(i,1);continue;}
@@ -84,8 +85,8 @@ function drawMars(A,u){
     ctx.restore();
   }
   ctx.font='900 16px Nunito, sans-serif'; ctx.textAlign='center'; ctx.fillStyle=u>=1?P.amber:'rgba(232,233,242,.8)';
-  ctx.fillText(u>=1?'MARTE · ¡Misión 2 disponible!':'MARTE · Misión 2',x,y+r+24);
-  if(u<1){ ctx.font='700 13px Nunito, sans-serif'; ctx.fillStyle='rgba(232,233,242,.6)'; ctx.fillText('Bloqueado: completa las 5 misiones lunares',x,y+r+42); }
+  ctx.fillText(u>=1?L('MARTE · ¡Misión 2 disponible!','MARS · Mission 2 available!'):L('MARTE · Misión 2','MARS · Mission 2'),x,y+r+24);
+  if(u<1){ ctx.font='700 13px Nunito, sans-serif'; ctx.fillStyle='rgba(232,233,242,.6)'; ctx.fillText(L('Bloqueado: completa las 5 misiones lunares','Locked: complete the 5 lunar missions'),x,y+r+42); }
 }
 function drawGround(){
   ctx.beginPath(); ctx.moveTo(0,horizonY(0)); for(let x=0;x<=W;x+=20) ctx.lineTo(x,horizonY(x)); ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
@@ -197,7 +198,7 @@ function drawHub(A){
   ctx.strokeStyle='#C9CBD8'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(x,y-70); ctx.lineTo(x,y-100); ctx.stroke();
   circle(x,y-102,4); ctx.fillStyle=(A%1.4)<.3?P.aqua:'rgba(111,227,232,.35)'; ctx.fill();
   ctx.font='900 16px Nunito, sans-serif'; const tw=ctx.measureText('BASE LUNIA').width; rr(x-tw/2-14,y+24,tw+28,26,13); ctx.fillStyle='rgba(11,15,58,.9)'; ctx.fill(); ctx.strokeStyle=P.aqua; ctx.lineWidth=2; ctx.stroke();
-  ctx.fillStyle=P.aqua; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('BASE LUNIA',x,y+38); ctx.textBaseline='alphabetic';
+  ctx.fillStyle=P.aqua; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(L('BASE LUNIA','LUNIA BASE'),x,y+38); ctx.textBaseline='alphabetic';
 }
 function drawLandingPad(A){
   const {x,y}=PAD;
@@ -210,7 +211,7 @@ function drawLandingPad(A){
   ctx.fillStyle='#F2F5FF'; ctx.beginPath(); ctx.moveTo(rx,ry-70); ctx.quadraticCurveTo(rx+14,ry-50,rx+13,ry-10); ctx.lineTo(rx-13,ry-10); ctx.quadraticCurveTo(rx-14,ry-50,rx,ry-70); ctx.fill();
   ctx.fillStyle=P.pink; ctx.beginPath(); ctx.moveTo(rx,ry-70); ctx.quadraticCurveTo(rx+8,ry-62,rx+10,ry-56); ctx.lineTo(rx-10,ry-56); ctx.quadraticCurveTo(rx-8,ry-62,rx,ry-70); ctx.fill();
   circle(rx,ry-42,5); ctx.fillStyle=P.cyan; ctx.fill();
-  ctx.font='900 13px Nunito, sans-serif'; const t='✓ Llegada a la Luna'; const tw=ctx.measureText(t).width; rr(x-tw/2-12,y+20,tw+24,24,12); ctx.fillStyle='rgba(11,15,58,.9)'; ctx.fill(); ctx.strokeStyle=P.amber; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.font='900 13px Nunito, sans-serif'; const t=L('✓ Llegada a la Luna','✓ Arrival at the Moon'); const tw=ctx.measureText(t).width; rr(x-tw/2-12,y+20,tw+24,24,12); ctx.fillStyle='rgba(11,15,58,.9)'; ctx.fill(); ctx.strokeStyle=P.amber; ctx.lineWidth=1.5; ctx.stroke();
   ctx.fillStyle=P.amber; ctx.textBaseline='middle'; ctx.fillText(t,x,y+33); ctx.textBaseline='alphabetic';
 }
 // Ruta de vuelo: Marte solo se alcanza en el cohete
@@ -231,14 +232,14 @@ function flightRoute(A,u){
     ctx.fillStyle='#F2F5FF'; ctx.beginPath(); ctx.moveTo(s,0); ctx.quadraticCurveTo(s*.3,-s*.45,-s*.6,-s*.35); ctx.lineTo(-s*.6,s*.35); ctx.quadraticCurveTo(s*.3,s*.45,s,0); ctx.fill(); ctx.restore(); }
   // candado / letrero a mitad de la ruta
   const m=q(FL0,FLC,FL1,.5), n=ST.filter(s=>done[s.id]).length;
-  ctx.font='900 15px Nunito, sans-serif'; const t=u>=1?'🚀 Ruta a Marte abierta':`🔒 Ruta a Marte · ${n}/5`; const tw=ctx.measureText(t).width;
+  ctx.font='900 15px Nunito, sans-serif'; const t=u>=1?L('🚀 Ruta a Marte abierta','🚀 Route to Mars open'):L(`🔒 Ruta a Marte · ${n}/5`,`🔒 Route to Mars · ${n}/5`); const tw=ctx.measureText(t).width;
   rr(m.x-tw/2-14,m.y-15,tw+28,30,15); ctx.fillStyle='rgba(11,15,58,.92)'; ctx.fill(); ctx.strokeStyle=u>=1?P.green:P.coral; ctx.lineWidth=2; ctx.stroke();
   ctx.fillStyle=u>=1?P.green:P.white; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(t,m.x,m.y+1); ctx.textBaseline='alphabetic';
 }
 // letrero sobre el cohete: el cohete es el transporte a Marte
 function rocketSign(A,u){
   const x=PAD.x+4, y=PAD.y-96, bob=Math.sin(A*2)*3;
-  ctx.font='900 14px Nunito, sans-serif'; const t=u>=1?'¡Listo para ir a Marte!':'Cohete a Marte'; const tw=ctx.measureText(t).width;
+  ctx.font='900 14px Nunito, sans-serif'; const t=u>=1?L('¡Listo para ir a Marte!','Ready to go to Mars!'):L('Cohete a Marte','Rocket to Mars'); const tw=ctx.measureText(t).width;
   rr(x-tw/2-30,y-14+bob,tw+44,28,14); ctx.fillStyle='rgba(11,15,58,.92)'; ctx.fill(); ctx.strokeStyle=u>=1?P.green:P.coral; ctx.lineWidth=2; ctx.stroke();
   ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText(u>=1?'🚀':'🔒',x-tw/2-20,y+1+bob); ctx.fillStyle=u>=1?P.green:P.white; ctx.fillText(t,x-tw/2+2,y+1+bob); ctx.textBaseline='alphabetic';
   // motores listos: brillo bajo el cohete al desbloquear
@@ -337,14 +338,14 @@ function showTip(h){
     // (Marte está pegado al borde superior, así que encima no cabe)
     if(h==='cohete'){ x=PAD.x+4; y=PAD.y-112; }
     else { x=MARS.x; y=MARS.y+MARS.r+52; abajo=true; }
-    tN.textContent='Marte · Misión 2'; tD.textContent=ok?'¡Tu cohete está listo! Súbete y viaja a Marte: la segunda parte de la misión te espera en el planeta rojo.':'A Marte se viaja en el cohete. Para que pueda despegar, primero tienes que completar las 5 misiones de la base lunar.';
-    tE.textContent=ok?'🔓 Disponible':`🔒 Bloqueado · ${ST.filter(s=>done[s.id]).length} de 5 misiones`; tE.style.color=ok?P.green:P.coral;
-    tG.style.display=ok?'':'none'; tG.textContent='🚀 Despegar hacia Marte'; tG.onclick=()=>dispatchEvent(new CustomEvent('mapa:marte'));
+    tN.textContent=L('Marte · Misión 2','Mars · Mission 2'); tD.textContent=ok?L('¡Tu cohete está listo! Súbete y viaja a Marte: la segunda parte de la misión te espera en el planeta rojo.','Your rocket is ready! Get on board and travel to Mars: the second part of the mission is waiting for you on the red planet.'):L('A Marte se viaja en el cohete. Para que pueda despegar, primero tienes que completar las 5 misiones de la base lunar.','You travel to Mars in the rocket. Before it can take off, you need to complete the 5 missions of the lunar base.');
+    tE.textContent=ok?L('🔓 Disponible','🔓 Available'):L(`🔒 Bloqueado · ${ST.filter(s=>done[s.id]).length} de 5 misiones`,`🔒 Locked · ${ST.filter(s=>done[s.id]).length} of 5 missions`); tE.style.color=ok?P.green:P.coral;
+    tG.style.display=ok?'':'none'; tG.textContent=L('🚀 Despegar hacia Marte','🚀 Launch to Mars'); tG.onclick=()=>dispatchEvent(new CustomEvent('mapa:marte'));
   } else {
     x=h.x; y=h.y-62; col=h.col;
     tN.textContent=h.nom; tD.textContent=h.desc;
     tE.textContent=done[h.id]?'⭐ Completada':'● Disponible'; tE.style.color=done[h.id]?P.amber:col;
-    tG.style.display=''; tG.textContent=done[h.id]?'Jugar otra vez ▶':'Entrar ▶';
+    tG.style.display=''; tG.textContent=done[h.id]?L('Jugar otra vez ▶','Play again ▶'):L('Entrar ▶','Enter ▶');
     tG.onclick=()=>{ dispatchEvent(new CustomEvent('mapa:entrar',{detail:{id:h.id}})); try{ if(parent!==window) parent.postMessage({type:'mapa-entrar',id:h.id},'*'); }catch(e){}
       if(MISSION_SCREENS[h.id]) location.href=MISSION_SCREENS[h.id]; };
   }
@@ -357,7 +358,7 @@ const aviso=document.getElementById('aviso');
 function updateProgress(){
   const n=ST.filter(s=>done[s.id]).length;
   document.getElementById('barra').style.width=(n/5*100)+'%';
-  document.getElementById('prog').textContent=n===5?'¡Completaste las 5 misiones! Marte te espera.':`Misiones completadas: ${n} de 5`;
+  document.getElementById('prog').textContent=n===5?L('¡Completaste las 5 misiones! Marte te espera.','You completed all 5 missions! Mars is waiting.'):L(`Misiones completadas: ${n} de 5`,`Missions completed: ${n} of 5`);
   if(n===5 && unlockT<0){ unlockT=A; aviso.classList.add('on'); setTimeout(()=>aviso.classList.remove('on'),3500); }
   if(n<5) unlockT=-1;
 }
@@ -393,7 +394,7 @@ function sonar(){
 }
 function callar(){ fundirA(0,400,()=>ambiente.pause()); }
 // El botón refleja si de verdad está sonando (no solo la preferencia)
-function pintarBoton(){ const on=!ambiente.paused&&!mudo; btnSonido.textContent=on?'🔊':'🔇'; btnSonido.classList.toggle('mudo',!on); btnSonido.setAttribute('aria-label',on?'Silenciar sonido ambiental':'Activar sonido ambiental'); }
+function pintarBoton(){ const on=!ambiente.paused&&!mudo; btnSonido.textContent=on?'🔊':'🔇'; btnSonido.classList.toggle('mudo',!on); btnSonido.setAttribute('aria-label',on?L('Silenciar sonido ambiental','Mute background sound'):L('Activar sonido ambiental','Turn on background sound')); }
 ambiente.addEventListener('play',pintarBoton); ambiente.addEventListener('pause',pintarBoton);
 ambiente.addEventListener('error',()=>console.warn('Sonido ambiental: no se pudo cargar',ambiente.currentSrc,ambiente.error&&ambiente.error.code));
 btnSonido.onclick=e=>{

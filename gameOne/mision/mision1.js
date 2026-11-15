@@ -1,5 +1,7 @@
 (() => {
 'use strict';
+const L = window.EqLang ? window.EqLang.L : (es) => es;
+const LOCALE = L('es-CO', 'en-US');
 
 /* =========================================================
    1. DATOS REALES (curados de la NASA, no en vivo)
@@ -27,9 +29,9 @@ const NIVELES = [
   // tolGrados: qué tan cerca (en grados de la órbita lunar) hay que llegar.
   // zona: arco verde que muestra dónde debe estar la Luna al despegar.
   // fantasma: muestra dónde estará la Luna dentro de 3 días.
-  { nombre: 'Cadete',     tolGrados: 15, fantasma: true,  zona: true  },
-  { nombre: 'Piloto',     tolGrados: 10, fantasma: true,  zona: false },
-  { nombre: 'Comandante', tolGrados: 8,  fantasma: false, zona: false }
+  { nombre: L('Cadete', 'Cadet'), tolGrados: 15, fantasma: true,  zona: true  },
+  { nombre: L('Piloto', 'Pilot'), tolGrados: 10, fantasma: true,  zona: false },
+  { nombre: L('Comandante', 'Commander'), tolGrados: 8,  fantasma: false, zona: false }
 ];
 
 /* =========================================================
@@ -44,8 +46,8 @@ const GRADOS_POR_HORA = 360 / (DATOS.periodoLunarDias * 24);      // ≈ 0,55°/
 const envolver = a => { a = (a + Math.PI) % TAU; if (a < 0) a += TAU; return a - Math.PI; };
 const aGrados = r => r * 180 / Math.PI;
 const suave = t => t * t * (3 - 2 * t);
-const fmt = n => Math.round(n).toLocaleString('es-CO');
-const num = (n, d = 1) => n.toLocaleString('es-CO', { minimumFractionDigits: d, maximumFractionDigits: d });
+const fmt = n => Math.round(n).toLocaleString(LOCALE);
+const num = (n, d = 1) => n.toLocaleString(LOCALE, { minimumFractionDigits: d, maximumFractionDigits: d });
 const fmtAlt = km => km >= 1 ? `${fmt(km)} km` : `${fmt(km * 1000)} m`;
 const fmtVel = kms => kms >= 1 ? `${num(kms)} km/s` : `${fmt(kms * 1000)} m/s`;
 
@@ -401,17 +403,17 @@ const $ = id => document.getElementById(id);
 const burbuja = $('burbuja'), btnMotor = $('btnMotor');
 
 function actualizarHUD() {
-  $('chipNivel').textContent = `Nivel ${juego.nivel + 1} · ${NIVELES[juego.nivel].nombre}`;
-  $('chipIntento').textContent = `Intento ${juego.intento}`;
+  $('chipNivel').textContent = `${L('Nivel', 'Level')} ${juego.nivel + 1} · ${NIVELES[juego.nivel].nombre}`;
+  $('chipIntento').textContent = `${L('Intento', 'Attempt')} ${juego.intento}`;
   $('chipAyuda').style.display = juego.ayudaExtra > 0 ? '' : 'none';
 }
 function decir(html) { burbuja.innerHTML = html; }
 
 function mensajeEspera() {
   const c = config();
-  if (c.zona) decir('Tu cohete subirá a la órbita baja y viajará hasta el <b>punto de encuentro</b>. Espera a que la Luna entre en la <b>zona verde</b>… ¡y despega!');
-  else if (c.fantasma) decir('La <b>Luna fantasma</b> muestra dónde estará la Luna al llegar. Despega cuando la Luna fantasma toque el <b>punto de encuentro</b>.');
-  else decir('Sin ayudas, Comandante. El viaje dura <b>3 días</b> y en ese tiempo la Luna avanza unos <b>40°</b> de su vuelta.');
+  if (c.zona) decir(L('Tu cohete subirá a la órbita baja y viajará hasta el <b>punto de encuentro</b>. Espera a que la Luna entre en la <b>zona verde</b>… ¡y despega!', 'Your rocket will climb to low orbit and travel to the <b>meeting point</b>. Wait for the Moon to enter the <b>green zone</b>… and launch!'));
+  else if (c.fantasma) decir(L('La <b>Luna fantasma</b> muestra dónde estará la Luna al llegar. Despega cuando la Luna fantasma toque el <b>punto de encuentro</b>.', 'The <b>ghost Moon</b> shows where the Moon will be when you arrive. Launch when the ghost Moon touches the <b>meeting point</b>.'));
+  else decir(L('Sin ayudas, Comandante. El viaje dura <b>3 días</b> y en ese tiempo la Luna avanza unos <b>40°</b> de su vuelta.', 'No help this time, Commander. The trip takes <b>3 days</b>, and in that time the Moon moves about <b>40°</b> along its orbit.'));
 }
 
 function empezarIntento() {
@@ -446,7 +448,7 @@ function despegar() {
   juego.viaje = { t: 0, dif, exito, extra: 0, toque: null, phiE: null };
   juego.estado = 'viaje';
   btnMotor.disabled = true; btnMotor.classList.remove('ahora');
-  decir('🔥 ¡Despegue! Rumbo a la Luna…');
+  decir(L('🔥 ¡Despegue! Rumbo a la Luna…', '🔥 Liftoff! Heading to the Moon…'));
   // humo del despegue
   const p = polar(Rt, anguloPad());
   humo(p.x, p.y, 30, '#d8def5');
@@ -481,17 +483,17 @@ function actualizar(dt) {
   if (juego.estado === 'viaje') {
     if (v.t < T_ASC) {
       const u = v.t / T_ASC;
-      decir(`🚀 Subiendo · altura <b>${fmt((DATOS.orbitaBajaKm - DATOS.radioTierraKm) * suave(u))} km</b> · velocidad <b>${num(V_ORBITA_BAJA * Math.pow(u, 1.5))} km/s</b>`);
+      decir(`🚀 ${L('Subiendo · altura', 'Climbing · altitude')} <b>${fmt((DATOS.orbitaBajaKm - DATOS.radioTierraKm) * suave(u))} km</b> · ${L('velocidad', 'speed')} <b>${num(V_ORBITA_BAJA * Math.pow(u, 1.5))} km/s</b>`);
     } else if (v.t < fin) {
       const s = estadoTransferencia(v.t - T_ASC);
-      decir(`🛰️ Día <b>${num(Math.min(v.t / SEG_POR_DIA, DATOS.viajeDias))}</b> de ${DATOS.viajeDias} · a <b>${fmt(s.r)} km</b> de la Tierra · <b>${num(s.v)} km/s</b>`);
+      decir(L(`🛰️ Día <b>${num(Math.min(v.t / SEG_POR_DIA, DATOS.viajeDias))}</b> de ${DATOS.viajeDias} · a <b>${fmt(s.r)} km</b> de la Tierra · <b>${num(s.v)} km/s</b>`, `🛰️ Day <b>${num(Math.min(v.t / SEG_POR_DIA, DATOS.viajeDias))}</b> of ${DATOS.viajeDias} · <b>${fmt(s.r)} km</b> from Earth · <b>${num(s.v)} km/s</b>`));
     }
     if (v.exito && v.t >= tH) {
       juego.estado = 'aterrizaje'; v.extra = 0;
       v.phiE = juego.anguloLuna + Math.PI;   // desde aquí la cara que mira a la Tierra queda fija
     } else if (!v.exito && v.t >= fin) {
       juego.estado = 'fallo'; v.extra = 0;
-      decir('😮 ¡Oh no! La Luna no estaba ahí… el cohete sigue de largo.');
+      decir(L('😮 ¡Oh no! La Luna no estaba ahí… el cohete sigue de largo.', '😮 Oh no! The Moon wasn’t there… the rocket keeps going.'));
     }
   } else if (juego.estado === 'aterrizaje') {
     v.extra += dt;
@@ -499,13 +501,13 @@ function actualizar(dt) {
     if (!v.toque) {
       if (lt >= Lu.tToque) {
         v.toque = true; const s = sitioLuna(), ps = mundoAPantalla(s.x, s.y); humo(ps.x, ps.y, 26, '#c9cbd8');
-        decir('✅ <b>¡Aterrizaje exitoso!</b> El cohete está a salvo sobre la Luna.');
+        decir(L('✅ <b>¡Aterrizaje exitoso!</b> El cohete está a salvo sobre la Luna.', '✅ <b>Successful landing!</b> The rocket is safe on the Moon.'));
       } else if (lt < Lu.tP) {
-        decir(`🌙 ¡La gravedad de la Luna te atrapó! · a <b>${fmtAlt(d.alt)}</b> de la Luna · <b>${fmtVel(d.vel)}</b>`);
+        decir(L(`🌙 ¡La gravedad de la Luna te atrapó! · a <b>${fmtAlt(d.alt)}</b> de la Luna · <b>${fmtVel(d.vel)}</b>`, `🌙 The Moon’s gravity caught you! · <b>${fmtAlt(d.alt)}</b> from the Moon · <b>${fmtVel(d.vel)}</b>`));
       } else if (lt < Lu.tPdi) {
-        decir(`🛰️ Orbitando la Luna · altura <b>${fmtAlt(d.alt)}</b> · velocidad <b>${fmtVel(d.vel)}</b>`);
+        decir(`🛰️ ${L('Orbitando la Luna · altura', 'Orbiting the Moon · altitude')} <b>${fmtAlt(d.alt)}</b> · ${L('velocidad', 'speed')} <b>${fmtVel(d.vel)}</b>`);
       } else {
-        decir(`⬇️ Bajando a la Luna · altura <b>${fmtAlt(d.alt)}</b> · velocidad <b>${fmtVel(d.vel)}</b>`);
+        decir(`⬇️ ${L('Bajando a la Luna · altura', 'Descending to the Moon · altitude')} <b>${fmtAlt(d.alt)}</b> · ${L('velocidad', 'speed')} <b>${fmtVel(d.vel)}</b>`);
         if (lt > Lu.tPitchFin + Lu.TTERM * 0.55) {   // el motor levanta polvo cerca del suelo
           const s = sitioLuna(), ps = mundoAPantalla(s.x, s.y); humo(ps.x, ps.y, 1, '#c9cbd8');
         }
@@ -662,7 +664,7 @@ function dibujarTierra() {
   for (let i = 1; i <= 3; i++) { ctx.beginPath(); ctx.moveTo(sCohete * .7, -i * sCohete * .45); ctx.lineTo(sCohete * .45, -i * sCohete * .45); ctx.stroke(); }
   ctx.restore();
   const pt = polar(Rt * .45, ab + Math.PI);
-  if (cam.w < 0.4) texto('Tierra', pt.x, pt.y, Math.max(12, Rl * .055));
+  if (cam.w < 0.4) texto(L('Tierra', 'Earth'), pt.x, pt.y, Math.max(12, Rl * .055));
 }
 
 function dibujarLuna(x, y, alfa = 1, fantasma = false) {
@@ -738,7 +740,7 @@ function dibujar() {
     ctx.beginPath(); ctx.moveTo(pe.x - 6, pe.y); ctx.lineTo(pe.x + 6, pe.y); ctx.moveTo(pe.x, pe.y - 6); ctx.lineTo(pe.x, pe.y + 6); ctx.stroke();
     ctx.restore();
     const pt = polar(Rl + rLuna + tam * 1.7, ab);
-    texto('Punto de encuentro', pt.x, pt.y, tam * .85, '#ffb547');
+    texto(L('Punto de encuentro', 'Meeting point'), pt.x, pt.y, tam * .85, '#ffb547');
   }
 
   // zona de despegue: dónde debe estar la Luna al despegar
@@ -749,7 +751,7 @@ function dibujar() {
     ctx.strokeStyle = dentro ? 'rgba(62,230,143,.55)' : 'rgba(62,230,143,.25)';
     ctx.beginPath(); ctx.arc(cx, cy, Rl, -(centro + tol), -(centro - tol)); ctx.stroke(); ctx.restore();
     const pz = polar(Rl - rLuna - tam * 1.6, centro);
-    texto('Zona de despegue', pz.x, pz.y, tam * .8, '#3ee68f');
+    texto(L('Zona de despegue', 'Launch zone'), pz.x, pz.y, tam * .8, '#3ee68f');
   }
 
   // Luna fantasma (donde estará en 3 días)
@@ -759,7 +761,7 @@ function dibujar() {
     ctx.beginPath(); ctx.arc(cx, cy, Rl, -af, -juego.anguloLuna); ctx.stroke(); ctx.restore();
     dibujarLuna(pf.x, pf.y, .9, true);
     const pt = polar(Rl - rLuna - tam * 1.4, af);
-    texto('La Luna en 3 días', pt.x, pt.y, tam * .8, '#d8def5');
+    texto(L('La Luna en 3 días', 'The Moon in 3 days'), pt.x, pt.y, tam * .8, '#d8def5');
   }
 
   dibujarTierra();
@@ -768,7 +770,7 @@ function dibujar() {
   const pl = polar(Rl, juego.anguloLuna);
   dibujarLuna(pl.x, pl.y);
   const plt = polar(Rl + rLuna + tam * 1.1, juego.anguloLuna);
-  if (cam.w < 0.4) texto('Luna', plt.x, plt.y, tam);
+  if (cam.w < 0.4) texto(L('Luna', 'Moon'), plt.x, plt.y, tam);
 
   // sitio de aterrizaje en la cara que mira a la Tierra
   const sobreLuna = juego.estado === 'aterrizaje' || ((juego.estado === 'resultado' || juego.estado === 'fin') && juego.viaje && juego.viaje.exito);
@@ -811,7 +813,7 @@ function dibujar() {
     ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = 'rgba(255,107,107,.8)'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(pe.x, pe.y); ctx.lineTo(pl.x, pl.y); ctx.stroke(); ctx.restore();
     const km = DATOS.distanciaLunaKm * Math.abs(juego.viaje.dif);
-    texto(`¡Faltaron ~${fmt(km)} km!`, (pe.x + pl.x) / 2, (pe.y + pl.y) / 2 - 14, tam * .9, '#ff9b9b');
+    texto(L(`¡Faltaron ~${fmt(km)} km!`, `Missed by ~${fmt(km)} km!`), (pe.x + pl.x) / 2, (pe.y + pl.y) / 2 - 14, tam * .9, '#ff9b9b');
   }
 
   ctx.restore();   // fin del mundo; lo que sigue se dibuja directo en pantalla
@@ -831,7 +833,7 @@ function dibujar() {
     ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ex, ey, er, 0, TAU); ctx.fill();
     ctx.fillStyle = '#3fbf6a'; ctx.beginPath(); ctx.ellipse(ex + er * .15, ey + er * .1, er * .38, er * .24, .4, 0, TAU); ctx.fill();
     ctx.restore();
-    texto('Tierra', ex, ey + er + 14, Math.max(12, er * .45));
+    texto(L('Tierra', 'Earth'), ex, ey + er + 14, Math.max(12, er * .45));
   }
 
   for (const q of juego.particulas) {
@@ -873,15 +875,15 @@ function mostrarExito() {
 
   $('tarjetaResultado').innerHTML = `
     <div class="grande">🌙✨</div>
-    <h2>¡Aterrizaste en la Luna, ${NIVELES[juego.nivel].nombre}!</h2>
+    <h2>${L(`¡Aterrizaste en la Luna, ${NIVELES[juego.nivel].nombre}!`, `You landed on the Moon, ${NIVELES[juego.nivel].nombre}!`)}</h2>
     <div class="grande" style="font-size:40px">${estrellasTxt}</div>
-    <p>Lo lograste en <b>${n}</b> ${n === 1 ? 'intento' : 'intentos'}. Despegaste a solo <b>${horas.toFixed(1)} horas</b> del momento perfecto.</p>
-    <div class="dato">🚀 <b>Igual que Apolo 11:</b> en 1969 los astronautas salieron hacia la Luna en el momento justo y llegaron a ella unos 3 días después.</div>
+    <p>${L(`Lo lograste en <b>${n}</b> ${n === 1 ? 'intento' : 'intentos'}. Despegaste a solo <b>${horas.toFixed(1)} horas</b> del momento perfecto.`, `You did it in <b>${n}</b> ${n === 1 ? 'attempt' : 'attempts'}. You launched just <b>${horas.toFixed(1)} hours</b> from the perfect moment.`)}</p>
+    <div class="dato">${L('🚀 <b>Igual que Apolo 11:</b> en 1969 los astronautas salieron hacia la Luna en el momento justo y llegaron a ella unos 3 días después.', '🚀 <b>Just like Apollo 11:</b> in 1969 the astronauts left for the Moon at the right moment and got there about 3 days later.')}</div>
     <div class="botones">
       ${ultimo
-        ? '<button class="btn primario" id="btnSeguir">Continuar la misión →</button>'
-        : `<button class="btn primario" id="btnSeguir">Siguiente nivel: ${NIVELES[juego.nivel + 1].nombre} →</button>`}
-      <button class="btn secundario" id="btnRepetir">Jugar este nivel otra vez</button>
+        ? `<button class="btn primario" id="btnSeguir">${L('Continuar la misión →', 'Continue the mission →')}</button>`
+        : `<button class="btn primario" id="btnSeguir">${L('Siguiente nivel', 'Next level')}: ${NIVELES[juego.nivel + 1].nombre} →</button>`}
+      <button class="btn secundario" id="btnRepetir">${L('Jugar este nivel otra vez', 'Play this level again')}</button>
     </div>`;
   $('capaResultado').classList.add('visible');
   $('btnSeguir').onclick = () => {
@@ -889,7 +891,7 @@ function mostrarExito() {
     if (ultimo) {
       // Punto de integración con el resto del videojuego
       window.dispatchEvent(new CustomEvent('mision1:completada', { detail: { ayudasUsadas: juego.ayudasUsadas } }));
-      decir('🏆 ¡Misión 1 completada! Siguiente parada: construir el puesto lunar.');
+      decir(L('🏆 ¡Misión 1 completada! Siguiente parada: construir el puesto lunar.', '🏆 Mission 1 complete! Next stop: building the lunar outpost.'));
       juego.estado = 'fin';
       // Continue the flow: the next screen is the arrival at the lunar base
       setTimeout(() => { location.href = '../llegadaBase/index.html'; }, 2200);
@@ -907,17 +909,17 @@ function mostrarFallo() {
   // Aprendizaje adaptativo: más ayudas tras varios fallos seguidos
   let avisoAyuda = '';
   const c = config();
-  if (juego.fallosSeguidos === 2 && !c.fantasma) { juego.ayudaExtra = 1; avisoAyuda = '🛟 Control de Misión activó la <b>Luna fantasma</b> para ayudarte.'; }
-  else if (juego.fallosSeguidos === 4 && !c.zona) { juego.ayudaExtra = Math.max(juego.ayudaExtra, 2); avisoAyuda = '🛟 Control de Misión activó la <b>zona de despegue</b>.'; }
-  else if (juego.fallosSeguidos === 6) { juego.ayudaExtra = 3; avisoAyuda = '🛟 Activamos la <b>cámara lenta</b> para que encuentres el momento justo.'; }
+  if (juego.fallosSeguidos === 2 && !c.fantasma) { juego.ayudaExtra = 1; avisoAyuda = L('🛟 Control de Misión activó la <b>Luna fantasma</b> para ayudarte.', '🛟 Mission Control turned on the <b>ghost Moon</b> to help you.'); }
+  else if (juego.fallosSeguidos === 4 && !c.zona) { juego.ayudaExtra = Math.max(juego.ayudaExtra, 2); avisoAyuda = L('🛟 Control de Misión activó la <b>zona de despegue</b>.', '🛟 Mission Control turned on the <b>launch zone</b>.'); }
+  else if (juego.fallosSeguidos === 6) { juego.ayudaExtra = 3; avisoAyuda = L('🛟 Activamos la <b>cámara lenta</b> para que encuentres el momento justo.', '🛟 We turned on <b>slow motion</b> so you can find the right moment.'); }
   if (avisoAyuda) juego.ayudasUsadas++;
 
   $('tarjetaResultado').innerHTML = `
     <div class="grande">🚀💨</div>
-    <h2>¡El cohete pasó de largo!</h2>
-    <p>La Luna estaba muy lejos. Asegúrate de despegar cuando la Luna esté en la posición correcta.</p>
+    <h2>${L('¡El cohete pasó de largo!', 'The rocket flew right past!')}</h2>
+    <p>${L('La Luna estaba muy lejos. Asegúrate de despegar cuando la Luna esté en la posición correcta.', 'The Moon was too far away. Make sure you launch when the Moon is in the right position.')}</p>
     ${avisoAyuda ? `<div class="dato">${avisoAyuda}</div>` : ''}
-    <div class="botones"><button class="btn primario" id="btnOtraVez">🔁 Intentar de nuevo</button></div>`;
+    <div class="botones"><button class="btn primario" id="btnOtraVez">${L('🔁 Intentar de nuevo', '🔁 Try again')}</button></div>`;
   $('capaResultado').classList.add('visible');
   $('btnOtraVez').onclick = () => {
     $('capaResultado').classList.remove('visible');

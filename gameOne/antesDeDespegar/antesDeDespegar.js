@@ -9,6 +9,14 @@
    --------------------------------------------------------------- */
 const VOICE_FILES = [ /* 'audio/intro_0.mp3', 'audio/intro_1.mp3', ... */ ];
 
+const L=window.EqLang?window.EqLang.L:(es)=>es;
+const EN_LINES = [
+  'You’re ready to go to the Moon and complete your mission!',
+  'But watch out! Before liftoff, there’s something you need to know:',
+  'the Moon never stands still, it’s always going around the Earth.',
+  'Also, a rocket takes about three days to get from the Earth to the Moon, and in that time the Moon keeps moving.',
+  'That’s why astronauts don’t aim the rocket at where the Moon is... but at where it will be when the rocket arrives.'
+];
 const LINES = [
   '¡Estás listo para ir a la Luna y cumplir tu misión!',
   'Pero, ¡cuidado! Antes de despegar, hay algo que debes saber:',
@@ -16,6 +24,7 @@ const LINES = [
   'Además, un cohete tarda unos tres días en llegar de la Tierra a la Luna, y en ese tiempo la Luna sigue avanzando.',
   'Por eso, los astronautas no apuntan el cohete a donde está la Luna... sino a donde va a estar cuando el cohete llegue.'
 ];
+if(window.EqLang && EqLang.get()==='en') LINES.splice(0, LINES.length, ...EN_LINES);
 
 const stage=document.getElementById('stage'), cv=document.getElementById('c'), ctx=cv.getContext('2d');
 const W=1280,H=720; let dpr=1;
@@ -52,7 +61,7 @@ function drawEarth(){
   const sh=ctx.createLinearGradient(EX-ER*.2,0,EX+ER,0); sh.addColorStop(0,'rgba(5,8,30,0)'); sh.addColorStop(1,'rgba(5,8,30,.75)');
   ctx.fillStyle=sh; ctx.fillRect(EX-ER,EY-ER,ER*2,ER*2);
   ctx.restore();
-  ctx.font='800 17px Nunito, sans-serif'; ctx.fillStyle='rgba(232,233,242,.85)'; ctx.textAlign='center'; ctx.fillText('Tierra',EX,EY+ER+30);
+  ctx.font='800 17px Nunito, sans-serif'; ctx.fillStyle='rgba(232,233,242,.85)'; ctx.textAlign='center'; ctx.fillText(L('Tierra','Earth'),EX,EY+ER+30);
 }
 function moonPos(a){ return {x:EX+Math.cos(a)*ORX, y:EY+Math.sin(a)*ORY, s:1+Math.sin(a)*.18}; } // más grande cuando pasa por delante
 function drawMoon(x,y,r,alpha=1,ghost=false){
@@ -98,19 +107,20 @@ function render(){
   if(showFuture>0 && Math.sin(fa)>=0) drawMoon(f.x,f.y,34*f.s,showFuture,true);
   if(!behind) drawMoon(m.x,m.y,34*m.s);
   if(showFuture>0){ drawArrowAlongOrbit(ang+.18,fa-.2,P.pink,showFuture*.8);
-    label('Aquí está',m.x,m.y-34*m.s-26,P.aqua,showFuture); label('Aquí va a estar',f.x,f.y+34*f.s+26,P.pink,showFuture); }
-  else label('Luna',m.x,m.y-34*m.s-26,P.white,.9);
+    label(L('Aquí está','It’s here'),m.x,m.y-34*m.s-26,P.aqua,showFuture); label(L('Aquí va a estar','It will be here'),f.x,f.y+34*f.s+26,P.pink,showFuture); }
+  else label(L('Luna','Moon'),m.x,m.y-34*m.s-26,P.white,.9);
   // nota de escala
   ctx.font='700 13px Nunito, sans-serif'; ctx.fillStyle='rgba(232,233,242,.45)'; ctx.textAlign='right'; ctx.textBaseline='alphabetic';
-  ctx.fillText('Dibujo sin escala · La Luna tarda unos 27 días en dar una vuelta a la Tierra (NASA)',W-24,H-20);
+  ctx.fillText(L('Dibujo sin escala · La Luna tarda unos 27 días en dar una vuelta a la Tierra (NASA)','Not to scale · The Moon takes about 27 days to go around the Earth (NASA)'),W-24,H-20);
 }
 
 /* ------------- Narración ------------- */
 let started=false, idx=-1, voice=null, tok=0, safety=null, curAudio=null, wantFuture=false;
 function pickVoice(){
   if(!('speechSynthesis' in window)) return;
-  const vs=speechSynthesis.getVoices().filter(v=>/^es/i.test(v.lang)); if(!vs.length) return;
-  const sc=v=>(/es[-_](MX|US|CO|419)/i.test(v.lang)?3:0)+(/female|mujer|paulina|sabina|helena|m[oó]nica|laura|dalia|luc[ií]a|google/i.test(v.name)?2:0);
+  const EN=window.EqLang&&EqLang.get()==='en';
+  const vs=speechSynthesis.getVoices().filter(v=>(EN?/^en/i:/^es/i).test(v.lang)); if(!vs.length) return;
+  const sc=v=>((EN?/en[-_]US/i:/es[-_](MX|US|CO|419)/i).test(v.lang)?3:0)+(/female|mujer|paulina|sabina|helena|m[oó]nica|laura|dalia|luc[ií]a|google/i.test(v.name)?2:0);
   voice=vs.sort((a,b)=>sc(b)-sc(a))[0];
 }
 if('speechSynthesis' in window){ pickVoice(); speechSynthesis.addEventListener('voiceschanged',pickVoice); }
@@ -129,7 +139,7 @@ function speakLine(i){
   if(VOICE_FILES[i]){ curAudio=new Audio(VOICE_FILES[i]); curAudio.onplaying=()=>{heard=true;}; curAudio.onended=next; curAudio.onerror=next;
     curAudio.play().catch(e=>{ if(e&&e.name==='NotAllowedError') markBlocked(); }); return; }
   if(!('speechSynthesis' in window)) return;
-  const u=new SpeechSynthesisUtterance(LINES[i]); if(voice){u.voice=voice;u.lang=voice.lang;} else u.lang='es-MX';
+  const u=new SpeechSynthesisUtterance(LINES[i]); if(voice){u.voice=voice;u.lang=voice.lang;} else u.lang=window.EqLang?EqLang.speechLang():'es-MX';
   u.rate=.93; u.pitch=1.05;
   u.onstart=()=>{ heard=true; };
   u.onend=()=>{ if(heard) next(); };

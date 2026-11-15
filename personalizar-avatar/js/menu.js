@@ -1,6 +1,7 @@
 /* Menú del taller de trajes: arma el avatar y lo guarda para el resto del juego. */
 (function () {
   const A = window.EqAvatar;
+  const L = window.EqLang ? window.EqLang.L : (es) => es;
   const $ = (id) => document.getElementById(id);
   let cfg = A.cargar() || A.sugerido();
 
@@ -34,20 +35,24 @@
     if (window.EqAvatarFisicas) window.EqAvatarFisicas.saltar(cfg.acento);
   }
 
-  const MENSAJES = {
+  const MENSAJES = L({
     traje: { clasico: 'El traje Clásico: resistente y probado en campo.', ligero: 'El traje Ágil: ideal para moverse rápido.', blindado: 'El Blindado aguanta cualquier impacto.', piloto: 'El traje Piloto, perfecto para la cabina.' },
     gesto: { alegre: 'Esa sonrisa levanta la moral de toda la tripulación.', serio: 'Concentración total. Así se hacen las misiones.', decidido: 'Esa mirada dice: objetivo cumplido.', rabioso: 'Energía al máximo. Nada nos detiene.' },
     cabello: '¡Perfecto para el casco, Astronauta!', acento: '¡Ese color te identifica en toda la base!', insignias: '¡Insignia asignada!'
-  };
+  }, {
+    traje: { clasico: 'The Classic suit: tough and field-tested.', ligero: 'The Agile suit: great for moving fast.', blindado: 'The Armored suit can take any hit.', piloto: 'The Pilot suit, perfect for the cockpit.' },
+    gesto: { alegre: 'That smile lifts the whole crew’s spirits.', serio: 'Total focus. That’s how missions get done.', decidido: 'That look says: mission accomplished.', rabioso: 'Energy at max. Nothing stops us.' },
+    cabello: 'Perfect for the helmet, Astronaut!', acento: 'That color identifies you all over the base!', insignias: 'Badge assigned!'
+  });
 
   /* ---------- Vista previa ---------- */
   function pintar(animar) {
     const v = $('vista');
-    v.innerHTML = A.svg(cfg, { clase: 'grande', etiqueta: 'Vista previa de tu astronauta' });
+    v.innerHTML = A.svg(cfg, { clase: 'grande', etiqueta: L('Vista previa de tu astronauta', 'Preview of your astronaut') });
     if (animar) { v.classList.remove('pop'); void v.offsetWidth; v.classList.add('pop'); }
     document.documentElement.style.setProperty('--acento', cfg.acento);
     $('bCasco').setAttribute('aria-pressed', String(cfg.casco));
-    $('contador').textContent = `${cfg.insignias.length} de ${A.MAX_INSIGNIAS}`;
+    $('contador').textContent = L(`${cfg.insignias.length} de ${A.MAX_INSIGNIAS}`, `${cfg.insignias.length} of ${A.MAX_INSIGNIAS}`);
     actualizarBotones();
     refrescarMiniaturas();
   }
@@ -120,8 +125,8 @@
       const i = cfg.insignias.indexOf(valor);
       if (i >= 0) cfg.insignias = cfg.insignias.filter((x) => x !== valor);
       else if (cfg.insignias.length < A.MAX_INSIGNIAS) cfg.insignias = cfg.insignias.concat(valor);
-      else { decir(`Ya tienes ${A.MAX_INSIGNIAS} insignias. Toca una de las tuyas para quitarla.`); return; }
-      decir(i >= 0 ? 'Insignia guardada en el cajón.' : MENSAJES.insignias);
+      else { decir(L(`Ya tienes ${A.MAX_INSIGNIAS} insignias. Toca una de las tuyas para quitarla.`, `You already have ${A.MAX_INSIGNIAS} badges. Tap one of yours to remove it.`)); return; }
+      decir(i >= 0 ? L('Insignia guardada en el cajón.', 'Badge put back in the drawer.') : MENSAJES.insignias);
     } else {
       cfg[grupo] = valor;
       const m = MENSAJES[grupo];
@@ -173,12 +178,12 @@
     const ins = O.insignias.map((o) => o.id).sort(() => Math.random() - 0.5).slice(0, 1 + Math.floor(Math.random() * 3));
     cfg = Object.assign({}, cfg, { traje: azar(O.traje), acento: azar(O.acento), insignias: ins,
       gesto: azar(O.gesto), genero: azar(O.genero), piel: azar(O.piel), cabello: azar(O.cabello), colorCabello: azar(O.colorCabello) });
-    decir('¡Sorpresa! ¿Qué tal este astronauta?');
+    decir(L('¡Sorpresa! ¿Qué tal este astronauta?', 'Surprise! How about this astronaut?'));
     reproducirCambio();
     pintar(false);
     triggerSalto();
   };
-  $('bCasco').onclick = () => { cfg.casco = !cfg.casco; decir(cfg.casco ? 'Casco puesto: listo para salir.' : 'Sin casco, solo dentro de la base.'); reproducirCambio(); pintar(false); triggerSalto(); };
+  $('bCasco').onclick = () => { cfg.casco = !cfg.casco; decir(cfg.casco ? L('Casco puesto: listo para salir.', 'Helmet on: ready to go out.') : L('Sin casco, solo dentro de la base.', 'No helmet, only inside the base.')); reproducirCambio(); pintar(false); triggerSalto(); };
 
   // "¡Listo, a la misión!": guarda el avatar y pasa a la cinemática del despegue desde la Tierra
   const CINEMATICA = '../despegue-tierra/index.html';
@@ -186,7 +191,7 @@
   $('bGuardar').onclick = () => {
     const ok = A.guardar(cfg);
     const aviso = $('aviso');
-    aviso.textContent = ok ? '✅ ¡Avatar guardado! Te acompañará en todo el juego.' : 'No se pudo guardar en este navegador, pero puedes seguir jugando.';
+    aviso.textContent = ok ? L('✅ ¡Avatar guardado! Te acompañará en todo el juego.', '✅ Avatar saved! It will be with you for the whole game.') : L('No se pudo guardar en este navegador, pero puedes seguir jugando.', 'It couldn’t be saved in this browser, but you can keep playing.');
     aviso.classList.add('on');
     $('bGuardar').disabled = true;   // evita dobles clics mientras se muestra el aviso
     clearTimeout(tAviso);
@@ -197,7 +202,7 @@
   $('placaNombre').textContent = A.nombre().toUpperCase();
   try {
     const p = JSON.parse(localStorage.getItem('equilibria:perfil'));
-    if (p && p.especialidad) $('notaColor').textContent = `Sugerencia: el color de tu especialidad, ${p.especialidad.nombre}.`;
+    if (p && p.especialidad) $('notaColor').textContent = L(`Sugerencia: el color de tu especialidad, ${p.especialidad.nombre}.`, `Tip: the color of your specialty, ${p.especialidad.nombre}.`);
   } catch (e) {}
 
   construir();

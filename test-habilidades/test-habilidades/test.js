@@ -1,5 +1,6 @@
 (() => {
 const $ = (id) => document.getElementById(id);
+const L = window.EqLang ? window.EqLang.L : (es) => es;
 const PREGUNTAS = window.EQ_PREGUNTAS;
 const ESP = window.EQ_ESPECIALIDADES;
 const REACCIONES = window.EQ_REACCIONES;
@@ -73,11 +74,11 @@ if (previo && previo.nombre) $('nombre').value = previo.nombre;
 
 $('bEmpezar').onclick = () => {
   iniciarAmbiente();
-  nombre = $('nombre').value.trim() || 'Astronauta';
+  nombre = $('nombre').value.trim() || L('Astronauta', 'Astronaut');
   indice = 0; respuestas = [];
   window.EqPersonajes.silueta.montar($('silueta'));
   $('porcentaje').textContent = '0';
-  $('pistaSilueta').textContent = 'Cada respuesta revela una parte de tu personaje.';
+  $('pistaSilueta').textContent = L('Cada respuesta revela una parte de tu personaje.', 'Each answer reveals part of your character.');
   mostrar('pPregunta');
   pintarPregunta();
 };
@@ -92,7 +93,7 @@ function pintarProgreso() {
 function pintarPregunta() {
   const p = PREGUNTAS[indice];
   pintarProgreso();
-  $('numPrueba').textContent = `PRUEBA ${p.n} DE ${PREGUNTAS.length}`;
+  $('numPrueba').textContent = L(`PRUEBA ${p.n} DE ${PREGUNTAS.length}`, `TEST ${p.n} OF ${PREGUNTAS.length}`);
   $('tituloPrueba').textContent = p.titulo;
   proyectar(p);
   const cont = $('opciones');
@@ -138,8 +139,10 @@ function proyectar(p) {
 }
 
 /* El personaje secreto se llena 10 % por respuesta. */
-const PISTAS = { 1: 'Algo empieza a brillar...', 3: '¡Ya se ven sus botas!', 5: '¡Vas por la mitad!',
-  7: 'Ya casi se ve quién es...', 9: '¡Falta solo una respuesta!', 10: '¡Listo para la gran revelación!' };
+const PISTAS = L({ 1: 'Algo empieza a brillar...', 3: '¡Ya se ven sus botas!', 5: '¡Vas por la mitad!',
+  7: 'Ya casi se ve quién es...', 9: '¡Falta solo una respuesta!', 10: '¡Listo para la gran revelación!' },
+  { 1: 'Something is starting to glow...', 3: 'You can see its boots!', 5: 'You’re halfway there!',
+  7: 'You can almost see who it is...', 9: 'Just one answer left!', 10: 'Ready for the big reveal!' });
 function llenarSilueta() {
   const n = respuestas.length;
   window.EqPersonajes.silueta.fijar(n / PREGUNTAS.length);
@@ -173,9 +176,9 @@ function responder(i, boton) {
   $('opciones').querySelectorAll('button').forEach((b) => { b.disabled = true; });
 
   const ultima = indice === PREGUNTAS.length - 1;
-  const texto = ultima ? '¡Listo! Ya tengo tu expediente completo.' : reaccionAlAzar();
+  const texto = ultima ? L('¡Listo! Ya tengo tu expediente completo.', 'Done! Your file is complete.') : reaccionAlAzar();
   const r = $('reaccion');
-  r.innerHTML = '<span class="quien">Comandante Ríos</span><span class="txt"></span>';
+  r.innerHTML = `<span class="quien">${L('Comandante Ríos', 'Commander Ríos')}</span><span class="txt"></span>`;
   r.querySelector('.txt').textContent = texto;
   r.classList.add('on');
   decir(texto);
@@ -217,8 +220,8 @@ function mostrarEmpate(letras) {
     b.onclick = () => finalizar(l);
     cont.appendChild(b);
   });
-  const cuantos = letras.length === 2 ? 'dos' : 'tres';
-  const frase = `¡Tienes ${cuantos} súper habilidades! ¿Con cuál quieres empezar?`;
+  const cuantos = letras.length === 2 ? L('dos', 'two') : L('tres', 'three');
+  const frase = L(`¡Tienes ${cuantos} súper habilidades! ¿Con cuál quieres empezar?`, `You have ${cuantos} superpowers! Which one do you want to start with?`);
   $('tEmpate').textContent = frase;
   mostrar('pEmpate');
   decir(frase);
@@ -243,23 +246,23 @@ function finalizar(eleccionEmpate) {
   }
 
   // La gran revelación: tocar rápido para despejar el vapor.
-  $('kickerResultado').textContent = 'LA GRAN REVELACIÓN';
-  $('tResultado').textContent = '¡Toca la nube muchas veces y muy rápido!';
+  $('kickerResultado').textContent = L('LA GRAN REVELACIÓN', 'THE BIG REVEAL');
+  $('tResultado').textContent = L('¡Toca la nube muchas veces y muy rápido!', 'Tap the cloud lots of times, really fast!');
   $('tResultado').style.color = '';
   $('infoResultado').hidden = true;
   mostrar('pResultado');
-  decir('¡Toca la nube muchas veces y muy rápido!');
+  decir(L('¡Toca la nube muchas veces y muy rápido!', 'Tap the cloud lots of times, really fast!'));
   window.EqPersonajes.revelacion.iniciar({
     zona: $('zonaRevela'), avatar: $('avatarFinal'), vapor: $('vapor'), chispas: $('chispasToque'),
     medidor: $('medidorRevela'), saltar: $('bSaltarRevela'), especialidad: e.id,
     onDespejeInicia: sonarEfectoFinal,
     onRevelado: () => {
-      $('kickerResultado').textContent = 'TU PERSONAJE FINAL';
-      $('tResultado').textContent = `${perfil.nombre}, ¡eres ${e.nombre}!`;
+      $('kickerResultado').textContent = L('TU PERSONAJE FINAL', 'YOUR FINAL CHARACTER');
+      $('tResultado').textContent = L(`${perfil.nombre}, ¡eres ${e.nombre}!`, `${perfil.nombre}, you’re the ${e.nombre}!`);
       $('tResultado').style.color = e.color;
       $('bSaltarRevela').hidden = true;
       $('infoResultado').hidden = false;
-      decir(`¡Eres ${e.nombre}! ${e.lema}`);
+      decir(L(`¡Eres ${e.nombre}! ${e.lema}`, `You’re the ${e.nombre}! ${e.lema}`));
     }
   });
   window.dispatchEvent(new CustomEvent('perfil:listo', { detail: perfil }));
