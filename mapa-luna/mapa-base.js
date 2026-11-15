@@ -34,6 +34,8 @@ const ST=[
   {id:'blindaje', nom:'Blindaje contra radiación', icon:'🛡', col:P.pink, x:935,y:572, c:{x:800,y:560}, desc:'Protege a la tripulación cuando el Sol lanza radiación.'},
   {id:'comunica', nom:'Comunicaciones',       icon:'📡', col:P.violet, x:860,y:355, c:{x:760,y:380}, desc:'Envía y recibe mensajes de la Tierra… aunque tarden en llegar.'},
 ];
+// Pantalla a la que lleva "Entrar" en cada estación (las que aún no tienen misión solo emiten el evento)
+const MISSION_SCREENS={ soporte:'../mision1-soportevital/index.html' };
 const PAD={x:150,y:420}, PADC={x:380,y:460};   // pista del cohete (Misión 1, ya hecha)
 const MARS={x:1120,y:118,r:50};
 const done={}; ST.forEach(s=>done[s.id]=false);
@@ -343,7 +345,8 @@ function showTip(h){
     tN.textContent=h.nom; tD.textContent=h.desc;
     tE.textContent=done[h.id]?'⭐ Completada':'● Disponible'; tE.style.color=done[h.id]?P.amber:col;
     tG.style.display=''; tG.textContent=done[h.id]?'Jugar otra vez ▶':'Entrar ▶';
-    tG.onclick=()=>{ dispatchEvent(new CustomEvent('mapa:entrar',{detail:{id:h.id}})); try{ if(parent!==window) parent.postMessage({type:'mapa-entrar',id:h.id},'*'); }catch(e){} };
+    tG.onclick=()=>{ dispatchEvent(new CustomEvent('mapa:entrar',{detail:{id:h.id}})); try{ if(parent!==window) parent.postMessage({type:'mapa-entrar',id:h.id},'*'); }catch(e){}
+      if(MISSION_SCREENS[h.id]) location.href=MISSION_SCREENS[h.id]; };
   }
   tip.classList.toggle('abajo',abajo);
   tip.style.borderColor=col; tip.style.left=(x*sc)+'px'; tip.style.top=((abajo?y:Math.max(140,y))*sc)+'px'; tip.classList.add('on');
