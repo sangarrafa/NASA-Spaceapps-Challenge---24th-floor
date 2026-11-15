@@ -105,9 +105,11 @@ main { max-width: 1120px; margin: 0 auto; padding: 18px 16px 50px; }
 .paso { counter-increment: paso; position: relative; background: var(--fondo-2); border: 2px solid var(--borde); border-radius: var(--radio); padding: 20px 16px 16px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
 .paso::before { content: counter(paso); position: absolute; top: -14px; left: 50%; transform: translateX(-50%); width: 30px; height: 30px; border-radius: 50%; background: var(--acento); color: #3a2400; font-weight: 900; display: grid; place-items: center; }
 .paso-icono { font-size: 2.2rem; }
-.selector-demo { margin-top: 26px; color: var(--texto-suave); font-size: .9rem; }
-.selector-demo summary { cursor: pointer; }
-.selector-demo .fila { justify-content: center; }
+/* Nivel inicial al lado de ¡Empezar! */
+.fila-inicio { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px 22px; margin-top: 14px; }
+.fila-inicio .btn-grande { margin-top: 0; }
+.selector-nivel { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; color: var(--texto-suave); font-size: .9rem; }
+.selector-titulo { font-weight: 800; }
 
 /* ---------- Barra de misión (LUNIA + reloj) ---------- */
 .barra-mision { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; margin-bottom: 10px; }
@@ -302,7 +304,6 @@ main { max-width: 1120px; margin: 0 auto; padding: 18px 16px 50px; }
 .persona { background: rgba(25,34,79,.92); }
 .paso { background: rgba(18,26,66,.92); }
 .paso-ilustracion { width: 100%; max-width: 200px; height: auto; display: block; }
-.selector-demo summary { opacity: .75; }
 
 /* Botón que llama la atención */
 .btn.llamativo { animation: llamar 1.1s ease-in-out infinite; }
@@ -364,3 +365,34 @@ main { max-width: 1120px; margin: 0 auto; padding: 18px 16px 50px; }
 
 .muestra:focus { outline: none; }
 .muestra:focus-visible .brillo { stroke: #fff; }
+
+/* ---------- Todo en una pantalla, sin bajar (computador) ----------
+   Va al final para ganarle a las reglas de arriba. */
+@media (min-width: 900px) {
+  main { padding-bottom: 14px; }
+  /* Juego: la escena deja espacio para el HUD, el mensaje de LUNIA y los márgenes */
+  .escena-marco { max-width: calc((100vh - 215px) * 1000 / 580); }
+  /* Inicio: pasos un poco más compactos */
+  .encargo { gap: 12px; }
+
+  /* Repaso final en dos columnas: resumen arriba, días a la izquierda, pregunta a la derecha */
+  #pantalla-repaso.activa { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 12px 16px; align-items: start; }
+  #pantalla-repaso > .tarjeta { margin: 0; padding: 14px 18px; }
+  #pantalla-repaso > .tarjeta.centrada { grid-column: 1 / -1; max-width: none; display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 16px; text-align: left; }
+  #pantalla-repaso > .tarjeta.centrada .icono-grande { grid-row: span 2; font-size: 2.6rem; margin: 0; }
+  #pantalla-repaso > .tarjeta.centrada h2 { margin: 0; }
+  #pantalla-repaso > .tarjeta.centrada p { margin: 4px 0 0; }
+  /* Fuentes (cerrado) a la izquierda y botones a la derecha, en la misma fila */
+  #pantalla-repaso > details.adaptacion { grid-column: 1; align-self: center; }
+  #pantalla-repaso > .fila { grid-column: 2; align-self: center; flex-wrap: nowrap; }
+  #pantalla-repaso > details.adaptacion[open] { grid-column: 1 / -1; grid-row: 4; }
+  #pantalla-repaso .subtitulo { margin: 0 0 10px; }
+  #pantalla-repaso .btn-grande { margin-top: 0; padding: 10px 22px; font-size: 1.05rem; white-space: nowrap; }
+  .tus-dias { gap: 10px; }
+  .dia-card { padding: 10px; gap: 5px; }
+  .dia-card .estrellas-dia { font-size: 1.4rem; }
+  .dia-card svg { width: 48px; height: 48px; }
+  .dia-card span { font-size: .9rem; }
+  #pantalla-repaso .pregunta { margin: 0 0 10px; }
+  #pantalla-repaso .opcion { padding: 9px 14px; }
+}
