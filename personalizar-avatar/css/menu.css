@@ -5,6 +5,9 @@
 .encabezado{display:flex;flex-direction:column;align-items:center;gap:8px}
 .taller-grid{display:grid;grid-template-columns:minmax(280px,5fr) 7fr;gap:26px;width:100%;align-items:start;text-align:left}
 
+/* Las pantallas ocultas no ocupan espacio (display:flex anulaba el atributo hidden) */
+.pantalla[hidden]{display:none}
+
 /* ---------- Vitrina con la vista previa ---------- */
 .vitrina{position:sticky;top:16px;display:flex;flex-direction:column;align-items:center;gap:14px;
   border-right:1px solid rgba(111,227,232,.2);padding-right:22px}
@@ -24,7 +27,8 @@
 .fila-botones{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .fila-botones .tog{font-size:16px;padding:8px 16px}
 #bCasco[aria-pressed="false"]{opacity:.6}
-.vitrina .comandante .burbuja{font-size:17px;min-height:64px}
+.menu .comandante{margin-top:4px}
+.menu .comandante .burbuja{font-size:17px;min-height:64px}
 
 /* ---------- Salto del astronauta ---------- */
 @keyframes salto-av-frame {
@@ -101,6 +105,24 @@
 #bGuardar{margin-top:6px}
 .aviso{font-weight:900;font-size:18px;color:var(--amber);min-height:24px;opacity:0;transition:opacity .3s}
 .aviso.on{opacity:1}
+
+/* Escritorio: todo cabe en una pantalla; el astronauta se ajusta al alto disponible */
+@media (min-width:901px){
+  body{padding-block:12px}
+  .taller{padding:18px 28px 20px;gap:14px;max-height:calc(100vh - 24px)}
+  .taller-grid{flex:1;min-height:0;grid-template-rows:minmax(0,1fr)}
+  .menu{min-height:0;gap:12px}
+  .escenario{width:auto;max-width:100%;height:min(calc(100vh - 330px),532px)}
+  /* Panel compacto; si la pantalla es muy baja, solo el panel se desplaza */
+  .panel{min-height:0;overflow:auto;padding:14px 16px;gap:8px}
+  .panel h3{font-size:16px;margin-top:0}
+  .eleccion{padding:6px}
+  .chips .eleccion{padding:8px}
+  .muestra{width:30px;height:30px}
+  .tarjetas[data-vista="cabeza"] .mini{max-width:60px}
+  .traje-pantalla{padding:18px 28px 20px;gap:14px}
+  .traje-fila .mini{width:auto;max-width:100%;height:min(calc(100vh - 460px),300px)}
+}
 
 @media (max-width:900px){
   .taller-grid{grid-template-columns:1fr}
