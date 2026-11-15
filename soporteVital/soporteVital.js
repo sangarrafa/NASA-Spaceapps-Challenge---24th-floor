@@ -18,6 +18,8 @@
    ========================================================== */
 (() => {
   "use strict";
+  const EN = !!(window.EqLang && window.EqLang.get() === "en");
+  const L = (es, en) => (EN ? en : es);
 
   // ---------------------------------------------------------
   // 1. CONFIGURACIÓN
@@ -26,9 +28,9 @@
   const DIAS = 3;
 
   const NIVELES = {
-    1: { nombre: "Explorador", tanques: ["o2", "agua"], maquinas: ["gen", "rec"], energiaMax: 1, velocidad: 0.8, pistas: true, voz: true },
-    2: { nombre: "Ingeniero", tanques: ["o2", "agua", "co2"], maquinas: ["gen", "rec", "limp"], energiaMax: 2, velocidad: 1.0, pistas: true, voz: false },
-    3: { nombre: "Comandante", tanques: ["o2", "agua", "co2"], maquinas: ["gen", "rec", "limp"], energiaMax: 2, velocidad: 1.2, pistas: false, voz: false }
+    1: { nombre: L("Explorador", "Explorer"), tanques: ["o2", "agua"], maquinas: ["gen", "rec"], energiaMax: 1, velocidad: 0.8, pistas: true, voz: true },
+    2: { nombre: L("Ingeniero", "Engineer"), tanques: ["o2", "agua", "co2"], maquinas: ["gen", "rec", "limp"], energiaMax: 2, velocidad: 1.0, pistas: true, voz: false },
+    3: { nombre: L("Comandante", "Commander"), tanques: ["o2", "agua", "co2"], maquinas: ["gen", "rec", "limp"], energiaMax: 2, velocidad: 1.2, pistas: false, voz: false }
   };
 
   // Consumo de la tripulación (unidades de tanque por segundo).
@@ -39,8 +41,8 @@
   };
 
   const TANQUES = {
-    o2:   { nombre: "oxígeno", malo: "bajo" },
-    agua: { nombre: "agua", malo: "bajo" },
+    o2:   { nombre: L("oxígeno", "oxygen"), malo: "bajo" },
+    agua: { nombre: L("agua", "water"), malo: "bajo" },
     co2:  { nombre: "CO₂", malo: "alto" }
   };
 
@@ -53,69 +55,69 @@
 
   const EVENTOS = {
     filtro: {
-      aviso: "⚠️ El filtro de aire se llenó. Por un rato, el limpiador funciona a medias.",
-      lunia: "Vigila el CO₂. Mientras cambian el filtro, sube más rápido.",
+      aviso: L("⚠️ El filtro de aire se llenó. Por un rato, el limpiador funciona a medias.", "⚠️ The air filter is full. For a while, the air cleaner only works halfway."),
+      lunia: L("Vigila el CO₂. Mientras cambian el filtro, sube más rápido.", "Watch the CO₂. While they change the filter, it rises faster."),
       duracion: 15, requiere: "limp", factor: { limp: 0.4 }
     },
     mantenimiento: {
-      aviso: "🔧 El reciclador está en reparación. Por un rato, recupera menos agua.",
-      lunia: "El agua va a bajar más rápido. Usa el generador solo cuando haga falta.",
+      aviso: L("🔧 El reciclador está en reparación. Por un rato, recupera menos agua.", "🔧 The recycler is being repaired. For a while, it recovers less water."),
+      lunia: L("El agua va a bajar más rápido. Usa el generador solo cuando haga falta.", "The water will drop faster. Only use the generator when you need it."),
       duracion: 15, requiere: "rec", factor: { rec: 0.4 }
     },
     pocaLuz: {
-      aviso: "🌑 Llega poca luz a los paneles solares. Las máquinas van más lento.",
-      lunia: "Sin luz hay menos electricidad. Las máquinas tardan más en llenar los tanques.",
+      aviso: L("🌑 Llega poca luz a los paneles solares. Las máquinas van más lento.", "🌑 Little light is reaching the solar panels. The machines run slower."),
+      lunia: L("Sin luz hay menos electricidad. Las máquinas tardan más en llenar los tanques.", "Without light there’s less electricity. The machines take longer to fill the tanks."),
       duracion: 12, factor: { gen: 0.6, rec: 0.6, limp: 0.6 }
     },
     fuga: {
-      aviso: "💨 Hubo una pequeña fuga de aire. Ya está arreglada, pero se perdió oxígeno.",
-      lunia: "Se perdió oxígeno. Hay que fabricar más.",
+      aviso: L("💨 Hubo una pequeña fuga de aire. Ya está arreglada, pero se perdió oxígeno.", "💨 There was a small air leak. It’s fixed now, but some oxygen was lost."),
+      lunia: L("Se perdió oxígeno. Hay que fabricar más.", "Oxygen was lost. We need to make more."),
       duracion: 0, instantaneo: { o2: -12 }
     }
   };
 
   // Datos reales con fuente (verificados en los documentos originales).
   const FICHAS = [
-    { tipo: "real", icono: "⚗️", titulo: "El oxígeno se hace con agua",
-      texto: "Una máquina usa electricidad para separar el agua. Así sale el oxígeno. Por eso el generador gasta agua.",
+    { tipo: "real", icono: "⚗️", titulo: L("El oxígeno se hace con agua", "Oxygen is made from water"),
+      texto: L("Una máquina usa electricidad para separar el agua. Así sale el oxígeno. Por eso el generador gasta agua.", "A machine uses electricity to split water. That’s how oxygen comes out. That’s why the generator uses up water."),
       fuente: "NASA Marshall Space Flight Center. Environmental Control and Life Support System (ECLSS).",
       url: "https://www.nasa.gov/wp-content/uploads/2025/08/g-657270-59-hp-environmental-control-and-life-support-system-eclss.pdf" },
-    { tipo: "real", icono: "🫧", titulo: "Oxígeno para un día",
-      texto: "Cada astronauta respira unos 0,84 kg de oxígeno al día.",
+    { tipo: "real", icono: "🫧", titulo: L("Oxígeno para un día", "Oxygen for one day"),
+      texto: L("Cada astronauta respira unos 0,84 kg de oxígeno al día.", "Each astronaut breathes about 0.84 kg of oxygen a day."),
       fuente: "Jones, H. W. y Kliss, M. H. Developing an Advanced Life Support System for the Flexible Path into Deep Space. NASA Ames / AIAA (c. 2010). Valor confirmado en NASA ICES 2025 (0,85 kg).",
       url: "https://ntrs.nasa.gov/api/citations/20100036823/downloads/20100036823.pdf" },
-    { tipo: "real", icono: "♻️", titulo: "Casi toda el agua se recicla",
-      texto: "Se recuperan 98 de cada 100 partes de agua. También la del sudor y la orina.",
+    { tipo: "real", icono: "♻️", titulo: L("Casi toda el agua se recicla", "Almost all the water is recycled"),
+      texto: L("Se recuperan 98 de cada 100 partes de agua. También la del sudor y la orina.", "98 out of every 100 parts of water are recovered. Even from sweat and urine."),
       fuente: "NASA (2023). NASA Achieves Water Recovery Milestone on International Space Station.",
       url: "https://www.nasa.gov/missions/station/iss-research/nasa-achieves-water-recovery-milestone-on-international-space-station" },
-    { tipo: "real", icono: "💧", titulo: "Agua para un día",
-      texto: "Cada astronauta usa unos 3 litros de agua al día. Unos 2 litros son para beber.",
+    { tipo: "real", icono: "💧", titulo: L("Agua para un día", "Water for one day"),
+      texto: L("Cada astronauta usa unos 3 litros de agua al día. Unos 2 litros son para beber.", "Each astronaut uses about 3 liters of water a day. About 2 liters are for drinking."),
       fuente: "NASA Marshall Space Flight Center, ECLSS; y Jones y Kliss (NASA Ames).",
       url: "https://www.nasa.gov/wp-content/uploads/2025/08/g-657270-59-hp-environmental-control-and-life-support-system-eclss.pdf" },
-    { tipo: "real", icono: "🏃", titulo: "El esfuerzo gasta oxígeno",
-      texto: "Con ejercicio se respira unas 11 veces más oxígeno que durmiendo.",
+    { tipo: "real", icono: "🏃", titulo: L("El esfuerzo gasta oxígeno", "Effort uses oxygen"),
+      texto: L("Con ejercicio se respira unas 11 veces más oxígeno que durmiendo.", "During exercise you breathe about 11 times more oxygen than when sleeping."),
       fuente: "NASA (2017). TFAWS Life Support Short Course, sección de J. Perry (NASA Marshall): 0,24 frente a 0,022 kg por hora.",
       url: "https://ntrs.nasa.gov/api/citations/20180002051/downloads/20180002051.pdf" },
-    { tipo: "real", icono: "🌀", titulo: "Del CO₂ sale un poco de agua",
-      texto: "Una máquina quita el CO₂ del aire y lo mezcla con hidrógeno. De esa mezcla sale agua.",
+    { tipo: "real", icono: "🌀", titulo: L("Del CO₂ sale un poco de agua", "A little water comes from CO₂"),
+      texto: L("Una máquina quita el CO₂ del aire y lo mezcla con hidrógeno. De esa mezcla sale agua.", "A machine removes CO₂ from the air and mixes it with hydrogen. Water comes out of that mix."),
       fuente: "NASA Marshall Space Flight Center. ECLSS (reactor Sabatier).",
       url: "https://www.nasa.gov/wp-content/uploads/2025/08/g-657270-59-hp-environmental-control-and-life-support-system-eclss.pdf" },
-    { tipo: "real", icono: "🌫️", titulo: "Demasiado CO₂ hace daño",
-      texto: "En la Estación Espacial, cuando sube el CO₂, los astronautas reportan dolor de cabeza y cansancio.",
+    { tipo: "real", icono: "🌫️", titulo: L("Demasiado CO₂ hace daño", "Too much CO₂ is harmful"),
+      texto: L("En la Estación Espacial, cuando sube el CO₂, los astronautas reportan dolor de cabeza y cansancio.", "On the Space Station, when CO₂ rises, astronauts report headaches and tiredness."),
       fuente: "Law, J. y Alexander, D. (2016). CO2 on the International Space Station: An Operations Update. NASA Johnson Space Center; y Law, J. et al. (2014), J Occup Environ Med, 56(5), 477-483.",
       url: "https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20150019624.pdf" },
-    { tipo: "simple", icono: "🎮", titulo: "Lo que ajustamos para jugar",
-      texto: "Un día dura 60 segundos. La energía alcanza para 1 o 2 máquinas. La velocidad de los tanques, los eventos, la reserva de emergencia y el esfuerzo (2,5 veces más oxígeno) están ajustados para poder jugar.",
-      fuente: "Decisiones de diseño del equipo Misión Equilibria.", url: "" }
+    { tipo: "simple", icono: "🎮", titulo: L("Lo que ajustamos para jugar", "What we adjusted for the game"),
+      texto: L("Un día dura 60 segundos. La energía alcanza para 1 o 2 máquinas. La velocidad de los tanques, los eventos, la reserva de emergencia y el esfuerzo (2,5 veces más oxígeno) están ajustados para poder jugar.", "A day lasts 60 seconds. There’s enough energy for 1 or 2 machines. Tank speed, events, the emergency reserve and effort (2.5 times more oxygen) are adjusted so the game is playable."),
+      fuente: L("Decisiones de diseño del equipo Misión Equilibria.", "Design decisions by the Equilibria Mission team."), url: "" }
   ];
 
   const REFLEXION = [
-    { texto: "Porque el oxígeno se fabrica separando el agua con electricidad.", correcta: true,
-      respuesta: "¡Correcto! La electricidad separa el agua en hidrógeno y oxígeno. Fabricar aire gasta agua y energía." },
-    { texto: "Porque los astronautas toman más agua cuando respiran.", correcta: false,
-      respuesta: "No es eso. Respirar no gasta el agua del tanque. Mira el tubo que va del agua al generador." },
-    { texto: "Porque la máquina se calienta y el agua se evapora.", correcta: false,
-      respuesta: "No es eso. El agua no se pierde por calor. La máquina la separa en hidrógeno y oxígeno." }
+    { texto: L("Porque el oxígeno se fabrica separando el agua con electricidad.", "Because oxygen is made by splitting water with electricity."), correcta: true,
+      respuesta: L("¡Correcto! La electricidad separa el agua en hidrógeno y oxígeno. Fabricar aire gasta agua y energía.", "Correct! Electricity splits water into hydrogen and oxygen. Making air uses water and energy.") },
+    { texto: L("Porque los astronautas toman más agua cuando respiran.", "Because astronauts drink more water when they breathe."), correcta: false,
+      respuesta: L("No es eso. Respirar no gasta el agua del tanque. Mira el tubo que va del agua al generador.", "That’s not it. Breathing doesn’t use the tank’s water. Look at the pipe that goes from the water to the generator.") },
+    { texto: L("Porque la máquina se calienta y el agua se evapora.", "Because the machine heats up and the water evaporates."), correcta: false,
+      respuesta: L("No es eso. El agua no se pierde por calor. La máquina la separa en hidrógeno y oxígeno.", "That’s not it. The water isn’t lost to heat. The machine splits it into hydrogen and oxygen.") }
   ];
 
   // ---------------------------------------------------------
@@ -156,6 +158,12 @@
     fallo() { this.tono(300, 0.2, "sine", 0.07); this.tono(220, 0.3, "sine", 0.07, 0.18); }
   };
 
+  function elegirVoz() {
+    const voces = window.speechSynthesis.getVoices();
+    if (EN) return voces.find((x) => /^en[-_]US/i.test(x.lang)) || voces.find((x) => /^en/i.test(x.lang));
+    return voces.find((x) => /^es[-_](MX|CO|US|419)/i.test(x.lang)) || voces.find((x) => /^es/i.test(x.lang));
+  }
+
   const Voz = {
     activa: false,
     hablar(texto) {
@@ -163,9 +171,8 @@
       try {
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(texto.replace(/[^\p{L}\p{N}\s.,;:¿?¡!%()+-]/gu, " "));
-        u.lang = "es-ES"; u.rate = 0.95;
-        const voces = window.speechSynthesis.getVoices();
-        const v = voces.find((x) => /^es[-_](MX|CO|US|419)/i.test(x.lang)) || voces.find((x) => /^es/i.test(x.lang));
+        u.lang = L("es-ES", "en-US"); u.rate = 0.95;
+        const v = elegirVoz();
         if (v) u.voice = v;
         window.speechSynthesis.speak(u);
       } catch (e) { /* sin voz */ }
@@ -182,9 +189,8 @@
         window.speechSynthesis.cancel();
         frases.forEach((f, i) => {
           const u = new SpeechSynthesisUtterance(f);
-          u.lang = "es-ES"; u.rate = 0.95;
-          const voces = window.speechSynthesis.getVoices();
-          const v = voces.find((x) => /^es[-_](MX|CO|US|419)/i.test(x.lang)) || voces.find((x) => /^es/i.test(x.lang));
+          u.lang = L("es-ES", "en-US"); u.rate = 0.95;
+          const v = elegirVoz();
           if (v) u.voice = v;
           u.onstart = () => alEmpezar(i);
           window.speechSynthesis.speak(u);
@@ -299,7 +305,7 @@
     if (TANQUES[clave].malo === "bajo") return v < 20 ? "peligro" : v < 40 ? "atencion" : "bien";
     return v > 80 ? "peligro" : v > 60 ? "atencion" : "bien";
   }
-  const TEXTO_ESTADO = { bien: "✔ Bien", atencion: "! Atención", peligro: "✖ Peligro" };
+  const TEXTO_ESTADO = L({ bien: "✔ Bien", atencion: "! Atención", peligro: "✖ Peligro" }, { bien: "✔ OK", atencion: "! Careful", peligro: "✖ Danger" });
 
   // ---------------------------------------------------------
   // 5. ESCENA (estrellas, tripulación, batería)
@@ -413,7 +419,7 @@
       el.classList.toggle("calentando", calentando);
       el.classList.toggle("debil", factorEvento(clave) < 1);
       el.setAttribute("aria-pressed", String(m.on));
-      el.querySelector(".mq-estado").textContent = demo ? "Encendida" : !m.on ? "Apagada" : calentando ? "Arrancando" : "Encendida";
+      el.querySelector(".mq-estado").textContent = demo ? L("Encendida", "On") : !m.on ? L("Apagada", "Off") : calentando ? L("Arrancando", "Starting") : L("Encendida", "On");
       el.querySelector(".mq-anillo").style.strokeDashoffset = String(169.6 * (1 - m.potencia));
       MAQUINAS[clave].tubos.forEach((id) => $(id).classList.toggle("activo", demo || (m.on && m.potencia > 0.3)));
       $("cable-" + clave).classList.toggle("activo", m.on);
@@ -448,12 +454,12 @@
       d.classList.toggle("actual", S.modo !== "fin" && i === hechos && S.dia === i + 1);
     });
     const diaMostrado = S.dia ? Math.min(Math.max(S.dia, hechos), DIAS) : 0;
-    $("progreso-texto").textContent = diaMostrado ? `Día ${diaMostrado} de ${DIAS}` : "Práctica";
+    $("progreso-texto").textContent = diaMostrado ? L(`Día ${diaMostrado} de ${DIAS}`, `Day ${diaMostrado} of ${DIAS}`) : L("Práctica", "Practice");
     $("puntos").textContent = Math.floor(S.ciencia);
     const total = S.estrellasDias.reduce((a, b) => a + b, 0);
     const media = hechos ? Math.round(total / hechos) : 0;
     $("estrellas").textContent = "★".repeat(media) + "☆".repeat(3 - media);
-    $("estrellas").title = `${total} de ${DIAS * 3} estrellas`;
+    $("estrellas").title = L(`${total} de ${DIAS * 3} estrellas`, `${total} of ${DIAS * 3} stars`);
   }
 
   // ---------------------------------------------------------
@@ -474,8 +480,8 @@
         const bat = $("bateria");
         bat.classList.remove("bateria-sacudir"); void bat.getBBox(); bat.classList.add("bateria-sacudir");
         lunia(energiaMax() === 1
-          ? "No hay energía para dos máquinas. Primero apaga la otra."
-          : "La energía solo alcanza para dos máquinas. Primero apaga una.");
+          ? L("No hay energía para dos máquinas. Primero apaga la otra.", "There’s not enough energy for two machines. Turn the other one off first.")
+          : L("La energía solo alcanza para dos máquinas. Primero apaga una.", "There’s only enough energy for two machines. Turn one off first."));
         return;
       }
       m.on = true;   // arranca desde la potencia que le quede (se enfría poco a poco)
@@ -546,9 +552,9 @@
         S.ciencia += 40;
         Sonido.exito();
         terminarSalidaEspecial();
-        lunia("¡Trajeron la roca especial! Ganaste 40 puntos de ciencia.");
+        lunia(L("¡Trajeron la roca especial! Ganaste 40 puntos de ciencia.", "They brought back the special rock! You earned 40 science points."));
       } else {
-        lunia("Todo volvió a la normalidad.");
+        lunia(L("Todo volvió a la normalidad.", "Everything is back to normal."));
       }
       $("aviso-evento").hidden = true;
       return false;
@@ -559,9 +565,9 @@
 
   function consejo(tq) {
     return {
-      o2: "Enciende el generador de oxígeno.",
-      agua: "Enciende el reciclador de agua.",
-      co2: "Enciende el limpiador de aire."
+      o2: L("Enciende el generador de oxígeno.", "Turn on the oxygen generator."),
+      agua: L("Enciende el reciclador de agua.", "Turn on the water recycler."),
+      co2: L("Enciende el limpiador de aire.", "Turn on the air cleaner.")
     }[tq];
   }
 
@@ -574,10 +580,10 @@
       const nombre = TANQUES[tq].nombre;
       if (peligro && !S.avisos[tq + "-p"]) {
         S.avisos[tq + "-p"] = true;
-        lunia(`¡Peligro! El ${nombre} está muy ${bajo ? "bajo" : "alto"}. ${consejo(tq)}`, { sonar: true });
+        lunia(L(`¡Peligro! El ${nombre} está muy ${bajo ? "bajo" : "alto"}. ${consejo(tq)}`, `Danger! The ${nombre} is very ${bajo ? "low" : "high"}. ${consejo(tq)}`), { sonar: true });
       } else if (temprano && S.pistas && !S.avisos[tq + "-t"] && !S.avisos[tq + "-p"]) {
         S.avisos[tq + "-t"] = true;
-        lunia(`El ${nombre} está ${bajo ? "bajando" : "subiendo"}. ${consejo(tq)} Hazlo ya: la máquina tarda en arrancar.`);
+        lunia(L(`El ${nombre} está ${bajo ? "bajando" : "subiendo"}. ${consejo(tq)} Hazlo ya: la máquina tarda en arrancar.`, `The ${nombre} is ${bajo ? "dropping" : "rising"}. ${consejo(tq)} Do it now: the machine takes a while to start.`));
       }
       const recuperado = bajo ? v > 60 : v < 40;
       if (recuperado) { S.avisos[tq + "-t"] = false; S.avisos[tq + "-p"] = false; }
@@ -649,7 +655,7 @@
     const mx = x !== null ? x : 140 + Math.random() * 780;
     const my = 124 + Math.random() * 22;
     const pos = svg("g", { transform: `translate(${mx.toFixed(0)},${my.toFixed(0)})` }, $("exterior"));
-    const g = svg("g", { class: "muestra" + (especial ? " especial" : ""), role: "button", tabindex: "0", "aria-label": especial ? "Roca especial" : "Muestra de roca" }, pos);
+    const g = svg("g", { class: "muestra" + (especial ? " especial" : ""), role: "button", tabindex: "0", "aria-label": especial ? L("Roca especial", "Special rock") : L("Muestra de roca", "Rock sample") }, pos);
     const esc = especial ? 1.5 : 1;
     svg("circle", { r: 15 * esc, class: "brillo" }, g);
     svg("path", { d: "M-12 6 L-8 -6 L2 -10 L11 -3 L12 7 L0 10 Z", class: "roca", transform: `scale(${esc})` }, g);
@@ -693,11 +699,11 @@
     if (S.modo !== "dia" || !S.muestras.includes(m) || m.reservada) return;
     if (!todoEnVerde()) {
       Sonido.error();
-      lunia("La tripulación solo puede salir si todos los tanques están bien. Primero arregla los tanques.");
+      lunia(L("La tripulación solo puede salir si todos los tanques están bien. Primero arregla los tanques.", "The crew can only go out if all the tanks are OK. Fix the tanks first."));
       return;
     }
     if (S.salidaEnCurso) {
-      lunia("Espera: ya hay un astronauta afuera.");
+      lunia(L("Espera: ya hay un astronauta afuera.", "Wait: there’s already an astronaut outside."));
       return;
     }
     S.salidaEnCurso = true;
@@ -706,7 +712,7 @@
     const dentro = document.querySelectorAll(".astronauta")[3];
     if (dentro) dentro.classList.add("ausente");
     Sonido.encender();
-    lunia("¡Un astronauta sale a buscar la muestra!");
+    lunia(L("¡Un astronauta sale a buscar la muestra!", "An astronaut is going out to get the sample!"));
     const ast = crearAstronautaFuera(ESCLUSA.x, ESCLUSA.y);
     caminar(ast, m.x - 14, () => {
       S.ciencia += 5;
@@ -736,7 +742,7 @@
       S.proximaMuestra = S.t + 8 + Math.random() * 6;
       if (!S.pistaMuestra) {
         S.pistaMuestra = true;
-        lunia("Mira por la ventana: hay una roca. Tócala y un astronauta saldrá a buscarla. Solo pueden salir si todos los tanques están bien.");
+        lunia(L("Mira por la ventana: hay una roca. Tócala y un astronauta saldrá a buscarla. Solo pueden salir si todos los tanques están bien.", "Look out the window: there’s a rock. Tap it and an astronaut will go out to get it. They can only go out if all the tanks are OK."));
       }
     }
     S.muestras.slice().forEach((m) => { if (S.t >= m.fin && !m.reservada) quitarMuestra(m); });
@@ -746,7 +752,7 @@
   function aparecerRocaEspecial() {
     S.rocaEspecial = crearMuestra({ especial: true, x: 560 });
     Sonido.alerta();
-    lunia("¡Mira por la ventana! Apareció una roca especial.");
+    lunia(L("¡Mira por la ventana! Apareció una roca especial.", "Look out the window! A special rock appeared."));
   }
 
   function salidaEspecial() {
@@ -815,7 +821,7 @@
     S.modoPrevio = "dia";
     S.modo = "pausa";
     $("modal-dilema").hidden = false;
-    Voz.hablar("Por la ventana se ve una roca especial. ¿Salimos a buscarla? Ganas cuarenta puntos de ciencia. Pero con esfuerzo se respira más, y el oxígeno bajará rápido durante quince segundos.");
+    Voz.hablar(L("Por la ventana se ve una roca especial. ¿Salimos a buscarla? Ganas cuarenta puntos de ciencia. Pero con esfuerzo se respira más, y el oxígeno bajará rápido durante quince segundos.", "There’s a special rock out the window. Shall we go get it? You earn forty science points. But with effort you breathe more, and the oxygen will drop fast for fifteen seconds."));
     $("btn-dilema-si").focus();
   }
 
@@ -826,12 +832,12 @@
     if (acepta) {
       S.efectos.push({ tipo: "esfuerzo", fin: S.t + 15 });
       salidaEspecial();
-      $("aviso-evento").textContent = "🔬 Dos astronautas están afuera trabajando con mucho esfuerzo. El oxígeno baja más rápido durante 15 segundos.";
+      $("aviso-evento").textContent = L("🔬 Dos astronautas están afuera trabajando con mucho esfuerzo. El oxígeno baja más rápido durante 15 segundos.", "🔬 Two astronauts are outside working very hard. The oxygen drops faster for 15 seconds.");
       $("aviso-evento").hidden = false;
-      lunia("Mantén el generador encendido. Ahora se gasta mucho más oxígeno.");
+      lunia(L("Mantén el generador encendido. Ahora se gasta mucho más oxígeno.", "Keep the generator on. A lot more oxygen is being used now."));
     } else {
       if (S.rocaEspecial) { quitarMuestra(S.rocaEspecial); S.rocaEspecial = null; }
-      lunia("Hoy no saldremos. La tripulación sigue segura.");
+      lunia(L("Hoy no saldremos. La tripulación sigue segura.", "We won’t go out today. The crew stays safe."));
     }
     S.modo = "dia";
     ultimoCuadro = performance.now();
@@ -840,7 +846,7 @@
   // ---------------------------------------------------------
   // 11. GUÍA PASO A PASO
   // ---------------------------------------------------------
-  function enfocar(idObjetivo, texto, { boton = true, textoBoton = "Siguiente", hablar = true } = {}) {
+  function enfocar(idObjetivo, texto, { boton = true, textoBoton = L("Siguiente", "Next"), hablar = true } = {}) {
     const guia = $("guia");
     guia.hidden = false;
     $("guia-texto").textContent = texto;
@@ -897,7 +903,7 @@
       if (i >= pasos.length) { cerrarGuia(); if (alTerminar) alTerminar(); return; }
       const p = pasos[i++];
       S.guia = { objetivo: p.objetivo, congela: !!p.congela, bloquea: !!p.bloquea, alAccionar: null, alActualizar: null, alSalir: p.alSalir || null, avanzar: siguiente };
-      enfocar(p.objetivo, p.texto, { boton: !p.espera, textoBoton: p.textoBoton || "Siguiente", hablar: !p.vozPropia });
+      enfocar(p.objetivo, p.texto, { boton: !p.espera, textoBoton: p.textoBoton || L("Siguiente", "Next"), hablar: !p.vozPropia });
       if (p.alIniciar) p.alIniciar(S.guia);
       if (p.espera) p.espera(S.guia, siguiente);
     };
@@ -914,8 +920,8 @@
     S.demoGuardado = { ...S.tanques };
     const g = $("demo-flujo");
     g.innerHTML = "";
-    const eAgua = svg("text", { x: 220, y: 196, class: "etiqueta-demo" }, g); eAgua.textContent = "agua";
-    const eO2 = svg("text", { x: 460, y: 196, class: "etiqueta-demo" }, g); eO2.textContent = "oxígeno";
+    const eAgua = svg("text", { x: 220, y: 196, class: "etiqueta-demo" }, g); eAgua.textContent = L("agua", "water");
+    const eO2 = svg("text", { x: 460, y: 196, class: "etiqueta-demo" }, g); eO2.textContent = L("oxígeno", "oxygen");
     const tramo = (puntos, clase, r) => {
       const c = svg("circle", { r, class: clase, cx: puntos[0][0], cy: puntos[0][1] }, g);
       const largo = puntos.length - 1;
@@ -948,16 +954,17 @@
   // Paso de la guía con la tripulación: preocupada y luego sonriente, al ritmo de la voz.
   const pasoTripulacion = (textoBoton) => ({
     objetivo: "tripulacion", congela: true, vozPropia: true, textoBoton,
-    texto: "Mira a la tripulación. Si los tanques están mal, se preocupan. Si todo está bien, sonríen.",
+    texto: L("Mira a la tripulación. Si los tanques están mal, se preocupan. Si todo está bien, sonríen.", "Look at the crew. If the tanks are bad, they worry. If everything is OK, they smile."),
     alIniciar: () => {
       S.caraForzada = "peligro";
-      Voz.secuencia(["Mira a la tripulación. Si los tanques están mal, se preocupan.", "Si todo está bien, sonríen."],
+      Voz.secuencia(L(["Mira a la tripulación. Si los tanques están mal, se preocupan.", "Si todo está bien, sonríen."], ["Look at the crew. If the tanks are bad, they worry.", "If everything is OK, they smile."]),
         (i) => { if (S.caraForzada) S.caraForzada = i === 0 ? "peligro" : "bien"; });
     },
     alSalir: () => { S.caraForzada = null; }
   });
 
-  const TEXTO_CO2 = "Nuevo tanque: el CO₂. Es el gas que sale cuando respiramos. Si se acumula mucho, da dolor de cabeza y cansancio. Por eso este tanque no debe llenarse.";
+  const TEXTO_CO2 = L("Nuevo tanque: el CO₂. Es el gas que sale cuando respiramos. Si se acumula mucho, da dolor de cabeza y cansancio. Por eso este tanque no debe llenarse.", "New tank: CO₂. It’s the gas that comes out when we breathe. If too much builds up, it causes headaches and tiredness. That’s why this tank must not fill up.");
+  const TEXTO_CO2_INICIO = [L("Nuevo tanque: el CO₂. ", "New tank: CO₂. "), L("Este es el CO₂. ", "This is CO₂. ")];
 
   // ---------------------------------------------------------
   // 12. FLUJO DE LA MISIÓN
@@ -967,7 +974,7 @@
     nuevaPartida();
     activarVozPorNivel();
     S.modo = "practica";
-    $("titulo-dia").textContent = "Práctica";
+    $("titulo-dia").textContent = L("Práctica", "Practice");
     $("reloj-relleno").style.width = "0%";
     $("reloj-sol").style.left = "0%";
     $("btn-continuar-practica").hidden = true;
@@ -976,25 +983,25 @@
     Object.values(S.maquinas).forEach((m) => { m.on = false; m.potencia = 0; });
     mostrarPantalla("pantalla-juego");
     configurarEscena();
-    lunia("Hola, soy LUNIA, la inteligencia artificial de la base. Vamos a practicar.");
+    lunia(L("Hola, soy LUNIA, la inteligencia artificial de la base. Vamos a practicar.", "Hi, I’m LUNIA, the base’s artificial intelligence. Let’s practice."));
 
     setTimeout(() => ejecutarGuia([
-      { objetivo: "tq-o2", congela: true, texto: "Este tanque guarda el oxígeno. La tripulación lo respira todo el tiempo. Ahora está bajo." },
-      { objetivo: "mq-gen", bloquea: true, texto: "Toca el generador para fabricar oxígeno. También puedes pulsar la tecla 1.",
+      { objetivo: "tq-o2", congela: true, texto: L("Este tanque guarda el oxígeno. La tripulación lo respira todo el tiempo. Ahora está bajo.", "This tank stores the oxygen. The crew breathes it all the time. Right now it’s low.") },
+      { objetivo: "mq-gen", bloquea: true, texto: L("Toca el generador para fabricar oxígeno. También puedes pulsar la tecla 1.", "Tap the generator to make oxygen. You can also press the 1 key."),
         espera: (g, sig) => { g.alAccionar = (clave) => { if (clave === "gen" && S.maquinas.gen.on) sig(); }; } },
-      { objetivo: "mq-gen", texto: "Mira el anillo: la máquina tarda unos segundos en arrancar. Cuando se llena, ya funciona.",
+      { objetivo: "mq-gen", texto: L("Mira el anillo: la máquina tarda unos segundos en arrancar. Cuando se llena, ya funciona.", "Look at the ring: the machine takes a few seconds to start. When it fills up, it’s working."),
         espera: (g, sig) => { avanzarCuandoListo(g, sig, 3500); g.alActualizar = () => { if (S.maquinas.gen.potencia >= 1) g.marcarListo(); }; } },
-      { objetivo: "tq-o2", texto: "Ahora el oxígeno sube. Llénalo hasta el 60 %.",
+      { objetivo: "tq-o2", texto: L("Ahora el oxígeno sube. Llénalo hasta el 60 %.", "Now the oxygen is rising. Fill it up to 60%."),
         espera: (g, sig) => { avanzarCuandoListo(g, sig, 1500); g.alActualizar = () => { if (S.tanques.o2 >= 60) g.marcarListo(); }; } }
     ], () => {
       S.practicaLista = true;
       Sonido.exito();
-      lunia("¡Muy bien! Ya sabes encender una máquina.");
+      lunia(L("¡Muy bien! Ya sabes encender una máquina.", "Very good! Now you know how to turn on a machine."));
       const btn = $("btn-continuar-practica");
       btn.hidden = false;
       btn.scrollIntoView({ behavior: "smooth", block: "center" });
       S.guia = { objetivo: "btn-continuar-practica", congela: false, bloquea: true, avanzar: null };
-      setTimeout(() => { if (S.guia && S.guia.objetivo === "btn-continuar-practica") enfocar("btn-continuar-practica", "¡Comencemos con el día 1! Toca el botón que brilla.", { boton: false }); }, 450);
+      setTimeout(() => { if (S.guia && S.guia.objetivo === "btn-continuar-practica") enfocar("btn-continuar-practica", L("¡Comencemos con el día 1! Toca el botón que brilla.", "Let’s start day 1! Tap the glowing button."), { boton: false }); }, 450);
     }), 400);
   }
 
@@ -1021,7 +1028,7 @@
     S.cienciaInicioDia = S.ciencia;
 
     planearDia();
-    $("titulo-dia").textContent = `Día ${numero}`;
+    $("titulo-dia").textContent = L(`Día ${numero}`, `Day ${numero}`);
     $("aviso-evento").hidden = true;
     $("btn-continuar-practica").hidden = true;
     $("reloj-relleno").style.width = "0%";
@@ -1033,23 +1040,23 @@
     const conCO2 = NIVELES[S.nivel].tanques.includes("co2");
     if (guiar) {
       const pasos = [
-        { objetivo: "tq-agua", congela: true, texto: "Ahora también cuidas el agua. La tripulación la usa para beber, cocinar y asearse." },
-        { objetivo: "zona-agua-o2", congela: true, texto: "Mira este tubo: el generador usa agua para fabricar oxígeno. Si fabricas mucho oxígeno, se gasta el agua.",
+        { objetivo: "tq-agua", congela: true, texto: L("Ahora también cuidas el agua. La tripulación la usa para beber, cocinar y asearse.", "Now you also look after the water. The crew uses it to drink, cook and wash.") },
+        { objetivo: "zona-agua-o2", congela: true, texto: L("Mira este tubo: el generador usa agua para fabricar oxígeno. Si fabricas mucho oxígeno, se gasta el agua.", "Look at this pipe: the generator uses water to make oxygen. If you make a lot of oxygen, the water runs out."),
           alIniciar: iniciarDemoFlujo, alSalir: detenerDemoFlujo },
-        { objetivo: "mq-rec", congela: true, texto: "El reciclador limpia el agua usada para volver a usarla." },
+        { objetivo: "mq-rec", congela: true, texto: L("El reciclador limpia el agua usada para volver a usarla.", "The recycler cleans used water so it can be used again.") },
         { objetivo: "bateria", congela: true, texto: conCO2
-          ? "La energía alcanza para dos máquinas a la vez. Tendrás que elegir cuáles encender."
-          : "La energía alcanza para una sola máquina. Ve turnando el generador y el reciclador." }
+          ? L("La energía alcanza para dos máquinas a la vez. Tendrás que elegir cuáles encender.", "There’s enough energy for two machines at once. You’ll have to choose which ones to turn on.")
+          : L("La energía alcanza para una sola máquina. Ve turnando el generador y el reciclador.", "There’s only enough energy for one machine. Take turns between the generator and the recycler.") }
       ];
       if (conCO2) pasos.splice(3, 0,
-        { objetivo: "tq-co2", congela: true, texto: TEXTO_CO2.replace("Nuevo tanque: el CO₂. ", "Este es el CO₂. ") },
-        { objetivo: "mq-limp", congela: true, texto: "El limpiador quita el CO₂ del aire." });
-      pasos.push({ objetivo: "ventana", congela: true, texto: "Por esta ventana se ve el exterior de la base. A veces aparecen rocas. Si todos los tanques están bien, la tripulación puede salir a buscarlas." });
-      pasos.push(pasoTripulacion("¡Empezar!"));
-      ejecutarGuia(pasos, () => { ultimoCuadro = performance.now(); lunia("¡Empieza el día 1! Mantén todos los tanques en verde."); });
+        { objetivo: "tq-co2", congela: true, texto: TEXTO_CO2.replace(TEXTO_CO2_INICIO[0], TEXTO_CO2_INICIO[1]) },
+        { objetivo: "mq-limp", congela: true, texto: L("El limpiador quita el CO₂ del aire.", "The air cleaner removes CO₂ from the air.") });
+      pasos.push({ objetivo: "ventana", congela: true, texto: L("Por esta ventana se ve el exterior de la base. A veces aparecen rocas. Si todos los tanques están bien, la tripulación puede salir a buscarlas.", "Through this window you can see outside the base. Sometimes rocks appear. If all the tanks are OK, the crew can go out to get them.") });
+      pasos.push(pasoTripulacion(L("¡Empezar!", "Start!")));
+      ejecutarGuia(pasos, () => { ultimoCuadro = performance.now(); lunia(L("¡Empieza el día 1! Mantén todos los tanques en verde.", "Day 1 begins! Keep all the tanks green.")); });
     } else {
-      lunia(numero === 1 ? "¡Empieza el día 1! Mantén todos los tanques en verde."
-        : `Día ${numero}. Los tanques siguen como quedaron ayer.`);
+      lunia(numero === 1 ? L("¡Empieza el día 1! Mantén todos los tanques en verde.", "Day 1 begins! Keep all the tanks green.")
+        : L(`Día ${numero}. Los tanques siguen como quedaron ayer.`, `Day ${numero}. The tanks are just as they were yesterday.`));
     }
     pintar();
   }
@@ -1059,17 +1066,17 @@
     S.intentos++;
     Sonido.fallo();
     limpiarMuestras();
-    S.registroAdaptacion.push({ dia: S.dia, nota: `Se agotó el ${TANQUES[tq].nombre}. Se repite el día con más ayuda.` });
+    S.registroAdaptacion.push({ dia: S.dia, nota: L(`Se agotó el ${TANQUES[tq].nombre}. Se repite el día con más ayuda.`, `The ${TANQUES[tq].nombre} ran out. The day is repeated with more help.`) });
     const bajo = TANQUES[tq].malo === "bajo";
     const nombre = TANQUES[tq].nombre;
     const inicio = S.historialIntento.find((m) => typeof m[tq] === "number" && (bajo ? m[tq] < 40 : m[tq] > 60));
     $("ahorro-texto").textContent = bajo
-      ? `Se acabó el ${nombre}. Activé el modo ahorro: la tripulación está a salvo.`
-      : `El ${nombre} llenó su tanque. Activé el modo ahorro: la tripulación está a salvo.`;
+      ? L(`Se acabó el ${nombre}. Activé el modo ahorro: la tripulación está a salvo.`, `The ${nombre} ran out. I turned on saving mode: the crew is safe.`)
+      : L(`El ${nombre} llenó su tanque. Activé el modo ahorro: la tripulación está a salvo.`, `The ${nombre} filled its tank. I turned on saving mode: the crew is safe.`);
     $("ahorro-cuando").textContent = inicio && inicio.t <= 1
-      ? `El día empezó con poco ${nombre}. Lo que pasa un día se nota al día siguiente.`
-      : inicio ? `El problema empezó en el segundo ${inicio.t} del día.` : "";
-    $("ahorro-consejo").textContent = `${consejo(tq)} Hazlo antes de que el tanque se ponga amarillo, porque la máquina tarda en arrancar.`;
+      ? L(`El día empezó con poco ${nombre}. Lo que pasa un día se nota al día siguiente.`, `The day started with little ${nombre}. What happens one day shows up the next.`)
+      : inicio ? L(`El problema empezó en el segundo ${inicio.t} del día.`, `The problem started at second ${inicio.t} of the day.`) : "";
+    $("ahorro-consejo").textContent = L(`${consejo(tq)} Hazlo antes de que el tanque se ponga amarillo, porque la máquina tarda en arrancar.`, `${consejo(tq)} Do it before the tank turns yellow, because the machine takes a while to start.`);
     Voz.hablar($("ahorro-texto").textContent + " " + $("ahorro-consejo").textContent);
     S.velocidad = Math.max(0.7, S.velocidad * 0.9);
     S.pistas = true;
@@ -1083,7 +1090,7 @@
     S.tanques = { o2: Math.max(S.inicioDia.o2, 50), agua: Math.max(S.inicioDia.agua, 50), co2: Math.min(S.inicioDia.co2, 50) };
     S.reintentando = true;
     iniciarDia(S.dia);
-    lunia("Usé la reserva de emergencia de la base. ¡Inténtalo otra vez!");
+    lunia(L("Usé la reserva de emergencia de la base. ¡Inténtalo otra vez!", "I used the base’s emergency reserve. Try again!"));
   }
 
   const calcularEstrellas = (verde) => 1 + (verde >= 0.6 ? 1 : 0) + (verde >= 0.85 ? 1 : 0);
@@ -1100,19 +1107,19 @@
     const rea = S.metricas.reacciona - S.metricasDia.reacciona;
     const decision = adaptar(verde, ant, rea);
 
-    $("fin-dia-titulo").textContent = `¡Día ${S.dia} completado!`;
+    $("fin-dia-titulo").textContent = L(`¡Día ${S.dia} completado!`, `Day ${S.dia} complete!`);
     $("fin-dia-estrellas").innerHTML = [0, 1, 2].map((i) =>
       `<span class="estrella-pop" style="animation-delay:${0.2 + i * 0.25}s">${i < estrellas ? "★" : "☆"}</span>`).join("");
     $("fin-verde").textContent = Math.round(verde * 100) + "%";
     $("fin-muestras").textContent = S.muestrasDia;
     $("fin-ciencia").textContent = Math.floor(S.ciencia);
     $("fin-dia-texto").textContent = decision.mensaje;
-    $("btn-siguiente-dia").textContent = S.dia < DIAS ? `Ir al día ${S.dia + 1}` : "Ver cómo te fue";
+    $("btn-siguiente-dia").textContent = S.dia < DIAS ? L(`Ir al día ${S.dia + 1}`, `Go to day ${S.dia + 1}`) : L("Ver cómo te fue", "See how you did");
     pintarHud();
     mostrarPantalla("pantalla-fin-dia");
     Sonido.exito();
     confeti();
-    Voz.hablar(`Día ${S.dia} completado. Ganaste ${estrellas} estrellas. ${decision.mensaje}`);
+    Voz.hablar(L(`Día ${S.dia} completado. Ganaste ${estrellas} estrellas. ${decision.mensaje}`, `Day ${S.dia} complete. You earned ${estrellas} stars. ${decision.mensaje}`));
   }
 
   // Aprendizaje adaptativo: ajusta el día siguiente según cómo jugó este.
@@ -1121,31 +1128,31 @@
     const ratio = total ? anticipa / total : 0.5;
     let mensaje, nota;
     if (S.dia >= DIAS) {
-      nota = "Último día: sin ajuste.";
-      mensaje = "¡Terminaste los tres días!";
+      nota = L("Último día: sin ajuste.", "Last day: no adjustment.");
+      mensaje = L("¡Terminaste los tres días!", "You finished all three days!");
     } else if (ratio >= 0.6 && verde >= 0.7) {
       if (S.nivel === 1) {
         S.nivel = 2;
         S.tanques.co2 = 30;
         S.necesitaGuiaCO2 = true;
-        nota = "Anticipa y mantiene el equilibrio → sube a 3 tanques y 2 máquinas (nivel Ingeniero).";
-        mensaje = "Lo hiciste muy bien. Mañana también vas a cuidar el CO₂.";
+        nota = L("Anticipa y mantiene el equilibrio → sube a 3 tanques y 2 máquinas (nivel Ingeniero).", "Anticipates and keeps the balance → moves up to 3 tanks and 2 machines (Engineer level).");
+        mensaje = L("Lo hiciste muy bien. Mañana también vas a cuidar el CO₂.", "You did really well. Tomorrow you’ll also look after the CO₂.");
       } else {
         S.velocidad = Math.min(1.5, S.velocidad * 1.15);
         S.pistas = false;
-        nota = "Anticipa y mantiene el equilibrio → más velocidad y sin avisos tempranos.";
-        mensaje = "Lo hiciste muy bien. Mañana todo irá un poco más rápido y te avisaré menos.";
+        nota = L("Anticipa y mantiene el equilibrio → más velocidad y sin avisos tempranos.", "Anticipates and keeps the balance → faster pace and no early warnings.");
+        mensaje = L("Lo hiciste muy bien. Mañana todo irá un poco más rápido y te avisaré menos.", "You did really well. Tomorrow everything will go a bit faster and I’ll warn you less.");
       }
     } else if (ratio < 0.4 || verde < 0.5) {
       S.velocidad = Math.max(0.7, S.velocidad * 0.85);
       S.pistas = true;
-      nota = "Reacciona tarde o pasa poco tiempo en verde → ritmo más lento y avisos tempranos.";
-      mensaje = "Consejo para mañana: enciende las máquinas antes de que el tanque se ponga amarillo. Te avisaré antes.";
+      nota = L("Reacciona tarde o pasa poco tiempo en verde → ritmo más lento y avisos tempranos.", "Reacts late or spends little time in green → slower pace and early warnings.");
+      mensaje = L("Consejo para mañana: enciende las máquinas antes de que el tanque se ponga amarillo. Te avisaré antes.", "Tip for tomorrow: turn on the machines before the tank turns yellow. I’ll warn you earlier.");
     } else {
-      nota = "Desempeño intermedio → mismo ritmo.";
-      mensaje = "¡Buen trabajo! Mañana seguimos al mismo ritmo.";
+      nota = L("Desempeño intermedio → mismo ritmo.", "Average performance → same pace.");
+      mensaje = L("¡Buen trabajo! Mañana seguimos al mismo ritmo.", "Good job! Tomorrow we’ll keep the same pace.");
     }
-    S.registroAdaptacion.push({ dia: S.dia, nota: `Verde ${Math.round(verde * 100)} %, anticipó ${anticipa}, reaccionó tarde ${reacciona}. ${nota}` });
+    S.registroAdaptacion.push({ dia: S.dia, nota: L(`Verde ${Math.round(verde * 100)} %, anticipó ${anticipa}, reaccionó tarde ${reacciona}. ${nota}`, `Green ${Math.round(verde * 100)}%, anticipated ${anticipa}, reacted late ${reacciona}. ${nota}`) });
     return { mensaje };
   }
 
@@ -1158,8 +1165,8 @@
         iniciarDia(n);
         ejecutarGuia([
           { objetivo: "tq-co2", congela: true, texto: TEXTO_CO2 },
-          { objetivo: "mq-limp", congela: true, texto: "El limpiador quita el CO₂ del aire." },
-          { objetivo: "bateria", congela: true, texto: "Ahora la energía alcanza para dos máquinas a la vez.", textoBoton: "¡Empezar!" }
+          { objetivo: "mq-limp", congela: true, texto: L("El limpiador quita el CO₂ del aire.", "The air cleaner removes CO₂ from the air.") },
+          { objetivo: "bateria", congela: true, texto: L("Ahora la energía alcanza para dos máquinas a la vez.", "Now there’s enough energy for two machines at once."), textoBoton: L("¡Empezar!", "Start!") }
         ], () => { ultimoCuadro = performance.now(); });
       } else iniciarDia(n);
     } else mostrarRepaso();
@@ -1173,15 +1180,15 @@
     $("btn-pausa").hidden = true;
     const total = S.estrellasDias.reduce((a, b) => a + b, 0);
     $("repaso-resumen").textContent =
-      `La tripulación pasó 3 días más en LUNIA, sana y salva. Ganaste ${Math.floor(S.ciencia)} puntos de ciencia y ${total} de ${DIAS * 3} estrellas.` +
-      (S.dilemaAceptado === true ? " También saliste a buscar la roca especial." :
-       S.dilemaAceptado === false ? " Decidiste cuidar el oxígeno en vez de salir: también es una buena decisión." : "");
+      L(`La tripulación pasó 3 días más en LUNIA, sana y salva. Ganaste ${Math.floor(S.ciencia)} puntos de ciencia y ${total} de ${DIAS * 3} estrellas.`, `The crew spent 3 more days at LUNIA, safe and sound. You earned ${Math.floor(S.ciencia)} science points and ${total} of ${DIAS * 3} stars.`) +
+      (S.dilemaAceptado === true ? L(" También saliste a buscar la roca especial.", " You also went out to get the special rock.") :
+       S.dilemaAceptado === false ? L(" Decidiste cuidar el oxígeno en vez de salir: también es una buena decisión.", " You chose to save oxygen instead of going out: that’s a good decision too.") : "");
     construirTusDias();
     construirReflexion();
     construirAdaptacion();
     guardarResultado();
     mostrarPantalla("pantalla-repaso");
-    Voz.hablar("¡Misión cumplida! " + $("repaso-resumen").textContent);
+    Voz.hablar(L("¡Misión cumplida! ", "Mission accomplished! ") + $("repaso-resumen").textContent);
   }
 
   // Resumen visual por día: estrellas, cara de la tripulación, tiempo en verde y rocas.
@@ -1192,21 +1199,21 @@
       const animo = r.verde >= 0.6 ? "bien" : r.verde >= 0.3 ? "atencion" : "peligro";
       const boca = { bien: "M30 44 Q40 52 50 44", atencion: "M30 46 L50 46", peligro: "M30 50 Q40 42 50 50" }[animo];
       const borde = { bien: "#3ddc97", atencion: "#ffb020", peligro: "#ff5c6c" }[animo];
-      const frase = { bien: "La tripulación estuvo tranquila.", atencion: "Hubo algunos sustos.", peligro: "Fue un día difícil." }[animo];
+      const frase = L({ bien: "La tripulación estuvo tranquila.", atencion: "Hubo algunos sustos.", peligro: "Fue un día difícil." }, { bien: "The crew was calm.", atencion: "There were a few scares.", peligro: "It was a tough day." })[animo];
       const rocas = r.muestras ? "🪨".repeat(Math.min(r.muestras, 8)) : "—";
       const div = document.createElement("div");
       div.className = "dia-card";
       div.innerHTML = `
-        <h4>Día ${r.dia}</h4>
-        <div class="estrellas-dia" aria-label="${r.estrellas} estrellas">${"★".repeat(r.estrellas)}${"☆".repeat(3 - r.estrellas)}</div>
+        <h4>${L("Día", "Day")} ${r.dia}</h4>
+        <div class="estrellas-dia" aria-label="${r.estrellas} ${L("estrellas", "stars")}">${"★".repeat(r.estrellas)}${"☆".repeat(3 - r.estrellas)}</div>
         <svg viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="38" r="30" fill="#f6f8ff" stroke="${borde}" stroke-width="5"/>
           <ellipse cx="40" cy="38" rx="21" ry="17" fill="#26306a"/><circle cx="33" cy="34" r="3" fill="#fff"/><circle cx="47" cy="34" r="3" fill="#fff"/>
           <path d="${boca}" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg>
         <span>${frase}</span>
-        <div class="barra-verde" role="img" aria-label="Todo en verde el ${Math.round(r.verde * 100)} % del día"><i style="width:${Math.round(r.verde * 100)}%"></i></div>
-        <span class="etiqueta-chica">Todo en verde: ${Math.round(r.verde * 100)} %</span>
-        <div class="rocas" aria-label="${r.muestras} rocas recogidas">${rocas}</div>
-        <span class="etiqueta-chica">${r.muestras} ${r.muestras === 1 ? "roca recogida" : "rocas recogidas"}</span>`;
+        <div class="barra-verde" role="img" aria-label="${L(`Todo en verde el ${Math.round(r.verde * 100)} % del día`, `All green ${Math.round(r.verde * 100)}% of the day`)}"><i style="width:${Math.round(r.verde * 100)}%"></i></div>
+        <span class="etiqueta-chica">${L("Todo en verde", "All green")}: ${Math.round(r.verde * 100)} %</span>
+        <div class="rocas" aria-label="${r.muestras} ${L("rocas recogidas", "rocks collected")}">${rocas}</div>
+        <span class="etiqueta-chica">${r.muestras} ${r.muestras === 1 ? L("roca recogida", "rock collected") : L("rocas recogidas", "rocks collected")}</span>`;
       cont.appendChild(div);
     });
   }
@@ -1232,8 +1239,18 @@
   }
 
   function construirAdaptacion() {
-    const filas = S.registroAdaptacion.map((r) => `<tr><td>Día ${r.dia}</td><td>${r.nota}</td></tr>`).join("");
-    $("adaptacion-detalle").innerHTML = `
+    const filas = S.registroAdaptacion.map((r) => `<tr><td>${L("Día", "Day")} ${r.dia}</td><td>${r.nota}</td></tr>`).join("");
+    $("adaptacion-detalle").innerHTML = EN ? `
+      <p>Starting level: <strong>${NIVELES[nivelInicial].nombre}</strong> (from the profile test). Final level: <strong>${NIVELES[S.nivel].nombre}</strong>.</p>
+      <p>The mission quietly measures whether the player <em>anticipates</em> (turns on a machine while the tank is still OK)
+      or <em>reacts late</em> (when it’s already in danger), and how long they keep the tanks green. With that it adjusts
+      the next day: number of systems, speed and LUNIA’s warnings (stealth assessment, Shute; scaffolding that is
+      removed, Wood, Bruner and Ross, 1976). The guided practice, the voice and the icons follow Universal Design for
+      Learning (CAST, 2024).</p>
+      <table><thead><tr><th>Day</th><th>What happened and what was adjusted</th></tr></thead><tbody>${filas}</tbody></table>
+      <p class="nota">Total: anticipated ${S.metricas.anticipa} times, reacted late ${S.metricas.reacciona} times, ${S.intentos} retries, ${S.muestrasTotal} samples.</p>
+      <h4>Real data used in the mission</h4>
+      <ul class="fuentes-lista">${FICHAS.map((f) => `<li><strong>${f.titulo}.</strong> ${f.texto} <em>${f.url ? `<a href="${f.url}" target="_blank" rel="noopener">${f.fuente}</a>` : f.fuente}</em></li>`).join("")}</ul>` : `
       <p>Nivel inicial: <strong>${NIVELES[nivelInicial].nombre}</strong> (del test de perfil). Nivel final: <strong>${NIVELES[S.nivel].nombre}</strong>.</p>
       <p>La misión mide en silencio si el jugador <em>anticipa</em> (enciende una máquina cuando el tanque aún está bien)
       o <em>reacciona tarde</em> (cuando ya está en peligro), y cuánto tiempo mantiene los tanques en verde. Con eso ajusta
@@ -1309,7 +1326,7 @@
     if (!on) Voz.callar();
     $("btn-voz").setAttribute("aria-pressed", String(on));
     $("btn-voz").firstChild.textContent = on ? "🗣️" : "🔇";
-    $("btn-voz").title = on ? "Voz activada" : "Leer en voz alta";
+    $("btn-voz").title = on ? L("Voz activada", "Voice on") : L("Leer en voz alta", "Read aloud");
   }
   function ponerSonido(on) {
     prefs.sonido = on;
@@ -1357,7 +1374,7 @@
   $("btn-pausa").addEventListener("click", pausar);
   $("btn-reanudar").addEventListener("click", reanudar);
   $("btn-repetir").addEventListener("click", () => { const v = Voz.activa; Voz.activa = true; Voz.hablar($("mensaje-lunia").textContent); Voz.activa = v; });
-  $("btn-voz").addEventListener("click", () => { Sonido.iniciar(); prefs.voz = !Voz.activa; almacen.guardar("equilibria.preferencias", prefs); ponerVoz(prefs.voz); if (prefs.voz) Voz.hablar("Voz activada."); });
+  $("btn-voz").addEventListener("click", () => { Sonido.iniciar(); prefs.voz = !Voz.activa; almacen.guardar("equilibria.preferencias", prefs); ponerVoz(prefs.voz); if (prefs.voz) Voz.hablar(L("Voz activada.", "Voice on.")); });
   $("btn-sonido").addEventListener("click", () => { Sonido.iniciar(); ponerSonido(!prefs.sonido); almacen.guardar("equilibria.preferencias", prefs); Sonido.encender(); });
   $("btn-jugar-otra").addEventListener("click", () => {
     nuevaPartida();

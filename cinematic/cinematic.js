@@ -39,7 +39,7 @@ const STR = {
     origin:'ORIGIN: SOUTH POLE', contact:'CONTACT: 214 DAYS', energyPct:'ENERGY: 6%', backSmall:'MISSION', backBig:'CONTROL'
   }
 };
-let lang = 'es';
+let lang = (window.EqLang && EqLang.get()) || 'es';
 const t = k => STR[lang][k];
 
 const stage = document.getElementById('stage');
@@ -194,7 +194,11 @@ function say(cue){
   speaking=true; speakingWho=cue.who; speakingCue=cue;
   const text = cue[lang], spoken = cue[lang+'Speak'] || text;
   const rate = Math.min(2, PROF[cue.who].rate*speed);
-  safety = setTimeout(done, (text.length*0.085/rate + 2.5 + (isLunia ? text.split(/\s+/).length*.06 : 0))*1000);
+  // Safety net in case the browser never finishes a line. It is re-armed every time a piece of
+  // speech actually starts, so slow voices (or LUNIA's many short chunks) are never cut short.
+  const estimate = txt => (txt.length*0.09/rate + 2.5)*1000;
+  const arm = ms => { clearTimeout(safety); safety = setTimeout(done, ms); };
+  arm(estimate(text) + 4000);
   if(isLunia) robotChirp(false);
   const file = VOICE_FILES[lang][cue.id];
   if(file){
@@ -211,13 +215,20 @@ function say(cue){
     u.pitch = pitchFor(cue.who); u.rate = rate; u.volume = 1;
     return u;
   };
-  if(!isLunia){ const u = make(spoken); u.onend = done; u.onerror = done; speechSynthesis.speak(u); return; }
+  if(!isLunia){
+    const u = make(spoken);
+    u.onstart = () => { if(tok===speakTok) arm(estimate(spoken)); };
+    u.onend = done; u.onerror = done; speechSynthesis.speak(u); return;
+  }
   const chunks = robotChunks(spoken);
   const next = i => {
     if(tok!==speakTok) return;
     if(i>=chunks.length){ done(); return; }
     robotBlip();
     const u = make(chunks[i]);
+    // Before each chunk starts the browser may take a moment; once it starts, give it its own time
+    arm(estimate(chunks[i]) + 3000);
+    u.onstart = () => { if(tok===speakTok) arm(estimate(chunks[i])); };
     u.onend = () => setTimeout(() => next(i+1), 150/speed); u.onerror = done;
     speechSynthesis.speak(u);
   };
@@ -868,6 +879,7 @@ requestAnimationFrame(frame);
 const $=id=>document.getElementById(id);
 const startEl=$('start'), endEl=$('end'), ctrl=$('controls');
 function applyLang(){
+  if(window.EqLang) EqLang.set(lang);
   document.documentElement.lang = lang;
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-title]').forEach(el=>{ el.title = t(el.dataset.i18nTitle); });
@@ -976,7 +988,7 @@ $('bReplay').onclick=()=>{ endEl.classList.remove('on'); setPad([110,164.81,220,
 $('bNext').onclick=()=>{
   window.dispatchEvent(new CustomEvent('cinematica:siguiente', {detail:{lang, speed}}));
   try{ if(window.parent!==window) window.parent.postMessage({type:'cinematica-fin', lang},'*'); }catch(e){}
-  window.location.href='../test-habilidades/test-habilidades/index.html';
+  window.location.href='../testHabilidades/index.html';
 };
 $('bFull').onclick=()=>{ try{ const r=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen(); r&&r.catch&&r.catch(()=>{}); }catch(e){} };
 let hideT=null;

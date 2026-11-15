@@ -8,6 +8,7 @@
     navy: '#0B0F3A', indigo: '#1E1B6E', violeta: '#4B2A9E', piel: '#B07A55', pelo: '#2B1B14'
   };
 
+  const Tx = (es, en) => (window.EqLang ? window.EqLang.L(es, en) : es);
   let uid = 0;
 
   /* Gestos de la cara sin casco. */
@@ -316,7 +317,7 @@
       <g clip-path="url(#pantallaJuego)">
         ${puntos}${rocas}
         <g class="nave-juego"><path d="M392 100 l-16 -9 l0 18 z" fill="${C.aqua}"/><path d="M376 95 l-8 5 l8 5 z" fill="${C.ambar}" class="fuego"/></g>
-        <text x="362" y="56" font-family="Space Mono,monospace" font-weight="700" font-size="11" fill="${C.ambar}">PUNTOS</text>
+        <text x="362" y="56" font-family="Space Mono,monospace" font-weight="700" font-size="11" fill="${C.ambar}">${Tx('PUNTOS', 'POINTS')}</text>
         <text class="marcador" x="414" y="56" font-family="Space Mono,monospace" font-weight="700" font-size="11" fill="#fff">0420</text>
         <text x="540" y="56" font-family="Space Mono,monospace" font-weight="700" font-size="11" fill="${C.rosa}">♥♥♥</text>
       </g>
@@ -348,7 +349,7 @@
       <rect x="200" y="26" width="240" height="146" rx="14" fill="#2A2C4A" stroke="#9EA0B8" stroke-width="3"/>
       <rect x="214" y="40" width="212" height="118" rx="6" fill="#05061a"/>
       ${lineas}
-      <text x="224" y="56" font-family="Space Mono,monospace" font-size="9" fill="${C.aqua}" opacity=".7">CANAL TIERRA · LUNA</text>
+      <text x="224" y="56" font-family="Space Mono,monospace" font-size="9" fill="${C.aqua}" opacity=".7">${Tx('CANAL TIERRA · LUNA', 'EARTH · MOON CHANNEL')}</text>
       <g class="sobre">
         <rect x="285" y="72" width="70" height="46" rx="6" fill="${C.traje}"/>
         <path d="M287 75 L320 99 L353 75" fill="none" stroke="${C.rosa}" stroke-width="3" stroke-linejoin="round"/>
@@ -357,7 +358,7 @@
       <circle class="anillo" cx="355" cy="72" r="12" fill="none" stroke="${C.rosa}" stroke-width="3"/>
       <g class="insignia-nuevo"><circle cx="355" cy="72" r="12" fill="${C.rosa}"/>
         <text x="355" y="77" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="900" font-size="14" fill="#fff">1</text></g>
-      <text class="aviso" x="320" y="142" text-anchor="middle" font-family="Space Mono,monospace" font-weight="700" font-size="11" fill="${C.ambar}">MENSAJE NUEVO</text>
+      <text class="aviso" x="320" y="142" text-anchor="middle" font-family="Space Mono,monospace" font-weight="700" font-size="11" fill="${C.ambar}">${Tx('MENSAJE NUEVO', 'NEW MESSAGE')}</text>
       <path d="M184 186 L456 186 L470 204 L170 204 Z" fill="#33376A"/>
       ${[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => `<rect x="${200 + i * 27}" y="190" width="21" height="5" rx="1.5" fill="#4A4E86"/>`).join('')}
       <g class="leds">${[0, 1, 2].map((i) => `<circle style="animation-delay:${i * 0.35}s" cx="${456 + i * 14}" cy="40" r="3.5" fill="${[C.aqua, C.ambar, C.rosa][i]}"/>`).join('')}</g>
@@ -390,8 +391,8 @@
       <g class="guijarros"><circle class="guijarro" cx="300" cy="166" r="3" fill="#7D7F99"/><circle class="guijarro" style="animation-delay:.7s" cx="400" cy="150" r="2.5" fill="#7D7F99"/></g>
       <g transform="translate(330 186)"><path d="M0 -26 l14 24 h-28z" fill="${C.ambar}"/><text x="0" y="-6" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="900" font-size="15" fill="${C.navy}">!</text></g>
       <g font-family="Space Mono,monospace" font-weight="700" font-size="11">
-        <rect x="228" y="200" width="78" height="20" rx="10" fill="${C.coral}"/><text x="267" y="214" text-anchor="middle" fill="${C.navy}">CORTO</text>
-        <rect x="220" y="26" width="140" height="20" rx="10" fill="${C.aqua}"/><text x="290" y="40" text-anchor="middle" fill="${C.navy}">LARGO Y SEGURO</text>
+        <rect x="228" y="200" width="78" height="20" rx="10" fill="${C.coral}"/><text x="267" y="214" text-anchor="middle" fill="${C.navy}">${Tx('CORTO', 'SHORT')}</text>
+        <rect x="220" y="26" width="140" height="20" rx="10" fill="${C.aqua}"/><text x="290" y="40" text-anchor="middle" fill="${C.navy}">${Tx('LARGO Y SEGURO', 'LONG AND SAFE')}</text>
       </g>
       <g transform="translate(78 214)"><g transform="scale(.7)">${astronauta({ casco: true, cara: 'dudoso', clase: 'duda decide' })}</g></g>
     `, 'e-caminos');
@@ -410,7 +411,7 @@
         <text x="32" y="92" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="900" font-size="22" fill="${C.navy}">O₂</text>
         <rect x="74" y="34" width="16" height="108" rx="8" fill="#2A2C4A" stroke="#4A4E86" stroke-width="2"/>
         <rect class="nivel-bajo" x="77" y="122" width="10" height="17" rx="5" fill="${C.coral}"/>
-        <text class="alerta-o2" x="82" y="28" text-anchor="middle" font-family="Space Mono,monospace" font-weight="700" font-size="10" fill="${C.coral}">BAJO</text>
+        <text class="alerta-o2" x="82" y="28" text-anchor="middle" font-family="Space Mono,monospace" font-weight="700" font-size="10" fill="${C.coral}">${Tx('BAJO', 'LOW')}</text>
       </g>
       <g transform="translate(162 34)">
         <circle r="20" fill="#2A2C4A" stroke="#C4C6DC" stroke-width="3"/>
@@ -442,7 +443,7 @@
       <g stroke="${C.aqua}" stroke-width="1.5" fill="none" opacity=".6">
         <rect x="80" y="56" width="40" height="30" rx="5"/><rect x="74" y="88" width="52" height="34" rx="5"/><circle cx="100" cy="71" r="5"/>
         <path d="M74 96 l-16 10 M126 96 l16 10"/></g>
-      <text x="40" y="54" font-family="Space Mono,monospace" font-size="9" fill="${C.aqua}" opacity=".8">PLANO · ROBOT</text>
+      <text x="40" y="54" font-family="Space Mono,monospace" font-size="9" fill="${C.aqua}" opacity=".8">${Tx('PLANO · ROBOT', 'ROBOT · BLUEPRINT')}</text>
       <g transform="translate(410 190)">
         <g class="robot-cabeza"><rect x="-20" y="-34" width="40" height="30" rx="8" fill="#B6B9D3"/>
           <circle class="ojo-robot" cx="-7" cy="-20" r="5" fill="${C.aqua}"/><circle cx="7" cy="-20" r="5" fill="#2A2C4A"/>

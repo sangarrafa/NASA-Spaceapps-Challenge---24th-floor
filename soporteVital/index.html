@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Misión Equilibria · Misión 1: Soporte vital</title>
+  <title data-en="Equilibria Mission · Mission 1: Life support">Misión Equilibria · Misión 1: Soporte vital</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
@@ -53,24 +53,24 @@
   <!-- ===== Barra superior: componentes compartidos por todas las misiones ===== -->
   <header class="hud">
     <div class="hud-titulo">
-      <span class="hud-etiqueta">Misión 1</span>
-      <strong>Soporte vital</strong>
+      <span data-en="Mission 1" class="hud-etiqueta">Misión 1</span>
+      <strong data-en="Life support">Soporte vital</strong>
     </div>
-    <div class="hud-bloque" aria-label="Progreso de la misión">
+    <div class="hud-bloque" aria-label="Progreso de la misión" data-en-aria="Mission progress">
       <div class="hud-dias" aria-hidden="true"><span class="dia-punto"></span><span class="dia-punto"></span><span class="dia-punto"></span></div>
-      <span id="progreso-texto" class="hud-texto">Práctica</span>
+      <span data-en="Practice" id="progreso-texto" class="hud-texto">Práctica</span>
     </div>
-    <div class="hud-bloque" aria-label="Puntos de ciencia">
+    <div class="hud-bloque" aria-label="Puntos de ciencia" data-en-aria="Science points">
       <span class="hud-icono" aria-hidden="true">🔬</span>
       <span id="puntos" class="hud-numero">0</span>
     </div>
-    <div class="hud-bloque" aria-label="Estrellas de equilibrio">
+    <div class="hud-bloque" aria-label="Estrellas de equilibrio" data-en-aria="Balance stars">
       <span id="estrellas" class="hud-estrellas">☆☆☆</span>
     </div>
     <div class="hud-botones">
-      <button id="btn-voz" class="btn-redondo" aria-pressed="false" title="Leer en voz alta">🔇<span class="sr">Leer en voz alta</span></button>
-      <button id="btn-sonido" class="btn-redondo" aria-pressed="true" title="Sonidos">🔊<span class="sr">Sonidos</span></button>
-      <button id="btn-pausa" class="btn-redondo" title="Pausa" hidden>⏸<span class="sr">Pausa</span></button>
+      <button id="btn-voz" class="btn-redondo" aria-pressed="false" title="Leer en voz alta" data-en-title="Read aloud">🔇<span class="sr" data-en="Read aloud">Leer en voz alta</span></button>
+      <button id="btn-sonido" class="btn-redondo" aria-pressed="true" title="Sonidos" data-en-title="Sounds">🔊<span class="sr" data-en="Sounds">Sonidos</span></button>
+      <button id="btn-pausa" class="btn-redondo" title="Pausa" data-en-title="Pause" hidden>⏸<span class="sr" data-en="Pause">Pausa</span></button>
     </div>
   </header>
 
@@ -83,8 +83,8 @@
             <svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="38" fill="#ffd27a"/><circle cx="40" cy="36" r="22" fill="#f1f4ff"/><ellipse cx="40" cy="36" rx="16" ry="13" fill="#2b3566"/><circle cx="34" cy="34" r="2.5" fill="#fff"/><circle cx="46" cy="34" r="2.5" fill="#fff"/><path d="M34 41 Q40 45 46 41" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/><rect x="24" y="58" width="32" height="16" rx="8" fill="#f1f4ff"/></svg>
           </div>
           <div>
-            <p class="quien">Comandante Ríos</p>
-            <h2 class="encargo-titulo">Tu misión: que la tripulación pueda respirar y beber agua durante 3 días.</h2>
+            <p data-en="Commander Ríos" class="quien">Comandante Ríos</p>
+            <h2 data-en="Your mission: make sure the crew can breathe and drink water for 3 days." class="encargo-titulo">Tu misión: que la tripulación pueda respirar y beber agua durante 3 días.</h2>
           </div>
         </div>
 
@@ -96,16 +96,16 @@
               <rect x="33" y="28" width="44" height="63" rx="9" fill="#2bb8e0"/>
               <path d="M33 30 q11 -5 22 0 t22 0 v4 h-44z" fill="#7ee6f5"/>
               <rect x="31" y="100" width="48" height="16" rx="8" fill="rgba(61,220,151,.22)" stroke="#3ddc97" stroke-width="2"/>
-              <text x="55" y="112" text-anchor="middle" font-size="11" font-weight="900" fill="#3ddc97">✔ Bien</text>
+              <text x="55" y="112" text-anchor="middle" font-size="11" font-weight="900" fill="#3ddc97" data-en="✔ OK">✔ Bien</text>
               <!-- tanque mal -->
               <rect x="120" y="14" width="50" height="80" rx="12" fill="#0d1336" stroke="#ff5c6c" stroke-width="3"/>
               <rect x="123" y="78" width="44" height="13" rx="6" fill="#2bb8e0"/>
               <path d="M123 79 q11 -4 22 0 t22 0 v3 h-44z" fill="#7ee6f5"/>
               <rect x="117" y="100" width="56" height="16" rx="8" fill="rgba(255,92,108,.22)" stroke="#ff5c6c" stroke-width="2"/>
-              <text x="145" y="112" text-anchor="middle" font-size="11" font-weight="900" fill="#ff5c6c">✖ Peligro</text>
+              <text x="145" y="112" text-anchor="middle" font-size="11" font-weight="900" fill="#ff5c6c" data-en="✖ Danger">✖ Peligro</text>
               <text x="145" y="60" text-anchor="middle" font-size="22" font-weight="900" fill="#ffb020">▼</text>
             </svg>
-            <span>Mira los <strong>tanques</strong>. Si bajan mucho, hay peligro.</span>
+            <span data-en-html="Watch the <strong>tanks</strong>. If they drop too much, there’s danger.">Mira los <strong>tanques</strong>. Si bajan mucho, hay peligro.</span>
           </li>
           <li class="paso">
             <svg class="paso-ilustracion" viewBox="0 0 200 120" aria-hidden="true">
@@ -122,7 +122,7 @@
               <circle cx="152" cy="62" r="3" fill="#dff0ff"/><circle cx="170" cy="76" r="2.5" fill="#dff0ff"/><circle cx="160" cy="86" r="2" fill="#dff0ff"/>
               <text x="163" y="38" text-anchor="middle" font-size="20" font-weight="900" fill="#3ddc97">▲</text>
             </svg>
-            <span>Enciende las <strong>máquinas</strong> para llenar los tanques.</span>
+            <span data-en-html="Turn on the <strong>machines</strong> to fill the tanks.">Enciende las <strong>máquinas</strong> para llenar los tanques.</span>
           </li>
           <li class="paso">
             <svg class="paso-ilustracion" viewBox="0 0 200 120" aria-hidden="true">
@@ -138,19 +138,19 @@
               <text x="150" y="90" text-anchor="middle" font-size="20" opacity=".5">♻️</text>
               <circle cx="176" cy="60" r="11" fill="#ff5c6c"/><text x="176" y="65" text-anchor="middle" font-size="13" font-weight="900" fill="#fff">?</text>
             </svg>
-            <span>La <strong>energía</strong> no alcanza para todos los tanques. Tienes que elegir el más importante.</span>
+            <span data-en-html="There isn’t enough <strong>energy</strong> for every tank. You have to choose the most important one.">La <strong>energía</strong> no alcanza para todos los tanques. Tienes que elegir el más importante.</span>
           </li>
         </ol>
 
-        <button id="btn-empezar-practica" class="btn btn-grande">¡Empezar!</button>
+        <button data-en="Start!" id="btn-empezar-practica" class="btn btn-grande">¡Empezar!</button>
 
         <details class="selector-demo">
-          <summary>Nivel inicial</summary>
-          <p>En el juego completo, el nivel lo elige el test de perfil.</p>
-          <div class="fila" role="radiogroup" aria-label="Nivel inicial">
-            <button class="btn btn-chico" data-nivel="1">Explorador · 7–8 años</button>
-            <button class="btn btn-chico" data-nivel="2">Ingeniero</button>
-            <button class="btn btn-chico" data-nivel="3">Comandante</button>
+          <summary data-en="Starting level">Nivel inicial</summary>
+          <p data-en="In the full game, the profile test picks the level.">En el juego completo, el nivel lo elige el test de perfil.</p>
+          <div class="fila" role="radiogroup" aria-label="Nivel inicial" data-en-aria="Starting level">
+            <button class="btn btn-chico" data-nivel="1" data-en="Explorer · ages 7–8">Explorador · 7–8 años</button>
+            <button class="btn btn-chico" data-nivel="2" data-en="Engineer">Ingeniero</button>
+            <button class="btn btn-chico" data-nivel="3" data-en="Commander">Comandante</button>
           </div>
         </details>
       </div>
@@ -161,11 +161,11 @@
       <div class="barra-mision">
         <div class="lunia-mensaje">
           <div class="avatar-mini avatar-lunia" aria-hidden="true">L</div>
-          <p id="mensaje-lunia" aria-live="polite">Hola, soy LUNIA.</p>
-          <button id="btn-repetir" class="btn-texto" title="Escuchar otra vez">🔁<span class="sr">Escuchar otra vez</span></button>
+          <p id="mensaje-lunia" aria-live="polite" data-en="Hi, I’m LUNIA.">Hola, soy LUNIA.</p>
+          <button id="btn-repetir" class="btn-texto" title="Escuchar otra vez" data-en-title="Listen again">🔁<span class="sr" data-en="Listen again">Escuchar otra vez</span></button>
         </div>
-        <div class="reloj" aria-label="Tiempo del día">
-          <span id="titulo-dia" class="reloj-dia">Práctica</span>
+        <div class="reloj" aria-label="Tiempo del día" data-en-aria="Time of day">
+          <span data-en="Practice" id="titulo-dia" class="reloj-dia">Práctica</span>
           <div class="reloj-barra"><div id="reloj-relleno" class="reloj-relleno"></div><span id="reloj-sol" class="reloj-sol" aria-hidden="true">☀️</span></div>
         </div>
       </div>
@@ -173,7 +173,7 @@
       <div id="aviso-evento" class="aviso-evento" role="status" hidden></div>
 
       <div class="escena-marco">
-        <svg id="escena" viewBox="0 0 1000 580" role="group" aria-label="Cuarto de soporte vital de la base LUNIA">
+        <svg id="escena" viewBox="0 0 1000 580" role="group" aria-label="Cuarto de soporte vital de la base LUNIA" data-en-aria="LUNIA base life support room">
           <defs>
             <linearGradient id="g-pared" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stop-color="#1c2558"/><stop offset="1" stop-color="#141b44"/>
@@ -249,7 +249,7 @@
             </g>
             <rect x="343" y="22" width="8" height="132" fill="#45549e"/>
             <rect x="649" y="22" width="8" height="132" fill="#45549e"/>
-            <text x="500" y="176" text-anchor="middle" class="etiqueta-ventana" hidden>Exterior</text>
+            <text x="500" y="176" text-anchor="middle" class="etiqueta-ventana" hidden data-en="Outside">Exterior</text>
           </g>
 
           <!-- Piso -->
@@ -267,7 +267,7 @@
             </g>
 
             <g id="bateria" transform="translate(410,88)">
-              <text x="-12" y="24" text-anchor="end" class="etiqueta-bateria">⚡ Energía</text>
+              <text x="-12" y="24" text-anchor="end" class="etiqueta-bateria" data-en="⚡ Energy">⚡ Energía</text>
               <rect width="180" height="36" rx="10" class="bateria-cuerpo"/>
               <rect x="180" y="10" width="8" height="16" rx="3" class="bateria-cuerpo"/>
               <g id="bateria-celdas"></g>
@@ -287,7 +287,7 @@
 
             <!-- Tanques -->
             <g id="tq-agua" class="tanque" data-tanque="agua" transform="translate(90,166)">
-              <text class="tq-titulo" x="50" y="-14">💧 Agua</text>
+              <text class="tq-titulo" x="50" y="-14" data-en="💧 Water">💧 Agua</text>
               <rect class="tq-cuerpo" width="100" height="180" rx="18"/>
               <g clip-path="url(#clip-tq)">
                 <g clip-path="url(#clip-nivel-agua)">
@@ -304,7 +304,7 @@
             </g>
 
             <g id="tq-o2" class="tanque" data-tanque="o2" transform="translate(490,166)">
-              <text class="tq-titulo" x="50" y="-14">🫧 Oxígeno</text>
+              <text class="tq-titulo" x="50" y="-14" data-en="🫧 Oxygen">🫧 Oxígeno</text>
               <rect class="tq-cuerpo" width="100" height="180" rx="18"/>
               <g clip-path="url(#clip-tq)">
                 <g clip-path="url(#clip-nivel-o2)">
@@ -338,37 +338,37 @@
             </g>
 
             <!-- Máquinas -->
-            <g id="mq-gen" class="maquina" data-maquina="gen" role="button" tabindex="0" aria-pressed="false" aria-label="Generador de oxígeno. Tecla 1" transform="translate(250,160)">
+            <g id="mq-gen" class="maquina" data-maquina="gen" role="button" tabindex="0" aria-pressed="false" aria-label="Generador de oxígeno. Tecla 1" data-en-aria="Oxygen generator. Key 1" transform="translate(250,160)">
               <rect class="mq-cuerpo" width="180" height="110" rx="18"/>
               <circle class="mq-anillo-fondo" cx="42" cy="46" r="27"/>
               <circle class="mq-anillo" cx="42" cy="46" r="27" transform="rotate(-90 42 46)"/>
               <text class="mq-icono" x="42" y="56">⚗️</text>
-              <text class="mq-nombre" x="80" y="36">Generador</text>
-              <text class="mq-nombre2" x="80" y="56">de oxígeno</text>
+              <text class="mq-nombre" x="80" y="36" data-en="Oxygen">Generador</text>
+              <text class="mq-nombre2" x="80" y="56" data-en="generator">de oxígeno</text>
               <g class="mq-switch" transform="translate(80,70)"><rect width="58" height="28" rx="14"/><circle class="mq-knob" cx="14" cy="14" r="10"/></g>
               <text class="mq-estado" x="42" y="100">Apagada</text>
               <g class="mq-tecla" transform="translate(160,86)"><rect x="-11" y="-11" width="22" height="22" rx="6"/><text y="5">1</text></g>
             </g>
 
-            <g id="mq-rec" class="maquina" data-maquina="rec" role="button" tabindex="0" aria-pressed="false" aria-label="Reciclador de agua. Tecla 2" transform="translate(250,318)">
+            <g id="mq-rec" class="maquina" data-maquina="rec" role="button" tabindex="0" aria-pressed="false" aria-label="Reciclador de agua. Tecla 2" data-en-aria="Water recycler. Key 2" transform="translate(250,318)">
               <rect class="mq-cuerpo" width="180" height="110" rx="18"/>
               <circle class="mq-anillo-fondo" cx="42" cy="46" r="27"/>
               <circle class="mq-anillo" cx="42" cy="46" r="27" transform="rotate(-90 42 46)"/>
               <text class="mq-icono" x="42" y="56">♻️</text>
-              <text class="mq-nombre" x="80" y="36">Reciclador</text>
-              <text class="mq-nombre2" x="80" y="56">de agua</text>
+              <text class="mq-nombre" x="80" y="36" data-en="Water">Reciclador</text>
+              <text class="mq-nombre2" x="80" y="56" data-en="recycler">de agua</text>
               <g class="mq-switch" transform="translate(80,70)"><rect width="58" height="28" rx="14"/><circle class="mq-knob" cx="14" cy="14" r="10"/></g>
               <text class="mq-estado" x="42" y="100">Apagada</text>
               <g class="mq-tecla" transform="translate(160,86)"><rect x="-11" y="-11" width="22" height="22" rx="6"/><text y="5">2</text></g>
             </g>
 
-            <g id="mq-limp" class="maquina solo-co2" data-maquina="limp" role="button" tabindex="0" aria-pressed="false" aria-label="Limpiador de aire. Tecla 3" transform="translate(625,160)">
+            <g id="mq-limp" class="maquina solo-co2" data-maquina="limp" role="button" tabindex="0" aria-pressed="false" aria-label="Limpiador de aire. Tecla 3" data-en-aria="Air cleaner. Key 3" transform="translate(625,160)">
               <rect class="mq-cuerpo" width="175" height="110" rx="18"/>
               <circle class="mq-anillo-fondo" cx="42" cy="46" r="27"/>
               <circle class="mq-anillo" cx="42" cy="46" r="27" transform="rotate(-90 42 46)"/>
               <text class="mq-icono" x="42" y="56">🌀</text>
-              <text class="mq-nombre" x="80" y="36">Limpiador</text>
-              <text class="mq-nombre2" x="80" y="56">de aire</text>
+              <text class="mq-nombre" x="80" y="36" data-en="Air">Limpiador</text>
+              <text class="mq-nombre2" x="80" y="56" data-en="cleaner">de aire</text>
               <g class="mq-switch" transform="translate(80,70)"><rect width="58" height="28" rx="14"/><circle class="mq-knob" cx="14" cy="14" r="10"/></g>
               <text class="mq-estado" x="42" y="100">Apagada</text>
               <g class="mq-tecla" transform="translate(155,86)"><rect x="-11" y="-11" width="22" height="22" rx="6"/><text y="5">3</text></g>
@@ -376,27 +376,27 @@
 
             <!-- Tripulación -->
             <g id="tripulacion">
-              <text x="718" y="452" text-anchor="middle" class="etiqueta-tubo">tripulación</text>
+              <text x="718" y="452" text-anchor="middle" class="etiqueta-tubo" data-en="crew">tripulación</text>
             </g>
           </g>
         </svg>
       </div>
 
-      <button id="btn-continuar-practica" class="btn btn-grande llamativo" hidden>¡Ir al día 1!</button>
+      <button data-en="Go to day 1!" id="btn-continuar-practica" class="btn btn-grande llamativo" hidden>¡Ir al día 1!</button>
     </section>
 
     <!-- ===== FIN DE DÍA ===== -->
     <section id="pantalla-fin-dia" class="pantalla">
       <div class="tarjeta centrada">
-        <h2 id="fin-dia-titulo">¡Día completado!</h2>
-        <p id="fin-dia-estrellas" class="estrellas-enormes" aria-label="Estrellas del día">★☆☆</p>
+        <h2 data-en="Day complete!" id="fin-dia-titulo">¡Día completado!</h2>
+        <p id="fin-dia-estrellas" class="estrellas-enormes" aria-label="Estrellas del día" data-en-aria="Stars for the day">★☆☆</p>
         <div class="resumen-dia">
-          <div class="dato-dia"><span class="dato-dia-num" id="fin-verde">0%</span><span>del tiempo con todo en verde</span></div>
-          <div class="dato-dia"><span class="dato-dia-num" id="fin-muestras">0</span><span>muestras recogidas</span></div>
-          <div class="dato-dia"><span class="dato-dia-num" id="fin-ciencia">0</span><span>puntos de ciencia</span></div>
+          <div class="dato-dia"><span class="dato-dia-num" id="fin-verde">0%</span><span data-en="of the time with everything green">del tiempo con todo en verde</span></div>
+          <div class="dato-dia"><span class="dato-dia-num" id="fin-muestras">0</span><span data-en="samples collected">muestras recogidas</span></div>
+          <div class="dato-dia"><span class="dato-dia-num" id="fin-ciencia">0</span><span data-en="science points">puntos de ciencia</span></div>
         </div>
         <p id="fin-dia-texto" class="mensaje-lunia-fin"></p>
-        <button id="btn-siguiente-dia" class="btn btn-grande">Siguiente día</button>
+        <button data-en="Next day" id="btn-siguiente-dia" class="btn btn-grande">Siguiente día</button>
       </div>
     </section>
 
@@ -404,11 +404,11 @@
     <section id="pantalla-ahorro" class="pantalla">
       <div class="tarjeta centrada">
         <div class="icono-grande" aria-hidden="true">🛟</div>
-        <h2>Modo ahorro</h2>
+        <h2 data-en="Saving mode">Modo ahorro</h2>
         <p id="ahorro-texto"></p>
         <p id="ahorro-cuando" class="nota-fuerte"></p>
         <p class="consejo"><span aria-hidden="true">💡</span> <span id="ahorro-consejo"></span></p>
-        <button id="btn-reintentar" class="btn btn-grande">Intentar otra vez</button>
+        <button data-en="Try again" id="btn-reintentar" class="btn btn-grande">Intentar otra vez</button>
       </div>
     </section>
 
@@ -416,30 +416,30 @@
     <section id="pantalla-repaso" class="pantalla">
       <div class="tarjeta centrada">
         <div class="icono-grande" aria-hidden="true">🏅</div>
-        <h2>¡Misión cumplida!</h2>
+        <h2 data-en="Mission accomplished!">¡Misión cumplida!</h2>
         <p id="repaso-resumen"></p>
       </div>
 
       <div class="tarjeta">
-        <h3 class="subtitulo">Tus 3 días en LUNIA</h3>
+        <h3 data-en="Your 3 days at LUNIA" class="subtitulo">Tus 3 días en LUNIA</h3>
         <div id="tus-dias" class="tus-dias"></div>
       </div>
 
       <div class="tarjeta">
-        <h3 class="subtitulo">Pregunta</h3>
-        <p class="pregunta">¿Por qué baja el agua cuando el generador fabrica oxígeno?</p>
+        <h3 data-en="Question" class="subtitulo">Pregunta</h3>
+        <p data-en="Why does the water go down when the generator makes oxygen?" class="pregunta">¿Por qué baja el agua cuando el generador fabrica oxígeno?</p>
         <div id="reflexion" class="opciones"></div>
         <p id="reflexion-respuesta" class="respuesta" aria-live="polite"></p>
       </div>
 
       <details class="tarjeta adaptacion">
-        <summary>Fuentes y adaptación (para docentes y jueces)</summary>
+        <summary data-en="Sources and adaptation (for teachers and judges)">Fuentes y adaptación (para docentes y jueces)</summary>
         <div id="adaptacion-detalle"></div>
       </details>
 
       <div class="fila centro">
-        <button id="btn-jugar-otra" class="btn btn-grande">Jugar otra vez</button>
-        <a id="btn-mapa" class="btn btn-secundario btn-grande" href="../mapa-luna/index.html">Volver al mapa de misiones</a>
+        <button data-en="Play again" id="btn-jugar-otra" class="btn btn-grande">Jugar otra vez</button>
+        <a id="btn-mapa" class="btn btn-secundario btn-grande" href="../mapaLuna/index.html" data-en="Back to the mission map">Volver al mapa de misiones</a>
       </div>
     </section>
   </main>
@@ -449,14 +449,14 @@
     <div id="guia-foco" class="guia-foco"></div>
     <div id="guia-burbuja" class="guia-burbuja" role="dialog" aria-live="polite">
       <p id="guia-texto"></p>
-      <button id="guia-siguiente" class="btn-chico-principal">Siguiente</button>
+      <button data-en="Next" id="guia-siguiente" class="btn-chico-principal">Siguiente</button>
     </div>
   </div>
 
   <!-- ===== Dilema: muestra especial ===== -->
   <div id="modal-dilema" class="modal" role="dialog" aria-modal="true" aria-labelledby="dilema-titulo" hidden>
     <div class="tarjeta modal-tarjeta">
-      <p class="quien" id="dilema-titulo">Comandante Ríos</p>
+      <p data-en="Commander Ríos" class="quien" id="dilema-titulo">Comandante Ríos</p>
       <svg class="dilema-ilustracion" viewBox="0 0 320 110" aria-hidden="true">
         <rect width="320" height="110" rx="16" fill="#0b1030"/>
         <path d="M0 70 Q80 60 160 68 T320 66 V110 H0 Z" fill="#8f94ac"/>
@@ -476,15 +476,15 @@
           <circle r="13" fill="#f1f4ff"/><ellipse rx="9" ry="7" fill="#d9a441"/>
         </g>
       </svg>
-      <h2 class="modal-titulo">¡Por la ventana se ve una roca especial! ¿Salimos a buscarla?</h2>
+      <h2 data-en="There’s a special rock out the window! Shall we go get it?" class="modal-titulo">¡Por la ventana se ve una roca especial! ¿Salimos a buscarla?</h2>
       <div class="dilema-opciones">
-        <div class="dilema-lado gana"><span aria-hidden="true">🔬</span><strong>+40 puntos</strong><span>de ciencia</span></div>
-        <div class="dilema-lado cuesta"><span aria-hidden="true">🫧</span><strong>Más oxígeno</strong><span>Con esfuerzo se respira más. Durante 15 segundos el oxígeno bajará rápido.</span></div>
+        <div class="dilema-lado gana"><span aria-hidden="true">🔬</span><strong data-en="+40 points">+40 puntos</strong><span data-en="of science">de ciencia</span></div>
+        <div class="dilema-lado cuesta"><span aria-hidden="true">🫧</span><strong data-en="More oxygen">Más oxígeno</strong><span data-en="With effort you breathe more. For 15 seconds the oxygen will drop fast.">Con esfuerzo se respira más. Durante 15 segundos el oxígeno bajará rápido.</span></div>
       </div>
-      <p class="dato">Dato real: con ejercicio, un astronauta respira unas 11 veces más oxígeno que durmiendo (NASA, 2017).</p>
+      <p data-en="Real fact: during exercise, an astronaut breathes about 11 times more oxygen than when sleeping (NASA, 2017)." class="dato">Dato real: con ejercicio, un astronauta respira unas 11 veces más oxígeno que durmiendo (NASA, 2017).</p>
       <div class="fila centro">
-        <button id="btn-dilema-si" class="btn btn-grande">Sí, vamos</button>
-        <button id="btn-dilema-no" class="btn btn-secundario btn-grande">Hoy no</button>
+        <button data-en="Yes, let’s go" id="btn-dilema-si" class="btn btn-grande">Sí, vamos</button>
+        <button data-en="Not today" id="btn-dilema-no" class="btn btn-secundario btn-grande">Hoy no</button>
       </div>
     </div>
   </div>
@@ -492,8 +492,8 @@
   <!-- ===== Pausa ===== -->
   <div id="modal-pausa" class="modal" hidden>
     <div class="tarjeta centrada modal-tarjeta">
-      <h2>En pausa</h2>
-      <button id="btn-reanudar" class="btn btn-grande">Seguir</button>
+      <h2 data-en="Paused">En pausa</h2>
+      <button data-en="Resume" id="btn-reanudar" class="btn btn-grande">Seguir</button>
     </div>
   </div>
 

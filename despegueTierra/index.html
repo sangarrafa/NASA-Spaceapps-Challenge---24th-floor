@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-en="Before liftoff — Cinematic">Antes del despegue — Cinemática</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<div id="stage">
+  <canvas id="c" width="1280" height="720" aria-label="El cadete sube al cohete, se enciende el motor y la escena se detiene antes del despegue" data-en-aria="The cadet boards the rocket, the engine ignites and the scene stops before liftoff"></canvas>
+  <div id="ctrl">
+    <button id="bSnd" aria-pressed="true" data-en="🔊 Sound">🔊 Sonido</button>
+    <button id="bSkip" data-en="Skip ⏭">Saltar ⏭</button>
+  </div>
+  <div id="pausa">
+    <div class="marca" data-en="⏸ COUNTDOWN ON HOLD">⏸ CUENTA REGRESIVA DETENIDA</div>
+    <h2 id="txt"></h2>
+    <button id="bNext" data-en="Next ▶">Siguiente ▶</button>
+    <button id="otra" data-en="↺ Watch again">↺ Ver de nuevo</button>
+  </div>
+</div>
+
+<script src="../audio/audio-ambiente.js"></script>
+<script src="despegue-tierra.js"></script>
+</body>
+</html>

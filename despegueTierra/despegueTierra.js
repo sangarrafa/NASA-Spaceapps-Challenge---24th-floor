@@ -7,7 +7,8 @@
    el avatar del test, se puede cambiar el color de piel y pelo en AVATAR.
    ------------------------------------------------------------- */
 const AVATAR={piel:'#C68863', pielSombra:'#A96F50', pelo:'#2A1830'};
-const MENSAJE='Espera, aún no puedes arrancar, hay algo que debes hacer antes...';
+const L=window.EqLang?window.EqLang.L:(es)=>es;
+const MENSAJE=L('Espera, aún no puedes arrancar, hay algo que debes hacer antes...','Wait, you can’t take off yet, there’s something you need to do first...');
 
 const stage=document.getElementById('stage'), cv=document.getElementById('c'), ctx=cv.getContext('2d');
 const W=1280,H=720; let dpr=1;
@@ -75,9 +76,9 @@ function drawCrowd(cheer){
   // vallas y pancarta
   ctx.strokeStyle='rgba(232,233,242,.35)'; ctx.lineWidth=2;
   for(const [x0,x1] of [[30,430],[990,1260]]){ line(x0,566,x1,566); for(let x=x0;x<=x1;x+=20) line(x,566,x,580); }
-  rr(150,488,160,30,8); ctx.fillStyle=P.pink; ctx.fill(); ctx.font='900 15px Nunito, sans-serif'; ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('¡VAMOS, CADETE!',230,504);
+  rr(150,488,160,30,8); ctx.fillStyle=P.pink; ctx.fill(); ctx.font='900 15px Nunito, sans-serif'; ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(L('¡VAMOS, CADETE!','GO, CADET!'),230,504);
   ctx.strokeStyle='#c9cbd8'; ctx.lineWidth=2; line(155,518,155,535); line(305,518,305,535);
-  rr(1060,490,140,28,8); ctx.fillStyle=P.aqua; ctx.fill(); ctx.fillStyle=P.navy; ctx.fillText('¡A LA LUNA! 🌙',1130,505); ctx.strokeStyle='#c9cbd8'; line(1065,518,1065,535); line(1195,518,1195,535);
+  rr(1060,490,140,28,8); ctx.fillStyle=P.aqua; ctx.fill(); ctx.fillStyle=P.navy; ctx.fillText(L('¡A LA LUNA! 🌙','TO THE MOON! 🌙'),1130,505); ctx.strokeStyle='#c9cbd8'; line(1065,518,1065,535); line(1195,518,1195,535);
   ctx.textBaseline='alphabetic';
 }
 function drawGround(){
@@ -152,7 +153,7 @@ function drawCadet(x,y,s,view,walk=0,wave=0,alpha=1){
   ctx.fillStyle='#FFFFFF'; ctx.fillRect(-15,-34,30,4);           // cinturón reflectivo
   if(view!=='back'){ ctx.fillStyle=P.pink; rr(view==='right'?3:-11,-52,9,8,2); ctx.fill();   // parche de la misión
     ctx.fillStyle=P.aqua; circle(view==='right'?-4:6,-48,3.5); ctx.fill(); }
-  else { ctx.fillStyle='rgba(255,255,255,.85)'; ctx.font='900 7px Nunito'; ctx.textAlign='center'; ctx.fillText('CADETE',0,-42); }
+  else { ctx.fillStyle='rgba(255,255,255,.85)'; ctx.font='900 7px Nunito'; ctx.textAlign='center'; ctx.fillText(L('CADETE','CADET'),0,-42); }
   // brazos (uno sostiene el casco)
   const arm=(sx,ang)=>{ ctx.save(); ctx.translate(sx,-53); ctx.rotate(ang); rr(-4.5,0,9,22,4.5); ctx.fillStyle=o; ctx.fill(); circle(0,23,4.5); ctx.fillStyle=AVATAR.piel; ctx.fill(); ctx.restore(); };
   const helmet=(hx,hy)=>{ circle(hx,hy,10); ctx.fillStyle='#F2F3FA'; ctx.fill(); ctx.strokeStyle='#C9CCE0'; ctx.lineWidth=1.5; ctx.stroke();
@@ -257,10 +258,10 @@ function render(){
   drawParts();
   ctx.restore();
   // rótulo y cuenta regresiva
-  const s='CENTRO ESPACIAL · ACADEMIA DE CADETES', n=Math.floor(clamp((T-.4)*30,0,s.length));
+  const s=L('CENTRO ESPACIAL · ACADEMIA DE CADETES','SPACE CENTER · CADET ACADEMY'), n=Math.floor(clamp((T-.4)*30,0,s.length));
   ctx.globalAlpha=1-seg(T,4,5); ctx.font='700 20px "Space Mono", monospace'; ctx.textAlign='left'; ctx.fillStyle=P.aqua; ctx.shadowColor=P.aqua; ctx.shadowBlur=10; ctx.fillText(s.slice(0,n),40,56); ctx.shadowBlur=0; ctx.globalAlpha=1;
   if(T>11 && T<=FREEZE){ const c=Math.max(0,Math.ceil(13.5-T)); ctx.font='900 64px Nunito, sans-serif'; ctx.textAlign='center'; ctx.fillStyle='#fff'; ctx.shadowColor=P.amber; ctx.shadowBlur=20;
-    ctx.fillText(c>0?String(c):'¡IGNICIÓN!',640,120); ctx.shadowBlur=0; }
+    ctx.fillText(c>0?String(c):L('¡IGNICIÓN!','IGNITION!'),640,120); ctx.shadowBlur=0; }
   const vg=ctx.createRadialGradient(640,360,300,640,360,820); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,.45)'); ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
   const fade=1-seg(T,0,1); if(fade>0){ ctx.fillStyle=`rgba(0,0,0,${fade})`; ctx.fillRect(0,0,W,H); }
 }

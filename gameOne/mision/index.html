@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Misión 1 · ¡Rumbo a la Luna!</title>
+<title data-en="Mission 1 · Off to the Moon!">Misión 1 · ¡Rumbo a la Luna!</title>
 <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
@@ -12,16 +12,16 @@
 
   <div id="hud">
     <div class="chips">
-      <span class="chip" id="chipNivel">Nivel 1 · Cadete</span>
-      <span class="chip" id="chipIntento">Intento 1</span>
-      <span class="chip ayuda" id="chipAyuda" style="display:none">🛟 Ayuda activada</span>
+      <span class="chip" id="chipNivel" data-en="Level 1 · Cadet">Nivel 1 · Cadete</span>
+      <span class="chip" id="chipIntento" data-en="Attempt 1">Intento 1</span>
+      <span class="chip ayuda" id="chipAyuda" style="display:none" data-en="🛟 Help on">🛟 Ayuda activada</span>
     </div>
-    <button id="btnDatos">🔬 Datos reales NASA</button>
+    <button id="btnDatos" data-en="🔬 Real NASA data">🔬 Datos reales NASA</button>
   </div>
 
   <div id="panelLateral">
-    <div id="burbuja">Preparando la misión…</div>
-    <button id="btnMotor" disabled>🚀 ¡DESPEGAR!</button>
+    <div id="burbuja" data-en="Preparing the mission…">Preparando la misión…</div>
+    <button id="btnMotor" disabled data-en="🚀 LAUNCH!">🚀 ¡DESPEGAR!</button>
   </div>
 
   <!-- Resultado -->
@@ -32,21 +32,21 @@
   <!-- Datos y fuentes -->
   <div class="capa" id="capaDatos">
     <div class="tarjeta">
-      <h2>🔬 La ciencia detrás del juego</h2>
-      <div class="dato"><b>La Luna da una vuelta a la Tierra cada 27,32 días</b>, a unos 384.400 km de distancia, moviéndose a ~1 km por segundo. En 3 días avanza unos 40° de su vuelta.</div>
-      <div class="dato"><b>Apolo 11</b> despegó el 16 de julio de 1969 y entró en órbita lunar el 19 de julio: unas 76 horas después del gran encendido (la "inyección translunar").</div>
-      <div class="dato"><b>Artemis I</b> despegó el 16 de noviembre de 2022 y pasó junto a la Luna el 21 de noviembre. Su ruta fue distinta (más larga), pero también dependía de dónde estaría la Luna.</div>
-      <div class="dato"><b>¿Por qué hay "ventanas de lanzamiento"?</b> Porque la Tierra gira, la Luna se mueve y el cohete debe salir en el momento justo para encontrarse con ella. Por eso la NASA solo puede lanzar a la Luna en ciertos días y horas.</div>
-      <div class="dato"><b>La Luna siempre le muestra la misma cara a la Tierra.</b> Por eso, en el juego, el cohete aterriza en la cara que mira hacia nosotros, igual que las misiones Apolo.</div>
-      <div class="dato"><b>Zona de atrape:</b> a unos 66.000 km de la Luna, su gravedad empieza a ganarle a la de la Tierra. Si llegas a esa zona, ¡la Luna te atrapa!</div>
-      <p class="nota">Estos son datos reales recopilados de la NASA (no en vivo). Los tamaños y distancias del dibujo <b>no están a escala</b>, y el tiempo va acelerado. Simplificamos el viaje: el cohete sube a una órbita baja, enciende su motor hacia la Luna y sigue una órbita de Kepler (en la realidad, Apolo 11 antes daba vuelta y media a la Tierra). Los motores se encienden unos segundos en vez de varios minutos, el aterrizaje va más lento que el real, y la órbita de la Luna está dibujada más alta de lo real (en la realidad pasa a unos 110 km de la superficie).</p>
+      <h2 data-en="🔬 The science behind the game">🔬 La ciencia detrás del juego</h2>
+      <div class="dato" data-en-html="<b>The Moon goes around the Earth every 27.32 days</b>, about 384,400 km away, moving at ~1 km per second. In 3 days it covers about 40° of its orbit."><b>La Luna da una vuelta a la Tierra cada 27,32 días</b>, a unos 384.400 km de distancia, moviéndose a ~1 km por segundo. En 3 días avanza unos 40° de su vuelta.</div>
+      <div class="dato" data-en-html="<b>Apollo 11</b> launched on July 16, 1969 and entered lunar orbit on July 19: about 76 hours after the big burn (the “translunar injection”)."><b>Apolo 11</b> despegó el 16 de julio de 1969 y entró en órbita lunar el 19 de julio: unas 76 horas después del gran encendido (la "inyección translunar").</div>
+      <div class="dato" data-en-html="<b>Artemis I</b> launched on November 16, 2022 and flew past the Moon on November 21. Its route was different (longer), but it also depended on where the Moon would be."><b>Artemis I</b> despegó el 16 de noviembre de 2022 y pasó junto a la Luna el 21 de noviembre. Su ruta fue distinta (más larga), pero también dependía de dónde estaría la Luna.</div>
+      <div class="dato" data-en-html="<b>Why are there “launch windows”?</b> Because the Earth turns, the Moon moves, and the rocket has to leave at just the right time to meet it. That’s why NASA can only launch to the Moon on certain days and hours."><b>¿Por qué hay "ventanas de lanzamiento"?</b> Porque la Tierra gira, la Luna se mueve y el cohete debe salir en el momento justo para encontrarse con ella. Por eso la NASA solo puede lanzar a la Luna en ciertos días y horas.</div>
+      <div class="dato" data-en-html="<b>The Moon always shows the same face to the Earth.</b> That’s why, in the game, the rocket lands on the side facing us, just like the Apollo missions."><b>La Luna siempre le muestra la misma cara a la Tierra.</b> Por eso, en el juego, el cohete aterriza en la cara que mira hacia nosotros, igual que las misiones Apolo.</div>
+      <div class="dato" data-en-html="<b>Capture zone:</b> about 66,000 km from the Moon, its gravity starts to win over the Earth’s. If you reach that zone, the Moon catches you!"><b>Zona de atrape:</b> a unos 66.000 km de la Luna, su gravedad empieza a ganarle a la de la Tierra. Si llegas a esa zona, ¡la Luna te atrapa!</div>
+      <p class="nota" data-en-html="These are real data collected from NASA (not live). Sizes and distances in the drawing are <b>not to scale</b>, and time is sped up. We simplified the trip: the rocket climbs to a low orbit, fires its engine toward the Moon and follows a Kepler orbit (in reality, Apollo 11 first went around the Earth one and a half times). The engines burn for a few seconds instead of several minutes, the landing is slower than the real one, and the lunar orbit is drawn higher than it really is (in reality it passes about 110 km above the surface).">Estos son datos reales recopilados de la NASA (no en vivo). Los tamaños y distancias del dibujo <b>no están a escala</b>, y el tiempo va acelerado. Simplificamos el viaje: el cohete sube a una órbita baja, enciende su motor hacia la Luna y sigue una órbita de Kepler (en la realidad, Apolo 11 antes daba vuelta y media a la Tierra). Los motores se encienden unos segundos en vez de varios minutos, el aterrizaje va más lento que el real, y la órbita de la Luna está dibujada más alta de lo real (en la realidad pasa a unos 110 km de la superficie).</p>
       <ul class="fuentes">
         <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html" target="_blank" rel="noopener">NASA NSSDCA · Moon Fact Sheet</a></li>
-        <li><a href="https://www.nasa.gov/mission/apollo-11/" target="_blank" rel="noopener">NASA · Misión Apolo 11</a></li>
-        <li><a href="https://www.nasa.gov/mission/artemis-i/" target="_blank" rel="noopener">NASA · Misión Artemis I</a></li>
-        <li><a href="https://ssd.jpl.nasa.gov/horizons/" target="_blank" rel="noopener">NASA JPL · Horizons (efemérides de la Luna)</a></li>
+        <li><a href="https://www.nasa.gov/mission/apollo-11/" target="_blank" rel="noopener" data-en="NASA · Apollo 11 mission">NASA · Misión Apolo 11</a></li>
+        <li><a href="https://www.nasa.gov/mission/artemis-i/" target="_blank" rel="noopener" data-en="NASA · Artemis I mission">NASA · Misión Artemis I</a></li>
+        <li><a href="https://ssd.jpl.nasa.gov/horizons/" target="_blank" rel="noopener" data-en="NASA JPL · Horizons (Moon ephemerides)">NASA JPL · Horizons (efemérides de la Luna)</a></li>
       </ul>
-      <div class="botones"><button class="btn primario" id="btnCerrarDatos">Volver al juego</button></div>
+      <div class="botones"><button class="btn primario" id="btnCerrarDatos" data-en="Back to the game">Volver al juego</button></div>
     </div>
   </div>
 </div>

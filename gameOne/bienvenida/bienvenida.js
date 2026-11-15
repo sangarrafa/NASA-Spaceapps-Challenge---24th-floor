@@ -1,4 +1,5 @@
 (() => {
+const L=window.EqLang?window.EqLang.L:(es)=>es;
 /* -------------------------------------------------------------
    Pantalla de bienvenida · Misión Equilibria
    Integración: al enviar el nombre se emite el evento window
@@ -71,7 +72,7 @@ function drawMarsBody(){
   ctx.fillStyle='rgba(255,245,240,.85)'; ell(x-r*.05,y-r*.93,r*.32,r*.12); ctx.fill();   // casquete polar
   const sh=ctx.createLinearGradient(x+r*.2,y,x+r,y+r*.3); sh.addColorStop(0,'rgba(20,6,20,0)'); sh.addColorStop(1,'rgba(20,6,20,.55)'); ctx.fillStyle=sh; ctx.fillRect(x-r,y-r,r*2,r*2);
   ctx.restore();
-  ctx.font='800 15px Nunito, sans-serif'; ctx.fillStyle='rgba(232,233,242,.7)'; ctx.textAlign='center'; ctx.fillText('Marte',x,y+r+26);
+  ctx.font='800 15px Nunito, sans-serif'; ctx.fillStyle='rgba(232,233,242,.7)'; ctx.textAlign='center'; ctx.fillText(L('Marte','Mars'),x,y+r+26);
 }
 // base sobre un planeta, en el ángulo a (0 = derecha, -π/2 = arriba)
 function drawBase(cx,cy,R,a,s,col,light){
@@ -167,7 +168,7 @@ function frame(now){
   drawRocket();
   drawEarth(); drawSatellite();
   ctx.font='800 15px Nunito, sans-serif'; ctx.fillStyle='rgba(232,233,242,.7)'; ctx.textAlign='center';
-  ctx.fillText('Luna',MOON.x,MOON.y+MOON.r+26); ctx.fillText('Tierra',EARTH.x+60,EARTH.y-EARTH.r-22);
+  ctx.fillText(L('Luna','Moon'),MOON.x,MOON.y+MOON.r+26); ctx.fillText(L('Tierra','Earth'),EARTH.x+60,EARTH.y-EARTH.r-22);
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
@@ -196,7 +197,7 @@ const go=document.getElementById('go'), msg=document.getElementById('msg');
 const limpio=()=>input.value.replace(/\s+/g,' ').trim();
 input.addEventListener('input',()=>{
   const n=limpio(); go.disabled=n.length<2;
-  msg.textContent = n.length>=2 && !n.includes(' ') ? '¿Escribiste también tu apellido?' : '';
+  msg.textContent = n.length>=2 && !n.includes(' ') ? L('¿Escribiste también tu apellido?','Did you also type your last name?') : '';
 });
 // Next screen of the flow, linked with a relative path like the other screens do
 const NEXT_SCREEN='../antesDeDespegar/index.html';
@@ -208,7 +209,7 @@ document.getElementById('card').addEventListener('submit',e=>{
   dispatchEvent(new CustomEvent('equilibria:login',{detail:{nombre}}));
   try{ if(parent!==window) parent.postMessage({type:'equilibria-login',nombre},'*'); }catch(err){}
   const primero=nombre.split(' ')[0];
-  document.getElementById('hola').textContent=`¡Hola, ${primero}!`;
+  document.getElementById('hola').textContent=L(`¡Hola, ${primero}!`,`Hi, ${primero}!`);
   document.getElementById('saludo').classList.add('on');
   input.blur();
   // Let the greeting be read, then hand off to the next screen (event and postMessage were sent above)
