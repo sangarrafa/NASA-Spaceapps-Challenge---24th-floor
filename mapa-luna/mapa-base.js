@@ -138,9 +138,23 @@ function plinth(x,y,rx,col,glow){
 function dome(x,y,r,c1,c2){ const g=ctx.createRadialGradient(x-r*.4,y-r*.6,2,x,y-r*.3,r*1.2); g.addColorStop(0,c1); g.addColorStop(1,c2); ctx.beginPath(); ctx.arc(x,y,r,Math.PI,0); ctx.ellipse(x,y,r,r*.35,0,0,Math.PI); ctx.fillStyle=g; ctx.fill(); }
 function cyl(x,y,w,h,c1,c2){ const g=ctx.createLinearGradient(x-w/2,0,x+w/2,0); g.addColorStop(0,c1); g.addColorStop(1,c2); ctx.fillStyle=g; ctx.fillRect(x-w/2,y-h,w,h); ell(x,y,w/2,w*.18); ctx.fill(); ell(x,y-h,w/2,w*.18); ctx.fillStyle=c1; ctx.fill(); }
 function drawStation(s,A,hover){
-  const {x,y}=s, glow=done[s.id]?1:.5+.5*Math.sin(A*2.5+x), sc=hover?1.06:1;
+  // Señales solo visuales (sin texto):
+  // - Base bloqueada: conserva su color, pero se ve tenue, sin brillo y con el anillo punteado (barrera cerrada).
+  // - Base activa (desbloqueada y sin completar): halo de luz en el suelo y un pin de ubicación encima (ver más abajo).
+  const apagada=estacionBloqueada(s.id), activa=!apagada && !done[s.id];
+  const {x,y}=s, glow=apagada?0:done[s.id]?1:.5+.5*Math.sin(A*2.5+x), sc=hover?1.06:1;
   ctx.save(); ctx.translate(x,y); ctx.scale(sc,sc); ctx.translate(-x,-y);
+  if(activa){   // halo tenue que respira despacio, como un foco sobre la base
+    const g=ctx.createRadialGradient(x,y,10,x,y,110); const a=.32+.12*Math.sin(A*2);
+    g.addColorStop(0,`rgba(111,227,232,${a})`); g.addColorStop(1,'rgba(111,227,232,0)');
+    ctx.save(); ctx.translate(x,y); ctx.scale(1,.42); ctx.translate(-x,-y); circle(x,y,110); ctx.fillStyle=g; ctx.fill(); ctx.restore();
+  }
+  if(apagada) ctx.globalAlpha=.7;
   plinth(x,y,62,done[s.id]?P.amber:s.col,glow);
+  if(apagada){   // barrera: el borde de la base pasa a ser punteado
+    ctx.save(); ctx.globalAlpha=1; ell(x,y,62,24.8); ctx.strokeStyle='#2a2c55'; ctx.lineWidth=4; ctx.stroke();
+    ctx.setLineDash([7,7]); ctx.strokeStyle=s.col; ctx.lineWidth=3; ctx.globalAlpha=.85; ell(x,y,62,24.8); ctx.stroke(); ctx.restore();
+  }
   switch(s.id){
     case 'soporte':
       cyl(x-26,y,20,46,'#E3F9FB','#7fb7c4'); cyl(x-6,y+4,20,40,'#E3F9FB','#7fb7c4');
@@ -176,14 +190,41 @@ function drawStation(s,A,hover){
       rr(x-36,y-22,32,24,6); ctx.fillStyle='#C9CCE0'; ctx.fill(); ctx.fillStyle=P.violet; ctx.fillRect(x-30,y-16,20,6); break; }
   }
   ctx.restore();
+  // Base activa: pin de ubicación (el símbolo universal de "aquí") en el color de la estación, flotando encima
+  if(activa){
+    const cy=y-92+Math.sin(A*4.8)*6, R=15;   // centro de la cabeza del pin
+    const pin=()=>{ ctx.beginPath(); ctx.moveTo(x,cy+R+15);
+      ctx.bezierCurveTo(x-R*.55,cy+R*.95,x-R,cy+R*.45,x-R,cy); ctx.arc(x,cy,R,Math.PI,0); ctx.bezierCurveTo(x+R,cy+R*.45,x+R*.55,cy+R*.95,x,cy+R+15); ctx.closePath(); };
+    ctx.save();
+    const g=ctx.createLinearGradient(0,cy-R,0,cy+R+15); g.addColorStop(0,'#FFFFFF'); g.addColorStop(.4,s.col); g.addColorStop(1,s.col);
+    pin(); ctx.fillStyle=g; ctx.fill();
+    // borde de neón en el color de la base: resplandor en dos capas y un núcleo claro
+    ctx.lineJoin='round'; ctx.strokeStyle=s.col; ctx.shadowColor=s.col;
+    pin(); ctx.lineWidth=5; ctx.shadowBlur=26; ctx.stroke();
+    pin(); ctx.lineWidth=3.5; ctx.shadowBlur=10; ctx.stroke(); ctx.shadowBlur=0;
+    pin(); ctx.strokeStyle='rgba(255,255,255,.85)'; ctx.lineWidth=1.3; ctx.stroke();
+    circle(x,cy,5.5); ctx.fillStyle=P.navy; ctx.fill();   // centro del pin
+    ctx.restore();
+  }
   // etiqueta
   const ly=y+46;
+  ctx.save(); if(apagada) ctx.globalAlpha=.75;
   ctx.font='900 15px Nunito, sans-serif'; const tw=ctx.measureText(s.nom).width;
   rr(x-tw/2-34,ly-14,tw+48,28,14); ctx.fillStyle='rgba(11,15,58,.9)'; ctx.fill(); ctx.strokeStyle=done[s.id]?P.amber:s.col; ctx.lineWidth=2; ctx.stroke();
-  circle(x-tw/2-18,ly,10); ctx.fillStyle=done[s.id]?P.amber:s.col; ctx.fill();
-  ctx.fillStyle=P.navy; ctx.font='900 12px Nunito, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText(done[s.id]?'✓':String(ST.indexOf(s)+1),x-tw/2-18,ly+1);
-  ctx.fillStyle=P.white; ctx.font='900 15px Nunito, sans-serif'; ctx.textAlign='left'; ctx.fillText(s.nom,x-tw/2-4,ly+1); ctx.textBaseline='alphabetic';
+  // Insignia sin número: candado abierto azul si se puede entrar (ámbar si ya está completada),
+  // candado cerrado gris si está bloqueada. Se dibujan como figuras para que se vean igual en todos los navegadores.
+  const bx=x-tw/2-18, bloq=estacionBloqueada(s.id), fondo=bloq?'#5A5C80':done[s.id]?P.amber:'#3B82F6';
+  circle(bx,ly,10); ctx.fillStyle=fondo; ctx.fill();
+  ctx.save(); ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle=P.white; ctx.lineWidth=1.8;
+  ctx.beginPath();
+  if(bloq){ ctx.arc(bx,ly-2,3.2,Math.PI,0); ctx.lineTo(bx+3.2,ly); ctx.moveTo(bx-3.2,ly-2); ctx.lineTo(bx-3.2,ly); }   // arco cerrado
+  else { ctx.moveTo(bx-3.2,ly); ctx.lineTo(bx-3.2,ly-3.5); ctx.arc(bx,ly-3.5,3.2,Math.PI,-.15); }                        // arco abierto: el lado derecho queda suelto y levantado
+  ctx.stroke();
+  rr(bx-5,ly-.5,10,7,1.5); ctx.fillStyle=P.white; ctx.fill();                                                                // cuerpo
+  circle(bx,ly+2.6,1.1); ctx.fillStyle=fondo; ctx.fill();                                                                    // cerradura
+  ctx.restore();
+  ctx.fillStyle=P.white; ctx.font='900 15px Nunito, sans-serif'; ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.fillText(s.nom,x-tw/2-4,ly+1); ctx.textBaseline='alphabetic';
+  ctx.restore();
 }
 function drawHub(A){
   const {x,y}=HUB;
@@ -349,7 +390,7 @@ function showTip(h){
     tN.textContent=h.nom; tD.textContent=h.desc;
     // Las estaciones sin misión todavía (2, 3, 4 y 5) muestran su información pero no se pueden abrir
     const bloqueada=estacionBloqueada(h.id);
-    tE.textContent=bloqueada?L('🔒 Bloqueada · muy pronto','🔒 Locked · coming soon'):done[h.id]?L('⭐ Completada','⭐ Completed'):L('● Disponible','● Available');
+    tE.textContent=bloqueada?L('🔒 Bloqueada · Muy pronto','🔒 Locked · Coming soon'):done[h.id]?L('⭐ Completada','⭐ Completed'):L('● Disponible','● Available');
     tE.style.color=bloqueada?P.coral:done[h.id]?P.amber:col;
     tG.style.display=''; tG.disabled=bloqueada; tG.classList.toggle('bloqueado',bloqueada);
     tG.textContent=bloqueada?L('🔒 Entrar','🔒 Enter'):done[h.id]?L('Jugar otra vez ▶','Play again ▶'):L('Entrar ▶','Enter ▶');
