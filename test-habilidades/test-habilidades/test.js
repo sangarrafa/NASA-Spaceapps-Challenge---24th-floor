@@ -39,7 +39,7 @@ $('bLeer').onclick = () => {
   $('bLeer').setAttribute('aria-pressed', String(voz));
   if (voz) decir(textoHablado(PREGUNTAS[indice]));
 };
-$('bEscuchar').onclick = () => decir($('saludo').textContent);
+$('bEscuchar').onclick = () => decir(`${$('tBienvenida').textContent} ${$('saludo').textContent}`);
 
 /* ---------- Volumen de la música de fondo: de 0 (silencio) a 1 (máximo) ---------- */
 const VOLUMEN_MUSICA = 0.05;
@@ -71,12 +71,11 @@ function sonarEfectoFinal() {
 }
 
 /* ---------- Bienvenida ---------- */
-const previo = window.EquilibriaPerfil.cargar();
-if (previo && previo.nombre) $('nombre').value = previo.nombre;
+// No se pide el nombre: al astronauta siempre se le llama "Astronauta"
 
 $('bEmpezar').onclick = () => {
   iniciarAmbiente();
-  nombre = $('nombre').value.trim() || L('Astronauta', 'Astronaut');
+  nombre = L('Astronauta', 'Astronaut');
   indice = 0; respuestas = [];
   window.EqPersonajes.silueta.montar($('silueta'));
   $('porcentaje').textContent = '0';
@@ -84,7 +83,6 @@ $('bEmpezar').onclick = () => {
   mostrar('pPregunta');
   pintarPregunta();
 };
-$('nombre').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('bEmpezar').click(); });
 
 /* ---------- Preguntas ---------- */
 function pintarProgreso() {

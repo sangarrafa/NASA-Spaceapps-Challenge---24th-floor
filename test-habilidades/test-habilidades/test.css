@@ -36,10 +36,26 @@ h2{font-weight:900;font-size:clamp(24px,4vw,34px);line-height:1.15;text-wrap:bal
   padding:14px 18px;font-weight:700;font-size:clamp(17px,2.4vw,21px);line-height:1.35}
 .retrato.lunia + .burbuja{border-color:rgba(111,227,232,.4)}
 
-/* Bienvenida */
-.etiqueta{font-weight:800;font-size:18px;margin-top:6px}
-#nombre{width:min(340px,100%);padding:12px 18px;border-radius:999px;border:2px solid rgba(111,227,232,.4);
-  background:rgba(5,6,26,.6);color:var(--white);font:800 20px Nunito,sans-serif;text-align:center}
+/* Bienvenida: ficha de instrucciones (escucha o lee) */
+.pantalla.bienvenida{background:none;border:0;box-shadow:none;gap:22px}
+.ficha{position:relative;width:min(640px,100%);display:flex;flex-direction:column;align-items:center;gap:22px;
+  padding:34px 32px 30px;border-radius:30px;border:3px solid transparent;
+  background:linear-gradient(160deg,#1E1B6E,#0F1046 70%) padding-box,linear-gradient(to top right,var(--amber),var(--aqua) 45%,var(--pink)) border-box;
+  box-shadow:0 0 50px rgba(111,227,232,.18),0 0 90px rgba(75,42,158,.35)}
+.modos{display:flex;align-items:center;gap:22px}
+.modo{display:flex;flex-direction:column;align-items:center;gap:12px}
+.circulo{position:relative;display:grid;place-items:center;width:104px;height:104px;border-radius:50%;font-size:50px;
+  background:rgba(42,44,110,.7);border:3px solid var(--c)}
+.escucha{--c:var(--aqua)} .lee{--c:var(--amber)}
+.escucha .circulo{box-shadow:0 0 22px rgba(111,227,232,.35)}
+.ondas{position:absolute;right:-16px;top:50%;width:14px;height:34px;transform:translateY(-50%);
+  border-right:3px solid rgba(111,227,232,.45);border-radius:0 50% 50% 0}
+.rotulo{font-weight:900;font-size:15px;letter-spacing:.2em;color:var(--c)}
+.o{font-weight:900;font-size:22px;color:var(--gray);margin-bottom:28px}
+.instruccion{font-weight:900;font-size:clamp(24px,3.6vw,34px);line-height:1.25;text-wrap:balance}
+.c-aqua{color:var(--aqua)} .c-amber{color:var(--amber)}
+.escuchar{background:rgba(26,28,63,.9);border:2px solid var(--aqua);border-radius:999px;padding:10px 24px;font-weight:800;font-size:17px;transition:background .15s}
+.escuchar:hover{background:rgba(111,227,232,.15)}
 
 .big{background:linear-gradient(135deg,var(--pink),var(--magenta));color:#fff;font-weight:900;font-size:22px;
   padding:14px 36px;border-radius:999px;box-shadow:0 0 28px rgba(232,65,140,.55),inset 0 -4px 0 rgba(0,0,0,.2);transition:transform .15s}
