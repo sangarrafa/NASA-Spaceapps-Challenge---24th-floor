@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Equilibria · Test de súper habilidades</title>
+<title data-en="Equilibria · Superpower test">Equilibria · Test de súper habilidades</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -17,16 +17,16 @@
 
   <!-- Bienvenida -->
   <section id="pBienvenida" class="pantalla activa" aria-labelledby="tBienvenida">
-    <div class="kicker">ACADEMIA DE ASTRONAUTAS</div>
-    <h1 id="tBienvenida">Test de súper habilidades</h1>
+    <div class="kicker" data-en="ASTRONAUT ACADEMY">ACADEMIA DE ASTRONAUTAS</div>
+    <h1 id="tBienvenida" data-en="Superpower test">Test de súper habilidades</h1>
     <div class="comandante">
       <div class="retrato" aria-hidden="true">👩🏽‍🚀<span class="placa">RÍOS</span></div>
-      <p class="burbuja" id="saludo">Hola, Astronauta. Soy la Comandante Ríos. Voy a hacerte 10 pruebas cortas. No hay respuestas buenas ni malas: solo elige lo que tú harías.</p>
+      <p class="burbuja" id="saludo" data-en="Hi, Astronaut. I’m Commander Ríos. I’m going to give you 10 short tests. There are no right or wrong answers: just pick what you would do.">Hola, Astronauta. Soy la Comandante Ríos. Voy a hacerte 10 pruebas cortas. No hay respuestas buenas ni malas: solo elige lo que tú harías.</p>
     </div>
-    <button id="bEscuchar" class="tog" type="button">🔊 Escuchar a la Comandante</button>
-    <label for="nombre" class="etiqueta">¿Cómo te llamas, Astronauta?</label>
-    <input id="nombre" type="text" maxlength="20" placeholder="Ej.: Mia" autocomplete="off">
-    <button id="bEmpezar" class="big">¡Empezar! ▶</button>
+    <button id="bEscuchar" class="tog" type="button" data-en="🔊 Listen to the Commander">🔊 Escuchar a la Comandante</button>
+    <label for="nombre" class="etiqueta" data-en="What’s your name, Astronaut?">¿Cómo te llamas, Astronauta?</label>
+    <input id="nombre" type="text" maxlength="20" placeholder="Ej.: Mia" data-en-placeholder="E.g. Mia" autocomplete="off">
+    <button id="bEmpezar" class="big" data-en="Start! ▶">¡Empezar! ▶</button>
   </section>
 
   <!-- Pregunta -->
@@ -34,7 +34,7 @@
     <div class="columna-pregunta">
       <div class="barra">
         <div id="progreso" class="progreso" aria-hidden="true"></div>
-        <button id="bLeer" class="tog" aria-pressed="true" title="Leer en voz alta">🔊 Voz</button>
+        <button id="bLeer" class="tog" aria-pressed="true" title="Leer en voz alta" data-en-title="Read aloud" data-en="🔊 Voice">🔊 Voz</button>
       </div>
       <div class="kicker" id="numPrueba"></div>
       <h2 id="tituloPrueba"></h2>
@@ -46,11 +46,11 @@
       <div id="opciones" class="opciones" role="group"></div>
     </div>
     <!-- Tercio derecho: personaje secreto que se llena 10 % por respuesta -->
-    <aside class="columna-silueta" aria-label="Tu personaje secreto">
-      <div class="kicker">PERSONAJE SECRETO</div>
+    <aside class="columna-silueta" aria-label="Tu personaje secreto" data-en-aria="Your secret character">
+      <div class="kicker" data-en="SECRET CHARACTER">PERSONAJE SECRETO</div>
       <div id="silueta" class="silueta"></div>
       <div class="porcentaje"><span id="porcentaje">0</span> %</div>
-      <p class="pista-silueta" id="pistaSilueta">Cada respuesta revela una parte de tu personaje.</p>
+      <p class="pista-silueta" id="pistaSilueta" data-en="Each answer reveals part of your character.">Cada respuesta revela una parte de tu personaje.</p>
     </aside>
   </section>
 
@@ -59,16 +59,16 @@
 
   <!-- Desempate -->
   <section id="pEmpate" class="pantalla" aria-labelledby="tEmpate">
-    <div class="kicker">COMANDANTE RÍOS</div>
-    <h2 id="tEmpate">¡Tienes dos súper habilidades! ¿Con cuál quieres empezar?</h2>
+    <div class="kicker" data-en="COMMANDER RÍOS">COMANDANTE RÍOS</div>
+    <h2 id="tEmpate" data-en="You have two superpowers! Which one do you want to start with?">¡Tienes dos súper habilidades! ¿Con cuál quieres empezar?</h2>
     <div id="empateOpciones" class="insignias"></div>
   </section>
 
   <!-- Resultado (solo la especialidad) -->
   <section id="pResultado" class="pantalla" aria-labelledby="tResultado">
-    <div class="kicker" id="kickerResultado">LA GRAN REVELACIÓN</div>
-    <h2 id="tResultado">¡Toca la nube muchas veces y muy rápido!</h2>
-    <div id="zonaRevela" class="zona-revela" role="button" tabindex="0" aria-label="Toca muchas veces para despejar el vapor y revelar tu personaje">
+    <div class="kicker" id="kickerResultado" data-en="THE BIG REVEAL">LA GRAN REVELACIÓN</div>
+    <h2 id="tResultado" data-en="Tap the cloud lots of times, really fast!">¡Toca la nube muchas veces y muy rápido!</h2>
+    <div id="zonaRevela" class="zona-revela" role="button" tabindex="0" aria-label="Toca muchas veces para despejar el vapor y revelar tu personaje" data-en-aria="Tap many times to clear the steam and reveal your character">
       <div class="halo" aria-hidden="true"></div>
       <div class="rayos" aria-hidden="true"></div>
       <div id="avatarFinal" class="avatar-final" aria-hidden="true"></div>
@@ -76,7 +76,7 @@
       <div id="chispasToque" class="chispas-toque" aria-hidden="true"></div>
       <div class="medidor" aria-hidden="true"><span id="medidorRevela"></span></div>
     </div>
-    <button id="bSaltarRevela" class="ghost" hidden>Revelar sin el juego</button>
+    <button id="bSaltarRevela" class="ghost" hidden data-en="Reveal without the game">Revelar sin el juego</button>
     <div id="infoResultado" class="info-resultado" hidden>
       <div class="insignia" id="insignia"></div>
       <p class="lema" id="lema"></p>
@@ -85,20 +85,21 @@
         <p class="burbuja" id="mensajeLunia"></p>
       </div>
       <div class="fila">
-        <button id="bMision" class="big">Ir a la misión ▶</button>
+        <button id="bMision" class="big" data-en="Go to the mission ▶">Ir a la misión ▶</button>
       </div>
-      <button id="bRepetir" class="ghost">↺ Hacer el test otra vez</button>
+      <button id="bRepetir" class="ghost" data-en="↺ Take the test again">↺ Hacer el test otra vez</button>
       <pre id="depuracion" hidden></pre>
     </div>
   </section>
 
 </main>
 
+<script src="../shared/language.js"></script>
 <script src="audio/indice.js"></script>
 <script src="voz.js"></script>
 <script src="escenas.js"></script>
 <script src="personajes.js"></script>
-<script src="perfil-astronauta.js"></script>
+<script src="perfilAstronauta.js"></script>
 <script src="preguntas.js"></script>
 <script src="lib/three.r186.min.js"></script>
 <script src="profundidad.js"></script>

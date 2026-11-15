@@ -42,7 +42,7 @@
       for (let i = 0; i < 12; i++) {
         burbujas += `<circle class="chispa-sube" style="animation-delay:-${(i * 0.37).toFixed(2)}s;animation-duration:${(2.4 + (i % 4) * 0.5).toFixed(1)}s" cx="${26 + ((i * 41) % 150)}" cy="${120 + (i % 5) * 50}" r="${1.4 + (i % 3) * 0.8}" fill="#FFD58A"/>`;
       }
-      cont.innerHTML = `<svg viewBox="0 0 200 356" class="silueta-svg" role="img" aria-label="Silueta de tu personaje secreto">
+      cont.innerHTML = `<svg viewBox="0 0 200 356" class="silueta-svg" role="img" aria-label="${window.EqLang ? window.EqLang.L('Silueta de tu personaje secreto', 'Silhouette of your secret character') : 'Silueta de tu personaje secreto'}">
         <defs>
           <clipPath id="clipSil">${FORMAS}</clipPath>
           <clipPath id="clipNivel"><rect id="rectNivel" x="-20" y="${ABAJO + 8}" width="240" height="420"/></clipPath>

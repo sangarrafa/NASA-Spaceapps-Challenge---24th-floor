@@ -39,7 +39,7 @@ const STR = {
     origin:'ORIGIN: SOUTH POLE', contact:'CONTACT: 214 DAYS', energyPct:'ENERGY: 6%', backSmall:'MISSION', backBig:'CONTROL'
   }
 };
-let lang = 'es';
+let lang = (window.EqLang && EqLang.get()) || 'es';
 const t = k => STR[lang][k];
 
 const stage = document.getElementById('stage');
@@ -868,6 +868,7 @@ requestAnimationFrame(frame);
 const $=id=>document.getElementById(id);
 const startEl=$('start'), endEl=$('end'), ctrl=$('controls');
 function applyLang(){
+  if(window.EqLang) EqLang.set(lang);
   document.documentElement.lang = lang;
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-title]').forEach(el=>{ el.title = t(el.dataset.i18nTitle); });
@@ -925,7 +926,7 @@ $('bReplay').onclick=()=>{ endEl.classList.remove('on'); setPad([110,164.81,220,
 $('bNext').onclick=()=>{
   window.dispatchEvent(new CustomEvent('cinematica:siguiente', {detail:{lang, speed}}));
   try{ if(window.parent!==window) window.parent.postMessage({type:'cinematica-fin', lang},'*'); }catch(e){}
-  window.location.href='../test-habilidades/test-habilidades/index.html';
+  window.location.href='../testHabilidades/index.html';
 };
 $('bFull').onclick=()=>{ try{ const r=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen(); r&&r.catch&&r.catch(()=>{}); }catch(e){} };
 let hideT=null;

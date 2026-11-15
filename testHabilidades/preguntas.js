@@ -148,3 +148,69 @@ window.EQ_PREGUNTAS = [
       { e: '😕', t: 'Un poco triste, pero sigo', v: 1 },
       { e: '😣', t: 'Frustrado, prefiero que me ayuden', v: 2 } ] }
 ];
+
+/* ---------- English ----------
+   Si el jugador eligió inglés en la cinemática, se reemplazan los textos visibles.
+   Los ids, valores y puntajes no cambian. */
+if (window.EqLang && window.EqLang.get() === 'en') {
+  const ES = window.EQ_ESPECIALIDADES;
+  Object.assign(ES.E, { nombre: 'Crater Explorer', lema: 'Your superpower is curiosity.',
+    descripcion: 'You discover secrets nobody else sees and want to know how everything works inside.',
+    lunia: 'Great! I have secret NASA data stored away. I’ll show it to you as you discover it.' });
+  Object.assign(ES.T, { nombre: 'Record Pilot', lema: 'Your superpower is persistence.',
+    descripcion: 'You set goals, reach them and then go for a harder one.',
+    lunia: 'Awesome! I’ll prepare missions with stars for you. Let’s see how many you get.' });
+  Object.assign(ES.G, { nombre: 'Crew Guardian', lema: 'Your superpower is caring for others.',
+    descripcion: 'With you, nobody gets left behind. Together, the crew goes further.',
+    lunia: 'I’m not alone anymore! I’ll introduce you to the crew, and you’ll get messages from Earth.' });
+  Object.assign(ES.S, { nombre: 'Solar Strategist', lema: 'Your superpower is thinking before acting.',
+    descripcion: 'You look at everything, make a plan and follow it. When the Sun gets angry, your plan will save us.',
+    lunia: 'The Sun is waking up... With you and your plan, we’re going to beat the solar storm!' });
+
+  window.EQ_REACCIONES = [
+    'Interesting! That’s how good astronauts think.',
+    'Noted in your file.',
+    'Hmm! I’m starting to see your superpower...',
+    'That answer says a lot about you. Let’s keep going!',
+    'I like the way you think. On to the next one!',
+    'Now I know you a little better. Let’s go!',
+    'Good choice, Astronaut! Let’s keep going.',
+    'Your file is getting really interesting.',
+    'That tells me something important about you. Let’s continue!',
+    'Aha! One more piece of the puzzle.',
+    'Answer saved. You’re doing great!',
+    'That’s answering from the heart. Next test!',
+    'Very good. Every answer helps me prepare your mission.',
+    'Excellent! The Academy takes note.',
+    'Every answer gets me closer to your superpower. Keep it up!'
+  ];
+
+  const EN = {
+    'cueva': ['The mysterious cave', 'Walking on the Moon, you find a cave that isn’t on any map. What do you do?',
+      ['I go in to see what’s inside', 'I challenge myself to reach the bottom as fast as I can', 'I call my team so we go in together', 'First I look carefully and plan where to go']],
+    'dia-libre': ['A day off', 'There are no chores at the base today! What would you like to do?',
+      ['Open up an old robot to see how it works inside', 'Practice in the simulator to level up', 'Spend time with the crew and help someone', 'Organize the supplies for the whole week']],
+    'premio': ['The prize', 'At the end of your mission, the Academy will give you a prize. Which one do you choose?',
+      ['A map of places nobody has visited', 'A gold “Best Astronaut” medal', 'A photo with your whole crew', 'A secret handbook with commander tricks']],
+    'companero': ['A teammate in trouble', 'Another astronaut can’t fix their solar panel. What do you do?',
+      ['We try new things to see what happens', 'I show them how I fixed mine. It was super fast!', 'I stay and help until it works', 'We check together which part is failing and make a plan']],
+    'jugar': ['The best part of playing', 'What’s the most fun part of a game for you?',
+      ['Discovering hidden secrets', 'Winning and leveling up', 'Playing with my friends', 'Thinking up a strategy that works']],
+    'mensaje': ['A message from Earth', 'You get a message from Earth. What would you like it to say?',
+      ['“We found a new place for you to explore”', '“You broke an Academy record!”', '“Your family sends you a giant hug”', '“We need your plan for a hard mission”']],
+    'caminos': ['Two paths', 'There are two paths to the base: a short one with loose rocks and a long but safe one.',
+      ['The short one, I get there first!', 'I look at the rocks up close and then decide', 'The long one, better to be safe']],
+    'experimento': ['The experiment', 'The scientists ask you for an experiment that uses part of the reserve oxygen, but it could be a big discovery.',
+      ['I do it right now!', 'I only do it if I have enough oxygen left', 'I don’t do it, oxygen comes first']],
+    'robot': ['The robot that won’t work', 'You try to build a robot and, after several tries, it still doesn’t work. What do you do?',
+      ['I keep trying on my own until I get it', 'I ask for a tiny hint and keep going', 'I ask someone to show me how', 'I get a little mad and leave it for later']],
+    'sentir': ['How do you feel?', 'When something new goes wrong the first time, you feel...',
+      ['Calm, I try again', 'A bit sad, but I keep going', 'Frustrated, I’d rather get help']]
+  };
+  window.EQ_PREGUNTAS.forEach((p) => {
+    const t = EN[p.id];
+    if (!t) return;
+    p.titulo = t[0]; p.texto = t[1];
+    p.opciones.forEach((o, i) => { if (t[2][i]) o.t = t[2][i]; });
+  });
+}

@@ -270,7 +270,7 @@ function render(){
   for(const p of parts){ ctx.fillStyle=`rgba(190,190,210,${.6*(1-p.age/p.life)})`; circle(p.x,p.y,p.r); ctx.fill(); }
   ctx.restore();
   // rótulo
-  const s='POLO SUR LUNAR · BASE LUNIA · SIN ENERGÍA', n=Math.floor(clamp((T-.6)*28,0,s.length));
+  const s=(window.EqLang?window.EqLang.L:(es)=>es)('POLO SUR LUNAR · BASE LUNIA · SIN ENERGÍA','LUNAR SOUTH POLE · LUNIA BASE · NO POWER'), n=Math.floor(clamp((T-.6)*28,0,s.length));
   ctx.globalAlpha=1-seg(T,5,6); ctx.font='700 20px "Space Mono", monospace'; ctx.textAlign='left'; ctx.fillStyle=P.aqua; ctx.shadowColor=P.aqua; ctx.shadowBlur=10;
   ctx.fillText(s.slice(0,n),40,56); ctx.shadowBlur=0; ctx.globalAlpha=1;
   // viñeta y fundidos
@@ -297,6 +297,6 @@ initAudio(); stage.addEventListener('pointerdown',unlockAudio); addEventListener
 document.getElementById('bSnd').onclick=()=>{ sndOn=!sndOn; document.getElementById('bSnd').setAttribute('aria-pressed',sndOn); unlockAudio(); if(master) master.gain.setTargetAtTime(sndOn?.7:0,ac.currentTime,.05); };
 document.getElementById('bSkip').onclick=()=>{ T=END; finish(); };
 document.getElementById('bAgain').onclick=restart;
-const NEXT_SCREEN='../../mapa-luna/index.html';
+const NEXT_SCREEN='../../mapaLuna/index.html';
 document.getElementById('bNext').onclick=()=>{ dispatchEvent(new CustomEvent('llegada:siguiente')); try{ if(parent!==window) parent.postMessage({type:'llegada-fin'},'*'); }catch(e){} location.href=NEXT_SCREEN; };
 })();

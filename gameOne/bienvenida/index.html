@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Misión Equilibria — Bienvenida</title>
+<title data-en="Equilibria Mission — Welcome">Misión Equilibria — Bienvenida</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
@@ -14,21 +14,22 @@
   <canvas id="c" width="1280" height="720"></canvas>
 
   <form id="card" autocomplete="off">
-    <div class="kicker">ACADEMIA DE CADETES ESPACIALES</div>
-    <h1>¡Bienvenido a la misión <span class="eq">Equilibria</span>!</h1>
-    <p class="pide">Para comenzar, escribe tu nombre completo <span id="aqui">aquí:</span></p>
+    <div class="kicker" data-en="SPACE CADET ACADEMY">ACADEMIA DE CADETES ESPACIALES</div>
+    <h1 data-en-html="Welcome to the <span class=&quot;eq&quot;>Equilibria</span> mission!">¡Bienvenido a la misión <span class="eq">Equilibria</span>!</h1>
+    <p class="pide" data-en-html="To begin, type your full name <span id=&quot;aqui&quot;>here:</span>">Para comenzar, escribe tu nombre completo <span id="aqui">aquí:</span></p>
     <div class="campo">
-      <input id="nombre" type="text" maxlength="60" placeholder="Tu nombre y apellido" aria-label="Escribe tu nombre completo" spellcheck="false">
+      <input id="nombre" type="text" maxlength="60" placeholder="Tu nombre y apellido" aria-label="Escribe tu nombre completo" data-en-placeholder="Your first and last name" data-en-aria="Type your full name" spellcheck="false">
     </div>
-    <button id="go" type="submit" disabled>¡Comenzar misión! ▶</button>
+    <button id="go" type="submit" disabled data-en="Start mission! ▶">¡Comenzar misión! ▶</button>
     <div class="msg" id="msg"></div>
   </form>
 
   <svg id="flecha" aria-hidden="true"><path class="linea" id="fl"/><path id="punta"/></svg>
 
-  <div id="saludo"><h2 id="hola"></h2><p>Preparando tu misión…</p></div>
+  <div id="saludo"><h2 id="hola"></h2><p data-en="Preparing your mission…">Preparando tu misión…</p></div>
 </div>
 
+<script src="../../shared/language.js"></script>
 <script src="bienvenida.js"></script>
 </body>
 </html>

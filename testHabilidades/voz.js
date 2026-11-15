@@ -7,7 +7,8 @@
    oración cierre con su entonación (baja en afirmaciones, sube en preguntas). */
 (function () {
   const PAUSAS = { '.': 420, '!': 380, '?': 520, '…': 650, ':': 320 };
-  const PREFERIDAS = ['Salome', 'Dalia', 'Ximena', 'Elena', 'Paloma', 'Larissa', 'Elvira', 'Paulina', 'Sabina', 'Helena', 'Laura'];
+  const EN = window.EqLang && window.EqLang.get() === 'en';
+  const PREFERIDAS = EN ? ['Aria', 'Jenny', 'Ana', 'Michelle', 'Samantha', 'Zira'] : ['Salome', 'Dalia', 'Ximena', 'Elena', 'Paloma', 'Larissa', 'Elvira', 'Paulina', 'Sabina', 'Helena', 'Laura'];
   const AJUSTE = { rate: 0.9, pitch: 1.12 }; // un poco más lenta y más aguda: más dulce
 
   let activa = true;
@@ -38,7 +39,7 @@
 
   function elegirVozNavegador() {
     if (!('speechSynthesis' in window)) return;
-    const es = speechSynthesis.getVoices().filter((v) => /^es/i.test(v.lang));
+    const es = speechSynthesis.getVoices().filter((v) => (EN ? /^en/i : /^es/i).test(v.lang));
     const puntaje = (v) => {
       const i = PREFERIDAS.findIndex((n) => v.name.includes(n));
       return (i < 0 ? 50 : i) - (/Natural|Online|Neural/i.test(v.name) ? 100 : 0);
@@ -57,7 +58,7 @@
   function reproducir(frase, t) {
     return new Promise((listo) => {
       if (t !== turno) return listo();
-      if (hayGrabacion(frase)) {
+      if (!EN && hayGrabacion(frase)) {   // las grabaciones solo existen en español
         const a = new Audio(`audio/${clave(frase)}.mp3`);
         audioActual = a;
         a.onended = a.onerror = () => listo();
@@ -66,7 +67,7 @@
       }
       if (!('speechSynthesis' in window)) return listo();
       const u = new SpeechSynthesisUtterance(frase);
-      u.lang = (vozNavegador && vozNavegador.lang) || 'es-MX';
+      u.lang = (vozNavegador && vozNavegador.lang) || (EN ? 'en-US' : 'es-MX');
       if (vozNavegador) u.voice = vozNavegador;
       const natural = vozNavegador && /Natural|Online|Neural/i.test(vozNavegador.name);
       u.rate = natural ? 0.95 : AJUSTE.rate;
