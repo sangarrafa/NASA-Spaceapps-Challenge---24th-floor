@@ -41,7 +41,10 @@
 
   <div id="toast" data-i18n="toast"></div>
 
-  <div id="start">
+  <div id="start" class="intro">
+    <video id="startVid" src="resources/Luna_desde_tierra_1.webm" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
+    <button id="bIntroSkip" data-i18n="skipIntro"></button>
+    <div id="introSound" data-i18n="introSound" aria-live="polite"></div>
     <div class="kicker" data-i18n="kickerIn"></div>
     <h1>EQUILIBRIA</h1>
     <p data-i18n="startLine"></p>
@@ -67,6 +70,7 @@
   </div>
 </div>
 
+<script src="../audio/audio-ambiente.js" data-reiniciar data-sin-aviso data-volumen="0.5"></script>
 <script src="cinematic.js"></script>
 </body>
 </html>
