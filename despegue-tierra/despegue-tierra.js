@@ -1,9 +1,9 @@
 (() => {
 /* -------------------------------------------------------------
-   Cinemática: el cadete sube al cohete (~15 s) y se detiene antes
+   Cinemática: el astronauta sube al cohete (~15 s) y se detiene antes
    del despegue. "Siguiente" emite window 'despegue:siguiente' y un
    postMessage {type:'despegue-siguiente'} al contenedor.
-   El cadete no lleva casco (lo lleva bajo el brazo): cuando tengan
+   El astronauta no lleva casco (lo lleva bajo el brazo): cuando tengan
    el avatar del test, se puede cambiar el color de piel y pelo en AVATAR.
    ------------------------------------------------------------- */
 const AVATAR={piel:'#C68863', pielSombra:'#A96F50', pelo:'#2A1830'};
@@ -76,8 +76,10 @@ function drawCrowd(cheer){
   // vallas y pancarta
   ctx.strokeStyle='rgba(232,233,242,.35)'; ctx.lineWidth=2;
   for(const [x0,x1] of [[30,430],[990,1260]]){ line(x0,566,x1,566); for(let x=x0;x<=x1;x+=20) line(x,566,x,580); }
-  rr(150,488,160,30,8); ctx.fillStyle=P.pink; ctx.fill(); ctx.font='900 15px Nunito, sans-serif'; ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(L('¡VAMOS, CADETE!','GO, CADET!'),230,504);
-  ctx.strokeStyle='#c9cbd8'; ctx.lineWidth=2; line(155,518,155,535); line(305,518,305,535);
+  // Cartel del público: se ensancha para que quepa "¡VAMOS, ASTRONAUTA!" (centrado en x=230)
+  ctx.font='900 15px Nunito, sans-serif'; const vamos=L('¡VAMOS, ASTRONAUTA!','GO, ASTRONAUT!'); const vw=Math.max(160,ctx.measureText(vamos).width+28);
+  rr(230-vw/2,488,vw,30,8); ctx.fillStyle=P.pink; ctx.fill(); ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(vamos,230,504);
+  ctx.strokeStyle='#c9cbd8'; ctx.lineWidth=2; line(230-vw/2+5,518,230-vw/2+5,535); line(230+vw/2-5,518,230+vw/2-5,535);
   rr(1060,490,140,28,8); ctx.fillStyle=P.aqua; ctx.fill(); ctx.fillStyle=P.navy; ctx.fillText(L('¡A LA LUNA! 🌙','TO THE MOON! 🌙'),1130,505); ctx.strokeStyle='#c9cbd8'; line(1065,518,1065,535); line(1195,518,1195,535);
   ctx.textBaseline='alphabetic';
 }
@@ -141,7 +143,7 @@ function drawFlame(power,lift){
   const gl=ctx.createRadialGradient(RX,PADY,10,RX,PADY,420*power); gl.addColorStop(0,`rgba(255,181,71,${.45*power})`); gl.addColorStop(1,'rgba(255,122,92,0)'); ctx.fillStyle=gl; ctx.fillRect(RX-450,PADY-300,900,450);
 }
 
-/* ---------------- Cadete (uniforme naranja, sin casco) ---------------- */
+/* ---------------- Astronauta (uniforme naranja, sin casco) ---------------- */
 function drawCadet(x,y,s,view,walk=0,wave=0,alpha=1){
   ctx.save(); ctx.globalAlpha=alpha; ctx.translate(x,y); ctx.scale(s,s);
   const o='#FF8A3D', od='#D9631E';
@@ -153,7 +155,10 @@ function drawCadet(x,y,s,view,walk=0,wave=0,alpha=1){
   ctx.fillStyle='#FFFFFF'; ctx.fillRect(-15,-34,30,4);           // cinturón reflectivo
   if(view!=='back'){ ctx.fillStyle=P.pink; rr(view==='right'?3:-11,-52,9,8,2); ctx.fill();   // parche de la misión
     ctx.fillStyle=P.aqua; circle(view==='right'?-4:6,-48,3.5); ctx.fill(); }
-  else { ctx.fillStyle='rgba(255,255,255,.85)'; ctx.font='900 7px Nunito'; ctx.textAlign='center'; ctx.fillText(L('CADETE','CADET'),0,-42); }
+  else { // nombre en la espalda: la letra se achica si hace falta para caber en los 30 px del uniforme
+    const t=L('ASTRONAUTA','ASTRONAUT'); ctx.font='900 7px Nunito'; const w=ctx.measureText(t).width;
+    if(w>26) ctx.font=`900 ${(7*26/w).toFixed(2)}px Nunito`;
+    ctx.fillStyle='rgba(255,255,255,.85)'; ctx.textAlign='center'; ctx.fillText(t,0,-42); }
   // brazos (uno sostiene el casco)
   const arm=(sx,ang)=>{ ctx.save(); ctx.translate(sx,-53); ctx.rotate(ang); rr(-4.5,0,9,22,4.5); ctx.fillStyle=o; ctx.fill(); circle(0,23,4.5); ctx.fillStyle=AVATAR.piel; ctx.fill(); ctx.restore(); };
   const helmet=(hx,hy)=>{ circle(hx,hy,10); ctx.fillStyle='#F2F3FA'; ctx.fill(); ctx.strokeStyle='#C9CCE0'; ctx.lineWidth=1.5; ctx.stroke();
@@ -233,7 +238,7 @@ function render(){
   ctx.setTransform(dpr,0,0,dpr,0,0);
   const power=easeOut(seg(T,12,13.6)), lift=ease(seg(T,14.2,FREEZE))*16;
   const shake=power*(T<FREEZE?3+power*3:4);
-  // cámara: se acerca para seguir al cadete y se aleja para el encendido
+  // cámara: se acerca para seguir al astronauta y se aleja para el encendido
   const zin=ease(seg(T,4,6.4))*(1-ease(seg(T,10.6,12.2)));
   const z=1+.42*zin, fx=lerp(640,lerp(ELX,DOOR.x,seg(T,6.4,7.4))+40,zin), fy=lerp(380,DECK-60,zin);
   ctx.save(); ctx.translate(640,360); ctx.scale(z,z); ctx.translate(-fx,-fy);
@@ -258,7 +263,7 @@ function render(){
   drawParts();
   ctx.restore();
   // rótulo y cuenta regresiva
-  const s=L('CENTRO ESPACIAL · ACADEMIA DE CADETES','SPACE CENTER · CADET ACADEMY'), n=Math.floor(clamp((T-.4)*30,0,s.length));
+  const s=L('CENTRO ESPACIAL · ACADEMIA DE ASTRONAUTAS','SPACE CENTER · ASTRONAUT ACADEMY'), n=Math.floor(clamp((T-.4)*30,0,s.length));
   ctx.globalAlpha=1-seg(T,4,5); ctx.font='700 20px "Space Mono", monospace'; ctx.textAlign='left'; ctx.fillStyle=P.aqua; ctx.shadowColor=P.aqua; ctx.shadowBlur=10; ctx.fillText(s.slice(0,n),40,56); ctx.shadowBlur=0; ctx.globalAlpha=1;
   if(T>11 && T<=FREEZE){ const c=Math.max(0,Math.ceil(13.5-T)); ctx.font='900 64px Nunito, sans-serif'; ctx.textAlign='center'; ctx.fillStyle='#fff'; ctx.shadowColor=P.amber; ctx.shadowBlur=20;
     ctx.fillText(c>0?String(c):L('¡IGNICIÓN!','IGNITION!'),640,120); ctx.shadowBlur=0; }
