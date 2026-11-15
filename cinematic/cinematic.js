@@ -925,7 +925,7 @@ $('bReplay').onclick=()=>{ endEl.classList.remove('on'); setPad([110,164.81,220,
 $('bNext').onclick=()=>{
   window.dispatchEvent(new CustomEvent('cinematica:siguiente', {detail:{lang, speed}}));
   try{ if(window.parent!==window) window.parent.postMessage({type:'cinematica-fin', lang},'*'); }catch(e){}
-  const el=$('toast'); el.classList.add('on'); setTimeout(()=>el.classList.remove('on'),2600);
+  window.location.href='../test-habilidades/test-habilidades/index.html';
 };
 $('bFull').onclick=()=>{ try{ const r=document.fullscreenElement?document.exitFullscreen():stage.requestFullscreen(); r&&r.catch&&r.catch(()=>{}); }catch(e){} };
 let hideT=null;
