@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Equilibria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="cinematic.css">
+</head>
+<body>
+
+<div id="stage">
+  <canvas id="c" width="1280" height="720" data-i18n-aria="canvasLabel"></canvas>
+
+  <div id="subs" aria-live="polite"><span class="who"></span><span class="txt"></span></div>
+
+  <div id="controls">
+    <button id="bPause" data-i18n-title="tPause"></button>
+    <button id="bSfx" aria-pressed="true" data-i18n="sound" data-i18n-title="tSfx"></button>
+    <button id="bVoice" aria-pressed="true" data-i18n="voice" data-i18n-title="tVoice"></button>
+    <button id="bSpeed" data-i18n-title="tSpeed">1x</button>
+    <button id="bFull" data-i18n-title="tFull">⛶</button>
+    <button id="bSkip" data-i18n="skip" data-i18n-title="tSkip"></button>
+  </div>
+
+  <div id="end">
+    <div>
+      <div class="kicker" data-i18n="academy"></div>
+      <h2 data-i18n="question"></h2>
+    </div>
+    <div class="bottom">
+      <div class="row">
+        <button class="big" id="bNext" data-i18n="next"></button>
+      </div>
+      <button class="ghost" id="bReplay" data-i18n="replay"></button>
+      <div class="credits" data-i18n="credits"></div>
+    </div>
+  </div>
+
+  <div id="toast" data-i18n="toast"></div>
+
+  <div id="start">
+    <div class="kicker" data-i18n="kickerIn"></div>
+    <h1>EQUILIBRIA</h1>
+    <p data-i18n="startLine"></p>
+    <button class="big" id="bStart" data-i18n="receive"></button>
+    <div class="opts">
+      <div class="seg" role="group" aria-labelledby="lLang">
+        <span class="seglabel" id="lLang" data-i18n="language"></span>
+        <button class="segb" id="langEs" data-lang="es" aria-pressed="true" lang="es">Español</button>
+        <button class="segb" id="langEn" data-lang="en" aria-pressed="false" lang="en">English</button>
+      </div>
+      <div class="seg" role="group" aria-labelledby="lSpeed">
+        <span class="seglabel" id="lSpeed" data-i18n="speed"></span>
+        <button class="segb" id="spd1" data-speed="1" aria-pressed="true">1x</button>
+        <button class="segb" id="spd125" data-speed="1.25" aria-pressed="false">1.25x</button>
+      </div>
+    </div>
+    <div class="opts">
+      <button class="tog" id="tVoice" aria-pressed="true" data-i18n="togVoice"></button>
+      <button class="tog" id="tSfx" aria-pressed="true" data-i18n="togSfx"></button>
+    </div>
+    <p class="hint" data-i18n="hint"></p>
+    <p class="hint" id="voiceInfo"></p>
+  </div>
+</div>
+
+<script src="cinematic.js"></script>
+</body>
+</html>

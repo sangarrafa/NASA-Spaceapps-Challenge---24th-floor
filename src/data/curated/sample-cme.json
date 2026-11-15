@@ -1,0 +1,13 @@
+{
+  "source": "NASA DONKI - Coronal Mass Ejection (CME)",
+  "retrievedAt": "2026-11-14",
+  "note": "Curated dataset used as an offline fallback; does not represent a live reading.",
+  "events": [
+    {
+      "activityID": "2026-10-15T20:24:00-CME-001",
+      "startTime": "2026-10-15T20:24Z",
+      "sourceLocation": "",
+      "note": "CME seen to the ESE in SOHO LASCO C2/C3 imagery."
+    }
+  ]
+}
