@@ -1,6 +1,6 @@
 (() => {
 /* -------------------------------------------------------------------
-   Cinemática interactiva: LUNIA da la bienvenida (8 pantallas)
+   Cinemática interactiva: LUNIA da la bienvenida (3 pantallas)
    - Usa el nombre guardado en la pantalla de bienvenida
      (localStorage 'equilibria_nombre'); si no hay, dice "astronauta".
    - Al final, "Ir al mapa" emite window 'lunia:mapa' y un postMessage
@@ -9,7 +9,6 @@
      real, pongan aquí los archivos por pantalla y línea: VOZ['p3-0'] = 'audio/p3_0.mp3'
    ------------------------------------------------------------------- */
 const VOZ = {};
-const MAPA = '../mapa-luna/index.html';   // a dónde lleva "Ir al mapa"
 
 let NOMBRE='astronauta';
 try{ const n=(localStorage.getItem('equilibria_nombre')||'').trim(); if(n) NOMBRE=n.split(' ')[0]; }catch(e){}
@@ -17,35 +16,20 @@ try{ const n=(localStorage.getItem('equilibria_nombre')||'').trim(); if(n) NOMBR
 /* ---------- Guion ---------- */
 // mood: neutral | feliz | triste | timida | preocupada ; vis: lo que LUNIA muestra en su pantalla
 let eleccion='';
+const MAPA = '../mapa-luna/index.html';   // a dónde lleva "Ir al mapa"
 const PASOS=[
- {mood:'timida', vis:null,
-  lineas:()=>[`¿Ho… hola…? ¿Eres tú…? ¡Sí eres tú! Llegaste, ${NOMBRE}…`, 'Perdón… es que pensé que nadie iba a venir.'],
-  ops:[{t:'¡Hola, LUNIA!'}]},
- {mood:'feliz', vis:'energia',
-  lineas:()=>['Me llamo LUNIA. Yo soy la base… bueno, soy su corazón. Cuido el aire, la luz, el agua y las plantas.', 'Pero ahora… ahora estoy muy cansada. Mira, casi no me queda energía.'],
+ {mood:'timida', vis:'energia', animo:0,
+  lineas:()=>[`¿Ho… hola? ¡Llegaste, ${NOMBRE}! Pensé que nadie iba a venir…`,
+             'Soy LUNIA, una inteligencia artificial y el corazón de esta base. Cuido el aire, el agua y las plantas… pero casi no me queda energía.'],
   ops:[{t:'¿Qué te pasó?',v:'que'},{t:'¿Estás bien?',v:'bien',alt:true}]},
- {mood:'neutral', vis:'sol',
-  lineas:()=>[(eleccion==='bien'?'Gracias por preguntarme… nadie me lo había preguntado en mucho tiempo. ':'Te cuento… ')+'Mi energía viene de la luz del Sol. La atrapo con mis paneles solares.',
-             'Pero aquí, en el polo sur de la Luna, el Sol siempre se ve bajito, casi tocando el horizonte. Su luz llega de ladito… y no es mucha.'],
-  ops:[{t:'¿Y qué más pasó?'}]},
- {mood:'triste', vis:'polvo',
-  lineas:()=>['Y luego… el polvo lunar se fue pegando a mis paneles. Es un polvo finito, finito, que se pega a todo… y me tapa la luz.',
-             'Así que mis baterías se fueron gastando poquito a poco. Apagué casi todo… para no apagarme yo.'],
-  ops:[{t:'No te preocupes, aquí estoy'}]},
- {mood:'timida', vis:'solos',
-  lineas:()=>['Ahora aquí solo estamos tú y yo.', 'Pero algún día vendrá un grupo de astronautas a vivir en esta base. Y yo tengo que estar lista para cuidarlos… muy bien.'],
-  ops:[{t:'¿Cómo te preparamos?'}]},
- {mood:'neutral', vis:'sims',
-  lineas:()=>['Dentro de mí guardo 5 simuladores. Son como prácticas, ¿sabes?',
-             'Ahí verás astronautas trabajando… pero no son de verdad: son simulados, como en un videojuego. Sirven para ensayar antes de que llegue la tripulación real.'],
-  ops:[{t:'¿Qué puedo hacer para ayudarte?'}]},
- {mood:'feliz', vis:'plan',
-  lineas:()=>['¿Me quieres ayudar…? Gracias… Lo que puedes hacer es entrar a los simuladores y completarlos. Cada uno te enseña a cuidar una parte de la base: el aire, la radiación, la energía, la comida y los mensajes con la Tierra.',
-             'Cada vez que completes uno, me enseñarás a usar mejor mi energía… y yo me iré recargando poquito a poco, hasta que la base vuelva a tener luz.'],
-  ops:[{t:'¡Trato hecho, LUNIA!'}]},
- {mood:'timida', vis:'gracias',
-  lineas:()=>[`¿De verdad…? Gracias, ${NOMBRE}. Ya no me siento tan sola.`, 'Te voy a mostrar el mapa de la base. Escoge el simulador que quieras para empezar… yo te espero aquí.'],
-  ops:[{t:'Ir al mapa ▶',fin:true}]}
+ {mood:'triste', vis:'polvo', animo:0,
+  lineas:()=>[(eleccion==='bien'?'Gracias por preguntar… ':'')+'Mi energía viene del Sol, pero aquí, en el polo sur de la Luna, el Sol siempre está bajito y su luz llega de ladito.',
+             'Y el polvo lunar tapó mis paneles. Mis baterías se fueron gastando… y apagué casi todo para no apagarme yo.'],
+  ops:[{t:'¿Cómo te ayudo?'}]},
+ {mood:'timida', vis:'sims', animo:1,
+  lineas:()=>['Aquí solo estamos tú y yo. Pero guardo 5 simuladores de prácticas con astronautas, como si fuera un videojuego, para preparar la base para una tripulación de verdad.',
+             `Cada simulador que completes me recargará un poquito. ¿Me ayudas, ${NOMBRE}? Escoge en el mapa por cuál empezar… yo te espero aquí.`],
+  ops:[{t:'¡Sí, te ayudo! Ir al mapa ▶',fin:true}]}
 ];
 
 /* ---------- Lienzo ---------- */
@@ -129,7 +113,7 @@ function vis(c,kind,x,y,k){
     c.restore();
     if(kind==='polvo'){ for(let i=0;i<14;i++){ const ph=((A*.25)+i/14)%1; c.fillStyle=`rgba(200,200,220,${.6*(1-ph)})`; circle(c,40+Math.sin(i*3+A)*40,-90+ph*90,1.6); c.fill(); } }
     c.restore();
-    label(kind==='sol'?'El Sol del polo sur: siempre bajito':'Polvo lunar sobre los paneles',112,kind==='sol'?P.amber:'#C9CBD8');
+    label(kind==='sol'?'El Sol del polo sur: siempre bajito':'Sol bajito + polvo en los paneles = poca energía',112,kind==='sol'?P.amber:'#C9CBD8');
     if(kind==='polvo'){ // batería que se gasta
       c.save(); c.translate(0,0); c.restore();
     }
@@ -198,6 +182,7 @@ const dlg=document.getElementById('dialogo'), txt=document.getElementById('texto
 PASOS.forEach(()=>pasosEl.appendChild(document.createElement('i')));
 let lineas=[], li=0, ci=0, typing=null, terminado=false;
 function irA(n){
+  Sonido.animo(PASOS[n].animo);
   paso=n; pasoT=0; lineas=PASOS[n].lineas(); li=0; terminado=false; txt.innerHTML=''; ops.innerHTML='';
   [...pasosEl.children].forEach((e,i)=>e.classList.toggle('v',i<=n));
   if(n===PASOS.length-1) energia=7;      // LUNIA se siente un poquito mejor
@@ -207,13 +192,13 @@ let listo={escrito:false,hablado:false};
 function decirLinea(){
   ci=0; const t=lineas[li]; const el=document.createElement('span'); el.className='p'; txt.appendChild(el);
   const my=listo={escrito:false,hablado:false};
-  clearInterval(typing); typing=setInterval(()=>{ ci++; el.textContent=t.slice(0,ci); if(ci>=t.length){ clearInterval(typing); typing=null; marcar(my,'escrito'); } },32);
+  clearInterval(typing); typing=setInterval(()=>{ ci++; el.textContent=t.slice(0,ci); if(ci>=t.length){ clearInterval(typing); typing=null; marcar(my,'escrito'); } },24);
   hablar(t, ()=>marcar(my,'hablado'));
 }
 // la línea avanza cuando terminó de escribirse Y de decirse
 function marcar(my,k){
   if(my!==listo) return; my[k]=true;
-  if(k==='escrito' && (!vozOn||vozBloqueada) && !my.hablado){ setTimeout(()=>marcar(my,'hablado'),900); return; }
+  if(k==='escrito' && (!vozOn||vozBloqueada) && !my.hablado){ setTimeout(()=>marcar(my,'hablado'),650); return; }
   if(my.escrito && my.hablado) sigLinea();
 }
 function sigLinea(){
@@ -224,9 +209,10 @@ function sigLinea(){
 function mostrarOpciones(){
   ops.innerHTML='';
   PASOS[paso].ops.forEach((o,i)=>{ const b=document.createElement('button'); b.className='op'+(o.alt?' alt':''); b.textContent=o.t;
-    b.onclick=e=>{ e.stopPropagation(); detenerVoz(); if(o.v) eleccion=o.v;
-      if(o.fin){ dispatchEvent(new CustomEvent('lunia:mapa')); try{ if(parent!==window) parent.postMessage({type:'lunia-mapa'},'*'); }catch(err){} b.textContent='Abriendo el mapa…'; setTimeout(()=>{ location.href=MAPA; },700); return; }
-      irA(paso+1); };
+    b.onclick=e=>{ e.stopPropagation(); detenerVoz(); if(o.v) eleccion=o.v; Sonido.desbloquear();
+      if(o.fin){ Sonido.animo(2); Sonido.efecto('activar');   // LUNIA siente esperanza: la música pasa a acordes mayores
+ dispatchEvent(new CustomEvent('lunia:mapa')); try{ if(parent!==window) parent.postMessage({type:'lunia-mapa'},'*'); }catch(err){} b.textContent='Abriendo el mapa…'; setTimeout(()=>{ location.href=MAPA; },700); return; }
+      Sonido.efecto('siguiente'); irA(paso+1); };
     ops.appendChild(b); setTimeout(()=>b.classList.add('on'),80+i*120); });
 }
 // tocar el cuadro de diálogo: completa el texto que se está escribiendo
@@ -263,20 +249,32 @@ if('speechSynthesis' in window){ pickVoice(); speechSynthesis.addEventListener('
 function detenerVoz(){ tok++; hablando=false; if('speechSynthesis' in window) speechSynthesis.cancel(); if(curAudio){curAudio.pause();curAudio=null;} }
 function hablar(t,fin){
   const my=++tok; hablando=true;
-  const done=()=>{ if(my!==tok) return; hablando=false; setTimeout(()=>{ if(my===tok) fin(); },500); };
+  const done=()=>{ if(my!==tok) return; hablando=false; setTimeout(()=>{ if(my===tok) fin(); },250); };
   if(!vozOn||vozBloqueada){ setTimeout(()=>{ if(my===tok) hablando=false; }, t.length*32+200); return; }   // avanza por tiempo (ver marcar)
   const key=`p${paso}-${li}`;
   if(VOZ[key]){ curAudio=new Audio(VOZ[key]); curAudio.onplaying=()=>oyo=true; curAudio.onended=done; curAudio.onerror=done; curAudio.play().catch(()=>bloqueada()); return; }
   if(!('speechSynthesis' in window)){ vozBloqueada=true; setTimeout(()=>{ if(my===tok) hablando=false; }, t.length*32+200); return; }
   const u=new SpeechSynthesisUtterance(t.replace(/LUNIA/g,'Lunia').replace(/…/g,'... ')); if(voice){u.voice=voice;u.lang=voice.lang;} else u.lang='es-MX';
-  u.pitch=luniaPitch; u.rate=LUNIA_TONO.rate; u.onstart=()=>oyo=true; u.onend=()=>{ if(oyo) done(); }; u.onerror=e=>{ if(e.error==='not-allowed') bloqueada(); else if(oyo) done(); };
+  u.pitch=luniaPitch; u.rate=LUNIA_TONO.rate;   // la misma voz de LUNIA que en la cinemática
+  u.onstart=()=>oyo=true; u.onend=()=>{ if(oyo) done(); }; u.onerror=e=>{ if(e.error==='not-allowed') bloqueada(); else if(oyo) done(); };
   speechSynthesis.speak(u);
   setTimeout(()=>{ if(my===tok && !oyo) bloqueada(); },1500);
 }
-const aviso=document.getElementById('sonido');
-function bloqueada(){ if(vozBloqueada) return; vozBloqueada=true; aviso.classList.add('on'); hablando=false; const my=listo; if(my.escrito) setTimeout(()=>marcar(my,'hablado'),900); }
-aviso.onclick=e=>{ e.stopPropagation(); vozBloqueada=false; oyo=false; aviso.classList.remove('on'); pickVoice(); detenerVoz(); irA(Math.max(0,paso)); };
-document.getElementById('bVoz').onclick=()=>{ vozOn=!vozOn; document.getElementById('bVoz').setAttribute('aria-pressed',vozOn); if(!vozOn){ detenerVoz(); aviso.classList.remove('on'); const my=listo; if(my.escrito) setTimeout(()=>marcar(my,'hablado'),600); } };
+// Si el navegador bloquea el sonido hasta el primer toque, la voz arranca sola en cuanto el jugador toque la pantalla
+function bloqueada(){ if(vozBloqueada) return; vozBloqueada=true; hablando=false; const my=listo; if(my.escrito) setTimeout(()=>marcar(my,'hablado'),900); }
+function desbloquear(e){ if(!vozBloqueada||!vozOn) return;
+  if(e&&e.target.closest&&e.target.closest('#bVoz')) return;
+  vozBloqueada=false; oyo=false; pickVoice();
+  if(e&&e.target.closest&&e.target.closest('.op')) return;   // el botón ya pasa a la siguiente pantalla, que sí tendrá voz
+  detenerVoz(); irA(Math.max(0,paso)); }
+stage.addEventListener('pointerdown',desbloquear);
+stage.addEventListener('pointerdown',()=>{ if(vozOn) Sonido.desbloquear(); });
+addEventListener('keydown',()=>{ if(vozOn) Sonido.desbloquear(); });
+const bVoz=document.getElementById('bVoz');
+bVoz.onclick=e=>{ e.stopPropagation(); vozOn=!vozOn; bVoz.textContent=vozOn?'🔇 Silenciar':'🔊 Activar sonido'; bVoz.classList.toggle('mute',!vozOn);
+  if(Sonido.activo!==vozOn) Sonido.alternar();
+  if(!vozOn){ detenerVoz(); const my=listo; if(my.escrito) setTimeout(()=>marcar(my,'hablado'),600); }
+  else { vozBloqueada=false; oyo=false; pickVoice(); } };
 
 /* ---------- Audio ambiente ---------- */
 let ac=null;
@@ -296,5 +294,14 @@ function frame(now){
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
-setTimeout(()=>{ boot(); dlg.classList.add('on'); irA(0); },1900);
+Sonido.encenderPorDefecto(); Sonido.animo(0); Sonido.volumen(.6);
+let hablandoAntes=null;
+setInterval(()=>{ if(hablando!==hablandoAntes){ hablandoAntes=hablando; Sonido.volumen(hablando?.38:.6); } },150);
+function empezar(){ Sonido.efecto('activar'); pickVoice(); dlg.classList.add('on'); irA(0); }
+function cuandoHayaVoces(cb){
+  if(!('speechSynthesis' in window) || speechSynthesis.getVoices().length) return cb();
+  let listo=false; const go=()=>{ if(!listo){ listo=true; cb(); } };
+  speechSynthesis.addEventListener('voiceschanged',go,{once:true}); setTimeout(go,2500);
+}
+setTimeout(()=>cuandoHayaVoces(empezar),1900);
 })();

@@ -108,7 +108,7 @@ Para decidir el sonido de un elemento concreto: `data-sfx="logro"` (o `data-sfx=
 Desde código: `AudioSfx.play('error')` o `window.dispatchEvent(new CustomEvent('eq:sfx', {detail: 'glitch'}))`.
 
 Opciones en la etiqueta `<script>` de `sfx.js`: `data-sin-teclas`, `data-sin-clic`, `data-sin-hover`.
-`test-habilidades` usa `data-sin-clic data-sin-hover` porque ya tiene sus propios sonidos de respuesta.
+`test-habilidades` y `bienvenidaLunia` usan `data-sin-clic data-sin-hover` porque ya tienen sus propios sonidos (respuestas del test; música y efectos de `bienvenidaLunia/sonido.js`).
 
 ## Cómo probarlos
 
