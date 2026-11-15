@@ -37,6 +37,8 @@ const ST=[
 ];
 // Pantalla a la que lleva "Entrar" en cada estación (las que aún no tienen misión solo emiten el evento)
 const MISSION_SCREENS={ soporte:'../mision1-soportevital/index.html' };
+// Una estación queda bloqueada mientras no tenga misión en MISSION_SCREENS: al agregarla aquí, se desbloquea sola
+const estacionBloqueada=id=>!MISSION_SCREENS[id];
 const PAD={x:150,y:420}, PADC={x:380,y:460};   // pista del cohete (Misión 1, ya hecha)
 const MARS={x:1120,y:118,r:50};
 const done={}; ST.forEach(s=>done[s.id]=false);
@@ -340,13 +342,18 @@ function showTip(h){
     else { x=MARS.x; y=MARS.y+MARS.r+52; abajo=true; }
     tN.textContent=L('Marte · Misión 2','Mars · Mission 2'); tD.textContent=ok?L('¡Tu cohete está listo! Súbete y viaja a Marte: la segunda parte de la misión te espera en el planeta rojo.','Your rocket is ready! Get on board and travel to Mars: the second part of the mission is waiting for you on the red planet.'):L('A Marte se viaja en el cohete. Para que pueda despegar, primero tienes que completar las 5 misiones de la base lunar.','You travel to Mars in the rocket. Before it can take off, you need to complete the 5 missions of the lunar base.');
     tE.textContent=ok?L('🔓 Disponible','🔓 Available'):L(`🔒 Bloqueado · ${ST.filter(s=>done[s.id]).length} de 5 misiones`,`🔒 Locked · ${ST.filter(s=>done[s.id]).length} of 5 missions`); tE.style.color=ok?P.green:P.coral;
+    tG.disabled=false; tG.classList.remove('bloqueado');
     tG.style.display=ok?'':'none'; tG.textContent=L('🚀 Despegar hacia Marte','🚀 Launch to Mars'); tG.onclick=()=>dispatchEvent(new CustomEvent('mapa:marte'));
   } else {
     x=h.x; y=h.y-62; col=h.col;
     tN.textContent=h.nom; tD.textContent=h.desc;
-    tE.textContent=done[h.id]?'⭐ Completada':'● Disponible'; tE.style.color=done[h.id]?P.amber:col;
-    tG.style.display=''; tG.textContent=done[h.id]?L('Jugar otra vez ▶','Play again ▶'):L('Entrar ▶','Enter ▶');
-    tG.onclick=()=>{ dispatchEvent(new CustomEvent('mapa:entrar',{detail:{id:h.id}})); try{ if(parent!==window) parent.postMessage({type:'mapa-entrar',id:h.id},'*'); }catch(e){}
+    // Las estaciones sin misión todavía (2, 3, 4 y 5) muestran su información pero no se pueden abrir
+    const bloqueada=estacionBloqueada(h.id);
+    tE.textContent=bloqueada?L('🔒 Bloqueada · muy pronto','🔒 Locked · coming soon'):done[h.id]?L('⭐ Completada','⭐ Completed'):L('● Disponible','● Available');
+    tE.style.color=bloqueada?P.coral:done[h.id]?P.amber:col;
+    tG.style.display=''; tG.disabled=bloqueada; tG.classList.toggle('bloqueado',bloqueada);
+    tG.textContent=bloqueada?L('🔒 Entrar','🔒 Enter'):done[h.id]?L('Jugar otra vez ▶','Play again ▶'):L('Entrar ▶','Enter ▶');
+    tG.onclick=()=>{ if(bloqueada) return; dispatchEvent(new CustomEvent('mapa:entrar',{detail:{id:h.id}})); try{ if(parent!==window) parent.postMessage({type:'mapa-entrar',id:h.id},'*'); }catch(e){}
       if(MISSION_SCREENS[h.id]) location.href=MISSION_SCREENS[h.id]; };
   }
   tip.classList.toggle('abajo',abajo);

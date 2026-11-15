@@ -22,6 +22,8 @@ button{font-family:inherit;cursor:pointer;border:0}
 #tip p{font-weight:700;font-size:calc(var(--s)*14px);line-height:1.35;opacity:.9}
 #tip .estado{font-weight:800;font-size:calc(var(--s)*13px);margin-top:calc(var(--s)*6px)}
 #tip button{margin-top:calc(var(--s)*10px);width:100%;background:linear-gradient(135deg,var(--pink),var(--magenta));color:#fff;font-weight:900;font-size:calc(var(--s)*17px);padding:calc(var(--s)*9px);border-radius:999px}
+/* Estación bloqueada: se ve la información, pero el botón muestra un candado y no se puede usar */
+#tip button.bloqueado{background:rgba(168,169,184,.25);color:rgba(232,233,242,.75);border:2px dashed rgba(232,233,242,.35);cursor:not-allowed;box-shadow:none}
 
 #btnSonido{position:absolute;right:calc(var(--s)*16px);top:calc(var(--s)*16px);width:calc(var(--s)*44px);height:calc(var(--s)*44px);border-radius:50%;background:rgba(11,15,58,.82);border:1.5px solid rgba(111,227,232,.35);color:var(--white);font-size:calc(var(--s)*20px);line-height:1}
 #btnSonido:hover{border-color:var(--aqua)}
