@@ -1,0 +1,210 @@
+/* Escenas animadas de las pruebas 1 a 4 */
+.escena{position:relative;width:100%;border-radius:18px;overflow:hidden;border:1px solid rgba(111,227,232,.3);
+  box-shadow:0 0 24px rgba(33,193,224,.18) inset;background:#05061a;line-height:0}
+.escena.exterior-3d{background:radial-gradient(120% 90% at 50% 100%,#14123a 0%,#070823 55%,#03040f 100%)}
+.escena[hidden]{display:none}
+.escena-svg{display:block;width:100%;height:auto;aspect-ratio:640/230}
+
+/* Pregunta "proyectada" como holograma */
+.burbuja.holograma{border-color:rgba(111,227,232,.55);background:linear-gradient(rgba(33,193,224,.08),rgba(26,28,63,.92));
+  box-shadow:0 0 18px rgba(111,227,232,.25);font-family:Nunito,sans-serif}
+.burbuja.holograma .escrito{color:var(--white);text-shadow:0 0 8px rgba(111,227,232,.6)}
+.burbuja.holograma .escrito::after{content:"▌";color:var(--aqua);animation:cursor .7s steps(1) infinite;margin-left:1px}
+.burbuja.holograma .por-escribir{color:transparent}
+@keyframes cursor{50%{opacity:0}}
+
+/* Pivotes del astronauta (coordenadas locales) */
+.astro .pi{transform-origin:-9.5px -36px}
+.astro .pd{transform-origin:9.5px -36px}
+.astro .bi{transform-origin:-24.5px -70px}
+.astro .bd{transform-origin:24.5px -70px}
+.astro .cabeza{transform-origin:0 -76px}
+
+.titila{animation:titila 2.8s ease-in-out infinite}
+@keyframes titila{50%{opacity:.25}}
+
+/* ---------- 1. Cueva ---------- */
+.camina-cueva{animation:avanza 4s cubic-bezier(.3,.1,.4,1) forwards;transform:translateX(40px)}
+@keyframes avanza{from{transform:translateX(40px)}to{transform:translateX(370px)}}
+.caminante{animation:rebote .25s ease-in-out 16 alternate}
+@keyframes rebote{to{transform:translateY(-3px)}}
+.caminante .pi{animation:paso .5s ease-in-out 8 alternate}
+.caminante .pd{animation:paso .5s ease-in-out 8 alternate-reverse}
+.caminante .bi{animation:paso .5s ease-in-out 8 alternate-reverse}
+@keyframes paso{from{transform:rotate(16deg)}to{transform:rotate(-16deg)}}
+.caminante .bd{animation:paso .5s ease-in-out 8 alternate,apunta .5s 4s ease-out forwards}
+@keyframes apunta{to{transform:rotate(-78deg)}}
+.caminante .cabeza{animation:asoma .6s 4s ease-out forwards}
+@keyframes asoma{to{transform:rotate(6deg)}}
+.haz-luz{opacity:0;animation:enciende .5s 4.4s forwards,parpadeo 2.4s 5s ease-in-out infinite}
+@keyframes enciende{to{opacity:1}}
+@keyframes parpadeo{50%{opacity:.7}}
+.exclama{transform-origin:0 -138px;transform:scale(0);animation:salta .45s 4s cubic-bezier(.3,1.6,.6,1) forwards,flota 1.6s 4.6s ease-in-out infinite}
+@keyframes salta{to{transform:scale(1)}}
+@keyframes flota{0%,100%{transform:scale(1) translateY(0)}50%{transform:scale(1) translateY(-4px)}}
+.huella{opacity:0;animation:aparece .3s forwards}
+@keyframes aparece{to{opacity:.85}}
+.cristales{animation:brillo 1.8s ease-in-out infinite}
+@keyframes brillo{50%{opacity:.35}}
+
+/* ---------- 2. Oficina: pelota en bucle ---------- */
+.recostado .bd{transform:rotate(-116.6deg);animation:lanza 1.6s infinite}
+@keyframes lanza{0%{transform:rotate(-112deg)}8%{transform:rotate(-124deg)}20%,84%{transform:rotate(-116.6deg)}92%{transform:rotate(-108deg)}100%{transform:rotate(-112deg)}}
+.recostado .cabeza{animation:mira 1.6s ease-in-out infinite}
+@keyframes mira{0%,100%{transform:rotate(0)}45%{transform:rotate(-6deg)}}
+.pelota{animation:sube 1.6s infinite}
+@keyframes sube{
+  0%{transform:translateY(0) rotate(0);animation-timing-function:cubic-bezier(.2,.7,.4,1)}
+  45%{transform:translateY(-78px) rotate(180deg);animation-timing-function:cubic-bezier(.6,0,.8,.3)}
+  88%{transform:translateY(0) rotate(360deg)}
+  100%{transform:translateY(0) rotate(360deg)}}
+
+/* ---------- 3. Podio ---------- */
+.festeja{animation:brinca .9s ease-in-out infinite}
+@keyframes brinca{0%,100%{transform:translateY(0)}40%{transform:translateY(-12px)}}
+.ganador .bi{transform:rotate(150deg);animation:saluda-i .9s ease-in-out infinite}
+.ganador .bd{transform:rotate(-150deg);animation:saluda-d .9s ease-in-out infinite}
+@keyframes saluda-i{0%,100%{transform:rotate(145deg)}40%{transform:rotate(162deg)}}
+@keyframes saluda-d{0%,100%{transform:rotate(-145deg)}40%{transform:rotate(-162deg)}}
+.medalla{animation:brillo-medalla 1.2s ease-in-out infinite}
+@keyframes brillo-medalla{50%{fill:#FFD58A}}
+.confeti{animation:cae 3s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes cae{from{transform:translateY(0) rotate(0)}to{transform:translateY(250px) rotate(540deg)}}
+.foco{animation:foco 2.4s ease-in-out infinite}
+@keyframes foco{50%{opacity:.6}}
+.destellos path{transform-box:fill-box;transform-origin:center;animation:destello 1.4s ease-in-out infinite}
+.destellos path:nth-child(2){animation-delay:.45s}
+.destellos path:nth-child(3){animation-delay:.9s}
+@keyframes destello{0%,100%{transform:scale(.4);opacity:.3}50%{transform:scale(1.1);opacity:1}}
+
+/* ---------- 4. Panel solar ---------- */
+.frustrado{animation:sacude 2.2s infinite}
+@keyframes sacude{0%,40%,100%{transform:translateX(0)}5%,15%,25%,35%{transform:translateX(-2.5px)}10%,20%,30%{transform:translateX(2.5px)}}
+.repara .bd{transform:rotate(-100deg);animation:golpea .32s ease-in-out infinite alternate}
+@keyframes golpea{from{transform:rotate(-122deg)}to{transform:rotate(-98deg)}}
+.repara .bi{transform:rotate(-20deg)}
+.vapor circle{animation:vapor 1.4s ease-out infinite;transform-box:fill-box;transform-origin:center}
+.vapor circle:nth-child(2){animation-delay:.6s}
+@keyframes vapor{from{transform:translateY(0) scale(.6);opacity:.8}to{transform:translateY(-26px) scale(1.5);opacity:0}}
+.garabato{animation:enoja 2.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes enoja{0%,100%{transform:translate(-34px,-128px) scale(.9)}10%{transform:translate(-34px,-128px) scale(1.08)}20%{transform:translate(-34px,-128px) scale(.95)}}
+.chispas{animation:chispa .6s steps(2) infinite}
+@keyframes chispa{50%{opacity:0}}
+.celda-rota{animation:falla 1s steps(2) infinite}
+@keyframes falla{50%{fill:#7a2140}}
+.alarma{animation:chispa .8s steps(2) infinite}
+.indeciso{animation:duda 3.6s ease-in-out infinite}
+@keyframes duda{0%,100%{transform:translateX(0)}25%{transform:translateX(14px)}40%{transform:translateX(14px)}60%{transform:translateX(0)}}
+.duda .bd{animation:mano-duda 3.6s ease-in-out infinite}
+@keyframes mano-duda{0%,15%,60%,100%{transform:rotate(0)}30%,42%{transform:rotate(-70deg)}}
+.duda .cabeza{animation:ladea 3.6s ease-in-out infinite}
+@keyframes ladea{0%,100%{transform:rotate(0)}20%{transform:rotate(-7deg)}70%{transform:rotate(7deg)}}
+.duda .pupilas{animation:mira-lados 1.8s ease-in-out infinite}
+@keyframes mira-lados{0%,100%{transform:translateX(-2.5px)}50%{transform:translateX(2.5px)}}
+.pregunta{animation:flota-p 1.5s ease-in-out infinite}
+@keyframes flota-p{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+/* ---------- 5. Joystick ---------- */
+.gamer .bi{transform:rotate(-40deg);animation:mando-i .5s ease-in-out infinite alternate}
+.gamer .bd{transform:rotate(40deg);animation:mando-d .5s ease-in-out infinite alternate}
+@keyframes mando-i{from{transform:rotate(-26deg)}to{transform:rotate(-34deg)}}
+@keyframes mando-d{from{transform:rotate(34deg)}to{transform:rotate(26deg)}}
+.jugador{animation:inclina 2s ease-in-out infinite}
+@keyframes inclina{0%,100%{transform:rotate(0)}30%{transform:rotate(-3deg)}70%{transform:rotate(3deg)}}
+.palanca{transform-origin:0 0;animation:palanca 2s ease-in-out infinite}
+@keyframes palanca{0%,100%{transform:rotate(0)}25%{transform:rotate(-24deg)}50%{transform:rotate(0)}75%{transform:rotate(22deg)}}
+.boton-juego{animation:chispa .5s steps(2) infinite}
+.nave-juego{animation:nave 2s ease-in-out infinite}
+@keyframes nave{0%,100%{transform:translateY(0)}25%{transform:translateY(-34px)}75%{transform:translateY(30px)}}
+.fuego{animation:chispa .2s steps(2) infinite}
+.roca-juego{animation:roca 3s linear infinite}
+@keyframes roca{from{transform:translateX(0)}to{transform:translateX(-280px)}}
+.estrella-juego{animation:roca 1.6s linear infinite}
+
+/* ---------- 6. Mensaje nuevo ---------- */
+.sobre{animation:sobre 1.6s ease-in-out infinite}
+@keyframes sobre{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.insignia-nuevo{transform-box:fill-box;transform-origin:center;animation:insignia 1.6s ease-in-out infinite}
+@keyframes insignia{0%,100%{transform:scale(1)}12%{transform:scale(1.3)}24%{transform:scale(.95)}36%{transform:scale(1.08)}}
+.anillo{transform-box:fill-box;transform-origin:center;animation:anillo 1.6s ease-out infinite}
+@keyframes anillo{from{transform:scale(1);opacity:.9}to{transform:scale(2.4);opacity:0}}
+.aviso{animation:chispa 1.2s steps(2) infinite}
+.onda{animation:onda 1.2s ease-in-out infinite}
+@keyframes onda{0%,100%{opacity:.15}50%{opacity:1}}
+.antena{animation:chispa 1s steps(2) infinite}
+.leds circle{animation:onda 1.05s ease-in-out infinite}
+.barra-dato{transform-box:fill-box;transform-origin:bottom;animation:barra 1.6s ease-in-out infinite}
+@keyframes barra{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.45)}}
+
+/* ---------- 7. Dos caminos ---------- */
+.hormigas{animation:hormigas 1s linear infinite}
+@keyframes hormigas{to{stroke-dashoffset:-18}}
+.piedra{transform-box:fill-box;transform-origin:center bottom;animation:tambalea .7s ease-in-out infinite alternate}
+@keyframes tambalea{from{transform:rotate(-9deg)}to{transform:rotate(9deg)}}
+.guijarro{animation:rueda 1.4s ease-in infinite}
+@keyframes rueda{from{transform:translate(0,0);opacity:1}to{transform:translate(14px,22px);opacity:0}}
+.bandera{transform-box:fill-box;transform-origin:left center;animation:ondea .8s ease-in-out infinite alternate}
+@keyframes ondea{to{transform:scaleX(.7)}}
+.decide .cabeza{animation:elige 3s ease-in-out infinite}
+@keyframes elige{0%,100%{transform:rotate(-10deg)}45%,55%{transform:rotate(10deg)}}
+.decide .bd{animation:none;transform:rotate(-30deg)}
+
+/* ---------- 8. Experimento ---------- */
+.aguja{animation:aguja .25s ease-in-out infinite alternate}
+@keyframes aguja{from{transform:rotate(-4deg)}to{transform:rotate(5deg)}}
+.nivel-bajo,.alerta-o2{animation:chispa .9s steps(2) infinite}
+.burbuja-matraz{animation:sube-burbuja 1.8s ease-in infinite}
+@keyframes sube-burbuja{from{transform:translateY(0);opacity:1}to{transform:translateY(-52px);opacity:0}}
+.burbuja-tubo{animation:sube-tubo 1.2s ease-in infinite}
+@keyframes sube-tubo{from{transform:translateY(0);opacity:1}to{transform:translateY(-10px);opacity:0}}
+.cientifico .bd{transform:rotate(-125deg);animation:examina 1.8s ease-in-out infinite}
+@keyframes examina{0%,100%{transform:rotate(-125deg)}50%{transform:rotate(-115deg)}}
+.cientifico .probeta{transform:rotate(125deg) translateY(-6px)}
+.cientifico .bi{transform:rotate(25deg)}
+.cientifico .cabeza{animation:ladea 3.6s ease-in-out infinite}
+.cientifico .pupilas{animation:mira-lados 2.4s ease-in-out infinite}
+.investiga .pregunta{animation:flota-p 1.5s ease-in-out infinite}
+
+/* ---------- 9. Robot ---------- */
+.armando .bd{transform:rotate(-140deg);animation:agita .22s ease-in-out infinite alternate}
+@keyframes agita{from{transform:rotate(-148deg)}to{transform:rotate(-132deg)}}
+.armando .bi{transform:rotate(28deg)}
+.ojo-robot{animation:chispa .45s steps(2) infinite}
+.robot-cabeza{transform:rotate(-14deg);transform-box:fill-box;transform-origin:center bottom;animation:robot-tic 2.2s ease-in-out infinite}
+@keyframes robot-tic{0%,80%,100%{transform:rotate(-14deg)}85%{transform:rotate(-6deg)}90%{transform:rotate(-16deg)}}
+.pulso-robot{animation:chispa .3s steps(2) infinite}
+
+/* ---------- 10. Pregunta ---------- */
+.levanta-mano .bd{transform:rotate(-165deg);animation:mano-arriba 1.2s ease-in-out infinite}
+@keyframes mano-arriba{0%,100%{transform:rotate(-165deg)}50%{transform:rotate(-150deg)}}
+.levanta-mano .cabeza{animation:ladea 3.6s ease-in-out infinite}
+.preguntando{animation:flota-p 2.4s ease-in-out infinite}
+.puntos-escribe{animation:escribe 3s infinite}
+@keyframes escribe{0%,45%{opacity:1}50%,100%{opacity:0}}
+.puntos-escribe circle{animation:punto .6s ease-in-out infinite alternate}
+@keyframes punto{to{transform:translateY(-4px)}}
+.signo{transform-box:fill-box;transform-origin:center;animation:signo 3s infinite}
+@keyframes signo{0%,48%{opacity:0;transform:scale(.4)}55%{opacity:1;transform:scale(1.2)}62%,100%{opacity:1;transform:scale(1)}}
+.signo-flota{animation:flota-signo 2.7s ease-out infinite}
+@keyframes flota-signo{from{transform:translateY(20px);opacity:0}30%{opacity:1}to{transform:translateY(-30px);opacity:0}}
+.plataforma{animation:foco 2.4s ease-in-out infinite}
+
+/* ---------- Profundidad (profundidad.js, Three.js) ---------- */
+.lienzo-3d{position:absolute;pointer-events:none;display:block}
+.escena .lienzo-fondo{inset:0;width:100%;height:100%;z-index:0}
+.escena .lienzo-frente{inset:0;width:100%;height:100%;z-index:2}
+.escena.con-3d .escena-svg{position:relative;z-index:1}
+.exterior-3d .cielo-svg{opacity:0}
+.exterior-3d .titila{display:none}
+/* Respiración: el torso, los brazos y la cabeza suben y bajan apenas */
+.respira{transform-box:view-box;animation:respira-astro 3.4s ease-in-out infinite}
+@keyframes respira-astro{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.3px)}}
+/* Movimiento orgánico del contenido: entra con un pequeño acercamiento */
+/* Un poco de margen (4 %) para que el paralaje nunca deje ver los bordes */
+.escena.con-3d .encuadre-3d{transform-box:view-box;transform-origin:50% 60%;transform:scale(1.04);animation:acerca-escena 1.6s cubic-bezier(.2,.7,.2,1)}
+@keyframes acerca-escena{from{transform:scale(1.12);opacity:.2}to{transform:scale(1.04);opacity:1}}
+
+@media (prefers-reduced-motion: reduce){
+  .respira,.escena.con-3d .encuadre-3d{animation:none}
+  .escena *{animation-duration:.01s!important;animation-iteration-count:1!important;animation-delay:0s!important}
+}

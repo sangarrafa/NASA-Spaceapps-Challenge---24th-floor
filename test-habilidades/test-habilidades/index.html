@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Equilibria · Test de súper habilidades</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="test.css">
+<link rel="stylesheet" href="escenas.css">
+<link rel="stylesheet" href="personajes.css">
+</head>
+<body>
+
+<main id="app">
+
+  <!-- Bienvenida -->
+  <section id="pBienvenida" class="pantalla activa" aria-labelledby="tBienvenida">
+    <div class="kicker">ACADEMIA DE ASTRONAUTAS</div>
+    <h1 id="tBienvenida">Test de súper habilidades</h1>
+    <div class="comandante">
+      <div class="retrato" aria-hidden="true">👩🏽‍🚀<span class="placa">RÍOS</span></div>
+      <p class="burbuja" id="saludo">Hola, Astronauta. Soy la Comandante Ríos. Voy a hacerte 10 pruebas cortas. No hay respuestas buenas ni malas: solo elige lo que tú harías.</p>
+    </div>
+    <button id="bEscuchar" class="tog" type="button">🔊 Escuchar a la Comandante</button>
+    <label for="nombre" class="etiqueta">¿Cómo te llamas, Astronauta?</label>
+    <input id="nombre" type="text" maxlength="20" placeholder="Ej.: Mia" autocomplete="off">
+    <button id="bEmpezar" class="big">¡Empezar! ▶</button>
+  </section>
+
+  <!-- Pregunta -->
+  <section id="pPregunta" class="pantalla" aria-live="polite">
+    <div class="columna-pregunta">
+      <div class="barra">
+        <div id="progreso" class="progreso" aria-hidden="true"></div>
+        <button id="bLeer" class="tog" aria-pressed="true" title="Leer en voz alta">🔊 Voz</button>
+      </div>
+      <div class="kicker" id="numPrueba"></div>
+      <h2 id="tituloPrueba"></h2>
+      <div id="escena" class="escena" aria-hidden="true" hidden></div>
+      <div class="comandante">
+        <div class="retrato" aria-hidden="true">👩🏽‍🚀<span class="placa">RÍOS</span></div>
+        <p class="burbuja" id="enunciado"></p>
+      </div>
+      <div id="opciones" class="opciones" role="group"></div>
+    </div>
+    <!-- Tercio derecho: personaje secreto que se llena 10 % por respuesta -->
+    <aside class="columna-silueta" aria-label="Tu personaje secreto">
+      <div class="kicker">PERSONAJE SECRETO</div>
+      <div id="silueta" class="silueta"></div>
+      <div class="porcentaje"><span id="porcentaje">0</span> %</div>
+      <p class="pista-silueta" id="pistaSilueta">Cada respuesta revela una parte de tu personaje.</p>
+    </aside>
+  </section>
+
+  <!-- Reacción entre preguntas -->
+  <div id="reaccion" class="reaccion" role="status" aria-live="polite"></div>
+
+  <!-- Desempate -->
+  <section id="pEmpate" class="pantalla" aria-labelledby="tEmpate">
+    <div class="kicker">COMANDANTE RÍOS</div>
+    <h2 id="tEmpate">¡Tienes dos súper habilidades! ¿Con cuál quieres empezar?</h2>
+    <div id="empateOpciones" class="insignias"></div>
+  </section>
+
+  <!-- Resultado (solo la especialidad) -->
+  <section id="pResultado" class="pantalla" aria-labelledby="tResultado">
+    <div class="kicker" id="kickerResultado">LA GRAN REVELACIÓN</div>
+    <h2 id="tResultado">¡Toca la nube muchas veces y muy rápido!</h2>
+    <div id="zonaRevela" class="zona-revela" role="button" tabindex="0" aria-label="Toca muchas veces para despejar el vapor y revelar tu personaje">
+      <div class="halo" aria-hidden="true"></div>
+      <div class="rayos" aria-hidden="true"></div>
+      <div id="avatarFinal" class="avatar-final" aria-hidden="true"></div>
+      <div id="vapor" class="vapor-capa" aria-hidden="true"></div>
+      <div id="chispasToque" class="chispas-toque" aria-hidden="true"></div>
+      <div class="medidor" aria-hidden="true"><span id="medidorRevela"></span></div>
+    </div>
+    <button id="bSaltarRevela" class="ghost" hidden>Revelar sin el juego</button>
+    <div id="infoResultado" class="info-resultado" hidden>
+      <div class="insignia" id="insignia"></div>
+      <p class="lema" id="lema"></p>
+      <div class="comandante">
+        <div class="retrato lunia" aria-hidden="true">🤖<span class="placa">LUNIA</span></div>
+        <p class="burbuja" id="mensajeLunia"></p>
+      </div>
+      <div class="fila">
+        <button id="bMision" class="big">Ir a la misión ▶</button>
+      </div>
+      <button id="bRepetir" class="ghost">↺ Hacer el test otra vez</button>
+      <pre id="depuracion" hidden></pre>
+    </div>
+  </section>
+
+</main>
+
+<script src="audio/indice.js"></script>
+<script src="voz.js"></script>
+<script src="escenas.js"></script>
+<script src="personajes.js"></script>
+<script src="perfil-astronauta.js"></script>
+<script src="preguntas.js"></script>
+<script src="lib/three.r186.min.js"></script>
+<script src="profundidad.js"></script>
+<script src="test.js"></script>
+</body>
+</html>
