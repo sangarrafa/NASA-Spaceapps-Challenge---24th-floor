@@ -29,7 +29,7 @@ const NIVELES = [
   // tolGrados: qué tan cerca (en grados de la órbita lunar) hay que llegar.
   // zona: arco verde que muestra dónde debe estar la Luna al despegar.
   // fantasma: muestra dónde estará la Luna dentro de 3 días.
-  { nombre: L('Cadete', 'Cadet'), tolGrados: 15, fantasma: true,  zona: true  },
+  { nombre: L('Astronauta', 'Astronaut'), tolGrados: 15, fantasma: true,  zona: true  },
   { nombre: L('Piloto', 'Pilot'), tolGrados: 10, fantasma: true,  zona: false },
   { nombre: L('Comandante', 'Commander'), tolGrados: 8,  fantasma: false, zona: false }
 ];

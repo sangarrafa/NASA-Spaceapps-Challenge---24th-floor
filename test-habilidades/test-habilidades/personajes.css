@@ -119,3 +119,30 @@
 @media (prefers-reduced-motion: reduce){
   .ola,.destello-oro,.chispa-sube,.reflejo,.aura-oro,.heroe-flota,.orbita-heroe,.rayos,.nube i,.silueta.completa{animation:none}
 }
+
+/* ---------- Todo en una pantalla, sin bajar (computador) ----------
+   Va al final para ganarle a las reglas de arriba. La escena, la silueta y el círculo de la
+   revelación se ajustan a la altura de la ventana; al revelar el personaje, su información
+   va al lado del avatar en vez de debajo. */
+@media (min-width:821px){
+  body{padding:12px 16px}
+  #app > .pantalla{padding:20px 24px;gap:12px}
+  .columna-pregunta{gap:10px}
+  .columna-pregunta h2{font-size:clamp(22px,3.8vh,32px)}
+  .columna-pregunta .escena{width:min(100%,calc((100vh - 430px) * 2.78))}
+  .columna-pregunta .retrato{width:60px;height:60px;font-size:32px}
+  .columna-pregunta .burbuja{padding:10px 14px;font-size:clamp(16px,2.6vh,20px)}
+  .opcion{min-height:60px;padding:10px 14px;font-size:16px}
+  .opcion .emoji{font-size:28px}
+  .silueta{max-width:min(260px,calc((100vh - 260px) * .56))}
+
+  .zona-revela{width:min(520px,100%,calc(100vh - 220px));margin:0 auto 6px}
+  #app > #pResultado.activa:has(#infoResultado:not([hidden])){max-width:1100px;display:grid;
+    grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:28px;row-gap:8px}
+  #pResultado:has(#infoResultado:not([hidden])) > .kicker,
+  #pResultado:has(#infoResultado:not([hidden])) > h2{grid-column:1 / -1}
+  #pResultado:has(#infoResultado:not([hidden])) .zona-revela{width:min(460px,calc(100vh - 190px));margin:0}
+  #pResultado .info-resultado{gap:12px}
+  /* Los rayos y el brillo 3D se salen del círculo: se recortan con un margen para que no alarguen la página */
+  #app > #pResultado{overflow:clip;overflow-clip-margin:30px}
+}

@@ -28,8 +28,10 @@ function mostrar(id) {
 }
 
 /* ---------- Voz de la Comandante (voz.js) ---------- */
-const decir = (texto) => { if (voz) window.EqVoz.decir(texto); };
-const textoHablado = (p) => `${p.titulo}. ${p.texto}`;
+// Devuelve una promesa que se cumple cuando Ríos termina de hablar (o de inmediato si la voz está apagada)
+const decir = (texto) => (voz ? window.EqVoz.decir(texto) : Promise.resolve());
+// El punto separa el título del enunciado, salvo que el título ya termine en signo ("¿Cómo te sientes?")
+const textoHablado = (p) => `${p.titulo}${/[.!?…]$/.test(p.titulo) ? '' : '.'} ${p.texto}`;
 
 $('bLeer').onclick = () => {
   voz = !voz;
@@ -37,7 +39,7 @@ $('bLeer').onclick = () => {
   $('bLeer').setAttribute('aria-pressed', String(voz));
   if (voz) decir(textoHablado(PREGUNTAS[indice]));
 };
-$('bEscuchar').onclick = () => decir($('saludo').textContent);
+$('bEscuchar').onclick = () => decir(`${$('tBienvenida').textContent} ${$('saludo').textContent}`);
 
 /* ---------- Volumen de la música de fondo: de 0 (silencio) a 1 (máximo) ---------- */
 const VOLUMEN_MUSICA = 0.05;
@@ -69,12 +71,11 @@ function sonarEfectoFinal() {
 }
 
 /* ---------- Bienvenida ---------- */
-const previo = window.EquilibriaPerfil.cargar();
-if (previo && previo.nombre) $('nombre').value = previo.nombre;
+// No se pide el nombre: al astronauta siempre se le llama "Astronauta"
 
 $('bEmpezar').onclick = () => {
   iniciarAmbiente();
-  nombre = $('nombre').value.trim() || L('Astronauta', 'Astronaut');
+  nombre = L('Astronauta', 'Astronaut');
   indice = 0; respuestas = [];
   window.EqPersonajes.silueta.montar($('silueta'));
   $('porcentaje').textContent = '0';
@@ -82,7 +83,6 @@ $('bEmpezar').onclick = () => {
   mostrar('pPregunta');
   pintarPregunta();
 };
-$('nombre').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('bEmpezar').click(); });
 
 /* ---------- Preguntas ---------- */
 function pintarProgreso() {
@@ -181,13 +181,16 @@ function responder(i, boton) {
   r.innerHTML = `<span class="quien">${L('Comandante Ríos', 'Commander Ríos')}</span><span class="txt"></span>`;
   r.querySelector('.txt').textContent = texto;
   r.classList.add('on');
-  decir(texto);
 
-  setTimeout(() => {
+  // La pregunta siguiente espera a que Ríos termine su reacción, para no cortarla a la mitad.
+  // Se queda al menos la pausa de siempre y como máximo 8 s, por si la voz del navegador se traba.
+  const pausa = reducirMovimiento ? PAUSA_REACCION + 300 : PAUSA_REACCION;
+  const esperar = (ms) => new Promise((ok) => setTimeout(ok, ms));
+  Promise.race([Promise.all([decir(texto), esperar(pausa)]), esperar(8000)]).then(() => {
     r.classList.remove('on');
     if (ultima) terminar();
     else { indice += 1; pintarPregunta(); }
-  }, reducirMovimiento ? PAUSA_REACCION + 300 : PAUSA_REACCION);
+  });
 }
 
 document.addEventListener('keydown', (e) => {

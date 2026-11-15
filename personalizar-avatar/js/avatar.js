@@ -152,9 +152,13 @@
   /* ---------- Cara: gestos según el género ---------- */
   function cara(gesto, genero, piel) {
     const N = C.navy, L = (d, w = 2.4, c = N) => `<path d="${d}" stroke="${c}" stroke-width="${w}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
-    const grosorCeja = genero === 'masculino' ? 3.4 : genero === 'femenino' ? 2.2 : 2.7;
+    const neutro = genero === 'neutro';
+    const grosorCeja = genero === 'masculino' ? 3.4 : genero === 'femenino' ? 2.2 : 2;
     const labio = genero === 'femenino' ? '#B63A63' : N;
-    const ojo = (x, ry = 4.3) => `<ellipse cx="${x}" cy="-182" rx="3.4" ry="${ry}" fill="${N}"/><circle cx="${x + 1.2}" cy="-183.6" r="1.2" fill="#fff"/>`;
+    // Neutro: ojos más grandes y redondos con doble brillo, para distinguirlo a simple vista
+    const ojo = neutro
+      ? (x, ry = 4.3) => `<ellipse cx="${x}" cy="-182" rx="4.4" ry="${ry + 1}" fill="${N}"/><circle cx="${x + 1.5}" cy="-184" r="1.6" fill="#fff"/><circle cx="${x - 1.4}" cy="-180" r=".8" fill="#fff"/>`
+      : (x, ry = 4.3) => `<ellipse cx="${x}" cy="-182" rx="3.4" ry="${ry}" fill="${N}"/><circle cx="${x + 1.2}" cy="-183.6" r="1.2" fill="#fff"/>`;
     let ojos, cejas, boca, mejilla = 0.35;
     switch (gesto) {
       case 'serio':
@@ -175,8 +179,13 @@
     }
     const pestanas = genero === 'femenino' ? L('M-13.2 -184.5 L-16.5 -187', 1.6) + L('M-12 -186 L-14 -189.5', 1.4) + L('M13.2 -184.5 L16.5 -187', 1.6) + L('M12 -186 L14 -189.5', 1.4) : '';
     const mejillas = `<circle cx="-17" cy="-173" r="4.2" fill="${C.rosa}" opacity="${mejilla}"/><circle cx="17" cy="-173" r="4.2" fill="${C.rosa}" opacity="${mejilla}"/>`;
+    // Neutro: pecas sobre las mejillas (más claras en pieles oscuras para que se vean)
+    const pielClara = parseInt(piel.slice(1, 3), 16) > 150;
+    const colPeca = pielClara ? oscuro(piel, 0.38) : '#D9A27A';
+    const pecas = neutro ? [[-19, -177], [-15, -175.5], [-21.5, -174], [-17, -172], [19, -177], [15, -175.5], [21.5, -174], [17, -172]]
+      .map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.1" fill="${colPeca}"/>`).join('') : '';
     const nariz = `<path d="M0 -180 Q-2.5 -175 0 -174" stroke="${oscuro(piel, 0.25)}" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;
-    return `<g class="av-cara">${mejillas}<g class="av-ojos">${ojos}</g>${pestanas}${cejas}${nariz}${boca}</g>`;
+    return `<g class="av-cara">${mejillas}${pecas}<g class="av-ojos">${ojos}</g>${pestanas}${cejas}${nariz}${boca}</g>`;
   }
 
   /* ---------- Avatar completo ---------- */

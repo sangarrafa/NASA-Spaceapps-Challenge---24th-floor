@@ -66,13 +66,22 @@
         return;
       }
       if (!('speechSynthesis' in window)) return listo();
+      // Si el navegador nunca avisa que terminó (pasa en Chrome y Edge), se sigue igual después de un
+      // tiempo razonable según el largo de la frase. El tiempo se reinicia cuando de verdad empieza a sonar.
+      let respaldo = null, terminado = false;
+      const fin = () => { if (terminado) return; terminado = true; clearTimeout(respaldo); if (window.__eqFrase === u) window.__eqFrase = null; listo(); };
+      const armar = (ms) => { clearTimeout(respaldo); respaldo = setTimeout(fin, ms); };
+      const duracion = frase.length * 95 + 1500;
       const u = new SpeechSynthesisUtterance(frase);
+      window.__eqFrase = u;   // se guarda mientras suena para que Chrome no la descarte y pierda el aviso de fin
       u.lang = (vozNavegador && vozNavegador.lang) || (EN ? 'en-US' : 'es-MX');
       if (vozNavegador) u.voice = vozNavegador;
       const natural = vozNavegador && /Natural|Online|Neural/i.test(vozNavegador.name);
       u.rate = natural ? 0.95 : AJUSTE.rate;
       u.pitch = natural ? 1.06 : AJUSTE.pitch;
-      u.onend = u.onerror = () => listo();
+      u.onstart = () => armar(duracion);
+      u.onend = u.onerror = fin;
+      armar(duracion + 3000);   // margen extra por si la voz tarda en arrancar
       speechSynthesis.speak(u);
     });
   }
@@ -86,9 +95,18 @@
   }
 
   async function decir(texto) {
+    // Chrome y Edge ignoran en silencio lo que se pide decir justo después de cortar una voz que
+    // estaba sonando (por ejemplo, la reacción de Ríos cuando aparece la pregunta siguiente).
+    // Por eso, si había algo sonando, se espera un momento antes de volver a hablar.
+    const ocupado = 'speechSynthesis' in window && (speechSynthesis.speaking || speechSynthesis.pending);
     callar();
     if (!activa || !texto) return;
     const t = turno;
+    if (ocupado) {
+      await esperar(250);
+      if (t !== turno) return;
+      try { speechSynthesis.resume(); } catch (e) { /* nada */ }
+    }
     const lista = frases(texto);
     for (let i = 0; i < lista.length; i++) {
       await reproducir(lista[i], t);

@@ -15,17 +15,19 @@
 
 <main id="app">
 
-  <!-- Bienvenida -->
-  <section id="pBienvenida" class="pantalla activa" aria-labelledby="tBienvenida">
+  <!-- Bienvenida: saludo + ficha de instrucciones -->
+  <section id="pBienvenida" class="pantalla activa bienvenida" aria-labelledby="tBienvenida">
     <div class="kicker" data-en="ASTRONAUT ACADEMY">ACADEMIA DE ASTRONAUTAS</div>
-    <h1 id="tBienvenida" data-en="Superpower test">Test de súper habilidades</h1>
-    <div class="comandante">
-      <div class="retrato" aria-hidden="true">👩🏽‍🚀<span class="placa">RÍOS</span></div>
-      <p class="burbuja" id="saludo" data-en="Hi, Astronaut. I’m Commander Ríos. I’m going to give you 10 short tests. There are no right or wrong answers: just pick what you would do.">Hola, Astronauta. Soy la Comandante Ríos. Voy a hacerte 10 pruebas cortas. No hay respuestas buenas ni malas: solo elige lo que tú harías.</p>
+    <h1 id="tBienvenida" data-en="Hi, Astronaut!">¡Hola, Astronauta!</h1>
+    <div class="ficha">
+      <div class="modos" aria-hidden="true">
+        <div class="modo escucha"><span class="circulo">🎧<i class="ondas"></i></span><span class="rotulo" data-en="LISTEN">ESCUCHA</span></div>
+        <span class="o" data-en="or">o</span>
+        <div class="modo lee"><span class="circulo">📖</span><span class="rotulo" data-en="READ">LEE</span></div>
+      </div>
+      <p class="instruccion" id="saludo" data-en-html="&lt;b class=&quot;c-aqua&quot;&gt;Listen&lt;/b&gt; or &lt;b class=&quot;c-aqua&quot;&gt;read&lt;/b&gt; the questions and answer with &lt;b class=&quot;c-amber&quot;&gt;what you would do&lt;/b&gt;."><b class="c-aqua">Escucha</b> o <b class="c-aqua">lee</b> las preguntas y responde con <b class="c-amber">lo que tú harías</b>.</p>
+      <button id="bEscuchar" class="escuchar" type="button" data-en="🔊 Listen to this instruction">🔊 Escuchar esta instrucción</button>
     </div>
-    <button id="bEscuchar" class="tog" type="button" data-en="🔊 Listen to the Commander">🔊 Escuchar a la Comandante</button>
-    <label for="nombre" class="etiqueta" data-en="What’s your name, Astronaut?">¿Cómo te llamas, Astronauta?</label>
-    <input id="nombre" type="text" maxlength="20" placeholder="Ej.: Mia" data-en-placeholder="E.g. Mia" autocomplete="off">
     <button id="bEmpezar" class="big" data-en="Start! ▶">¡Empezar! ▶</button>
   </section>
 
