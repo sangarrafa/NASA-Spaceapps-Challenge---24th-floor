@@ -922,7 +922,7 @@ $('bStart').onclick=start;
 // La música (intro_equilibria.wav) suena en bucle en la intro y en la portada, y se apaga con un fundido
 // al pulsar "Recibir transmisión".
 const INTRO_MS=9000;
-const startVid=$('startVid'), introSoundEl=$('introSound');
+const startVid=$('startVid'), startVid2=$('startVid2'), introSoundEl=$('introSound');
 const introMusic=new Audio('resources/intro_equilibria.wav');
 introMusic.loop=true; introMusic.volume=.8; introMusic.preload='auto';
 let introOn=startEl.classList.contains('intro'), musicOn=false, introTimer=null;
@@ -938,10 +938,11 @@ function fadeOutMusic(){
   (function step(){ const k=Math.min(1,(performance.now()-t0)/800); introMusic.volume=v0*(1-k);
     if(k<1) requestAnimationFrame(step); else { introMusic.pause(); introMusic.volume=v0; } })();
 }
-function fitVideo(){ if(startVid && isFinite(startVid.duration) && startVid.duration>0) startVid.playbackRate=Math.min(4,Math.max(.25,startVid.duration*1000/INTRO_MS)); }
+function fitVideo(){ if(startVid && isFinite(startVid.duration) && startVid.duration>0) startVid.playbackRate=Math.min(4,Math.max(.25,startVid.duration*1000/INTRO_MS)); }   // la Luna dura INTRO_MS; el glitch va a su velocidad (10 s)
+const sfx=n=>{ try{ window.dispatchEvent(new CustomEvent('eq:sfx',{detail:n})); }catch(e){} };   // efectos de sonido (audio/sfx.js)
 function endIntro(){
   if(!introOn) return; introOn=false; clearTimeout(introTimer);
-  startEl.classList.remove('intro');
+  startEl.classList.remove('intro'); sfx('portada');
   setTimeout(()=>{ if(!playing) $('bStart').focus({preventScroll:true}); },1500);
 }
 ['pointerdown','touchstart','click'].forEach(ev=>addEventListener(ev,unlockMusic,true));
@@ -952,17 +953,30 @@ addEventListener('keydown',e=>{
   if(e.key==='Escape'||e.key==='s'||e.key==='S') endIntro();
 },true);
 $('bIntroSkip').onclick=e=>{ e.stopPropagation(); unlockMusic(); endIntro(); };
-$('bStart').addEventListener('click',()=>{ fadeOutMusic(); introSoundEl.classList.remove('on'); if(startVid) setTimeout(()=>startVid.pause(),600); });
+$('bStart').addEventListener('click',()=>{ fadeOutMusic(); introSoundEl.classList.remove('on'); setTimeout(()=>{ if(startVid) startVid.pause(); if(startVid2) startVid2.pause(); },600); });
 tryMusic();
 // El video se ve SIEMPRE en movimiento y en bucle (intro y detrás de la portada), aunque Windows tenga
 // desactivados los efectos de animación (prefers-reduced-motion): es el fondo de la escena, no un adorno.
-if(startVid){
-  startVid.loop=true; startVid.muted=true;
+// El fondo es un bucle de DOS videos que se alternan para siempre: Luna → glitch → Luna → glitch…
+// Los dos están cargados y apilados; al terminar uno, el otro pasa a primer plano al instante (sin parpadeo).
+if(startVid && startVid2){
+  const vids=[startVid,startVid2]; let vi=0;
+  vids.forEach(v=>{ v.loop=false; v.muted=true; });
+  startVid2.defaultPlaybackRate = startVid2.playbackRate = 2;   // glitch 50 % más corto (10 s → 5 s); para otro valor: 1 / (1 - porcentaje reducido)
   if(startVid.readyState>=1) fitVideo(); else startVid.addEventListener('loadedmetadata',fitVideo,{once:true});
-  const playVid=()=>{ if(!playing) startVid.play().catch(()=>{}); };
+  const playVid=()=>{ if(!playing) vids[vi].play().catch(()=>{}); };
+  const siguiente=()=>{
+    const a=vids[vi], b=vids[1-vi]; vi=1-vi;
+    try{ b.currentTime=0; }catch(e){}
+    b.classList.add('on'); a.classList.remove('on');
+    if(vi===1) sfx('glitch');   // al entrar el video del glitch
+    if(!playing) b.play().catch(()=>{});
+    a.pause(); try{ a.currentTime=0; }catch(e){}
+  };
+  vids.forEach((v,i)=>v.addEventListener('ended',()=>{ if(i===vi) siguiente(); }));
   playVid();
   startVid.addEventListener('canplay',playVid,{once:true});
-  ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{ if(startVid.paused) playVid(); },true));
+  ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{ if(vids[vi].paused) playVid(); },true));
 }
 if(introOn) introTimer=setTimeout(endIntro, INTRO_MS);
 function setPause(p){

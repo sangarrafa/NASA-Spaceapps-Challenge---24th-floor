@@ -42,25 +42,82 @@ Atributos opcionales de esa etiqueta:
 
 Eventos en `window`: `ambiente:sonando`, `ambiente:bloqueado`.
 
-## Usar Tone.js con la música
+## Usar Tone.js en tus propios sonidos
 
-La música va por un `<audio>` normal (así funciona al abrir los archivos con doble clic, donde el navegador
-no deja decodificarlos con Web Audio). Tone.js suena aparte, en el mismo `AudioContext` común:
+`lib/tone.min.js` es Tone.js 15.1.22 (MIT) tal cual, sin modificar. La música va por un elemento de audio
+normal (así funciona al abrir los archivos con doble clic) y Tone suena aparte, en el mismo `AudioContext`:
 
-```html
-<script src="https://unpkg.com/tone"></script>   <!-- o una copia local, como three.js -->
-<script src="../audio/audio-ambiente.js"></script>
-<script>
-  const bus = AudioAmbiente.conectarTone(Tone);        // Tone usa AudioAmbiente.ctx
-  const synth = new Tone.Synth().connect(bus);         // los efectos pasan por busSfx
-  document.addEventListener('click', async () => {
-    await Tone.start();                                // necesita un gesto del usuario
-    synth.triggerAttackRelease('C5', '8n');
-  });
-  // Para que un efecto largo no tape la música:
-  // AudioAmbiente.atenuar(0.3, 400); ...al terminar... AudioAmbiente.atenuar(1, 800);
-</script>
+```js
+const bus = AudioAmbiente.conectarTone(Tone);        // Tone usa el AudioContext común
+const synth = new Tone.Synth().connect(bus);         // tus efectos pasan por el bus de efectos
+document.addEventListener('click', () => synth.triggerAttackRelease('C5', '8n'));
 ```
 
-`AudioAmbiente.volumen()` y `silenciar()` solo afectan a la música; el volumen de los efectos se controla
-con `AudioAmbiente.busSfx.gain.value`.
+`AudioAmbiente.volumen()`, `silenciar()` y `atenuar()` solo afectan a la música. El volumen de los efectos es
+`AudioAmbiente.busSfx.gain.value`. Si ya cargaste `sfx.js`, Tone ya está configurado: usa `AudioSfx.Tone`.
+
+---
+
+# Efectos de sonido (`sfx.js`)
+
+Efectos sci-fi sintetizados con Tone.js (osciladores, FM, ruido filtrado y un eco ligero): **no hay ni un archivo
+de audio**. Cada pantalla solo necesita, después de la línea de la música:
+
+```html
+<script src="../audio/sfx.js"></script>
+```
+
+Tone.js (`lib/tone.min.js`) se descarga solo en un momento libre tras abrir la página y los instrumentos se
+crean con el primer clic, toque o tecla (así respeta el bloqueo de autoplay). Los efectos salen por el bus de
+efectos (`AudioAmbiente.busSfx`) y, con los sonidos grandes, la música baja sola un momento y vuelve
+(`AudioAmbiente.golpe()`). Si la música está silenciada (botón "Música y efectos" de la cinemática), los efectos
+también.
+
+## Qué suena y cuándo
+
+| Sonido | Se dispara con |
+|---|---|
+| `tecla` | Cada tecla (tic mínimo, con tono aleatorio; sin repeticiones al mantenerla). |
+| `hover` | Cursor sobre un botón o elemento clicable (muy bajo). |
+| `clic` | Clic en un botón, tarjeta o canvas. |
+| `seleccion` | Casillas, opciones, selectores y elementos tipo ficha (`.segb`, `.tog`, `.opcion`, `.card`). |
+| `suave` | "Saltar", "Volver", "Cerrar", "Ver de nuevo" y la tecla Esc. |
+| `confirmar` | "Aceptar", "Listo", "Guardar", enviar un formulario o el evento `equilibria:login`. |
+| `salida` | Botones de avanzar: "Siguiente", "Continuar", "Comenzar", "Iniciar", "Despegar"… |
+| `entrada` | Al abrir una pantalla venida de otra (solo si el navegador ya permite audio). |
+| `error` | Clase `error` / `incorrecto` / `fallo` / `wrong` / `shake` puesta en un elemento. |
+| `exito` | Clase `correcto` / `acierto` / `success`. |
+| `logro` | Clase `completa` / `completado`. |
+| `revelar` | Clase `revelada`. |
+| `portada` | La portada EQUILIBRIA emerge al terminar la intro. |
+| `glitch` | Entra el video del glitch en el fondo de la portada. |
+| `transmision` | Botón "Recibir transmisión". |
+| `despegue`, `alerta`, `radio` | Solo a mano: `AudioSfx.play('despegue')`. |
+
+Para decidir el sonido de un elemento concreto: `data-sfx="logro"` (o `data-sfx="off"` para silenciarlo).
+Desde código: `AudioSfx.play('error')` o `window.dispatchEvent(new CustomEvent('eq:sfx', {detail: 'glitch'}))`.
+
+Opciones en la etiqueta `<script>` de `sfx.js`: `data-sin-teclas`, `data-sin-clic`, `data-sin-hover`.
+`testHabilidades` usa `data-sin-clic data-sin-hover` porque ya tiene sus propios sonidos de respuesta.
+
+## Cómo probarlos
+
+Abre cualquier pantalla, haz un clic (activa el audio) y en la consola del navegador (F12):
+
+```js
+AudioSfx.nombres.forEach((n, i) => setTimeout(() => AudioSfx.play(n), i * 1500));  // los oye todos, uno tras otro
+AudioSfx.play('despegue');       // uno solo
+AudioSfx.registro                // últimos sonidos disparados (para ver qué sonó con cada acción)
+AudioSfx.volumen(0.5)            // volumen de los efectos (se recuerda)
+AudioSfx.silenciar(true)         // silenciar solo los efectos
+```
+
+## Peso añadido
+
+| Archivo | Peso | Comprimido (gzip) |
+|---|---|---|
+| `lib/tone.min.js` | 345 KB | 80 KB |
+| `audio/sfx.js` | 17 KB | 6 KB |
+| `lib/tone-LICENSE.txt` | 1 KB | |
+
+Sin archivos de audio nuevos. Tone.js se carga una vez y el navegador lo reutiliza en el resto de pantallas.

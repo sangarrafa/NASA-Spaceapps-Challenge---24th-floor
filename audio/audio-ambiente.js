@@ -33,6 +33,7 @@ const attr = n => SCRIPT && SCRIPT.hasAttribute(n);
 let pageVol = clamp(parseFloat(SCRIPT && SCRIPT.dataset.volumen) || 0.5);   // volumen propio de la pantalla
 let busVol = 1;                          // volumen del bus de música (lo cambia volumen())
 let duck = 1, duckTarget = 1, duckStep = 0;
+let fx = 1, fxTarget = 1, fxStep = 0.12, fxTimer = null;   // bajada breve y automática cuando suena un efecto grande (golpe)
 let master = 0, masterTarget = 1, masterStep = 0;   // fundidos de entrada/salida
 let muted = false, wanted = true, blocked = false;
 try { const v = JSON.parse(localStorage.getItem(KEY_VOL) || 'null'); if (v && typeof v.vol === 'number') busVol = clamp(v.vol); } catch (e) {}
@@ -57,7 +58,7 @@ function guardar() {
 }
 
 /* ---------- volumen efectivo ---------- */
-const nivel = () => (muted ? 0 : busVol * pageVol * duck * master);
+const nivel = () => (muted ? 0 : busVol * pageVol * duck * fx * master);
 function rampa(actual, objetivo, paso) { // paso = cambio por tick (50 ms)
   if (actual === objetivo) return actual;
   return actual < objetivo ? Math.min(objetivo, actual + paso) : Math.max(objetivo, actual - paso);
@@ -67,6 +68,7 @@ function rampa(actual, objetivo, paso) { // paso = cambio por tick (50 ms)
 function tick() {
   master = rampa(master, masterTarget, masterStep || 1);
   duck = rampa(duck, duckTarget, duckStep || 1);
+  fx = rampa(fx, fxTarget, fxStep);
   if (fading && cur.paused) {            // la pista saliente llegó a su fin (el navegador la pausa sola): se intercambian
     try { cur.currentTime = 0; } catch (e) {}
     cur.volume = 0; [cur, nxt] = [nxt, cur]; fading = false;
@@ -171,7 +173,7 @@ const api = {
   /** GainNode para efectos/Tone: synth.connect(AudioAmbiente.busSfx). Es independiente del volumen de la música. */
   get busSfx() { void this.ctx; return this._bus; },
   /** Atajo: configura Tone con el contexto común y devuelve el bus de efectos. */
-  conectarTone(Tone) { Tone.setContext(this.ctx); return this.busSfx; },
+  conectarTone(Tone) { if (!Tone.getContext || Tone.getContext().rawContext !== this.ctx) Tone.setContext(this.ctx); return this.busSfx; },
 
   /** Empieza (o retoma) la música. Devuelve una promesa con true si ya suena. */
   iniciar() { wanted = true; guardar(); return intentar().then(ok => { if (!ok) ponerGestos(); return ok; }); },
@@ -193,6 +195,13 @@ const api = {
   alternarSilencio() { this.silenciar(!muted); return muted; },
   /** Baja la música temporalmente (factor 0 a 1) sin tocar su volumen guardado; atenuar(1) la restaura. */
   atenuar(factor = 0.35, ms = 800) { duckTarget = clamp(factor); duckStep = ms > 0 ? Math.abs(duckTarget - duck) * 50 / ms || 1 : 1; },
+  /** Baja la música un instante (factor 0 a 1) y la devuelve sola tras `ms`. Lo usa AudioSfx con los efectos grandes; no interfiere con atenuar(). */
+  golpe(factor = 0.55, ms = 900) {
+    factor = clamp(factor);
+    if (!fxTimer || factor < fxTarget) { fxTarget = factor; fxStep = 0.12; }
+    clearTimeout(fxTimer);
+    fxTimer = setTimeout(() => { fxTarget = 1; fxStep = 0.025; fxTimer = null; }, ms);
+  },
   estado() {
     return { sonando: !cur.paused && !muted, silenciado: muted, bloqueado: blocked, volumen: busVol, volumenPantalla: pageVol,
              posicion: +(cur.currentTime || 0).toFixed(2), duracion: cur.duration || 0, solape: fading };

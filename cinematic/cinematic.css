@@ -14,12 +14,13 @@ button:focus-visible{outline:3px solid var(--aqua);outline-offset:3px}
 
 #start{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--s)*16px);background:#05061a;isolation:isolate;overflow:hidden;text-align:center;transition:opacity .5s}
 /* Video de fondo de la portada + capa semitransparente encima para que el título siga legible */
-#startVid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;pointer-events:none}
+#start video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;pointer-events:none;opacity:0}
+#start video.on{opacity:1}
 #start::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 50% 40%,rgba(30,27,110,.55),rgba(11,15,58,.72) 60%,rgba(5,6,26,.88));transition:opacity 1.4s ease}
 /* Intro: al abrir solo se ve el video; al terminar, la capa y la portada emergen encima */
-#start>:not(#startVid):not(#bIntroSkip):not(#introSound){transition:opacity 1s ease .5s,transform 1s ease .5s}
+#start>:not(video):not(#bIntroSkip):not(#introSound){transition:opacity 1s ease .5s,transform 1s ease .5s}
 #start.intro::before{opacity:0}
-#start.intro>:not(#startVid):not(#bIntroSkip):not(#introSound){opacity:0;transform:translateY(calc(var(--s)*14px));pointer-events:none}
+#start.intro>:not(video):not(#bIntroSkip):not(#introSound){opacity:0;transform:translateY(calc(var(--s)*14px));pointer-events:none}
 #bIntroSkip{position:absolute;right:calc(var(--s)*24px);bottom:calc(var(--s)*22px);font-weight:800;font-size:calc(var(--s)*16px);color:var(--white,#E8E9F2);background:rgba(11,15,58,.55);border:1px solid rgba(111,227,232,.35);border-radius:999px;padding:calc(var(--s)*8px) calc(var(--s)*18px);opacity:0;pointer-events:none;transition:opacity .4s}
 #start.intro .hint{opacity:0!important}
 #start.intro #bIntroSkip{opacity:.85;pointer-events:auto}
