@@ -1,6 +1,6 @@
 # Test de súper habilidades
 
-Cuestionario de 10 pruebas que la Comandante Ríos le hace al astronauta después de la cinemática. Asigna una especialidad basada en el modelo de jugadores de Bartle y guarda, sin mostrarlos, el estilo ante el riesgo y el nivel de apoyo para que el juego se adapte.
+Cuestionario de 5 pruebas que la Comandante Ríos le hace al astronauta después de la cinemática. Asigna una especialidad basada en el modelo de jugadores de Bartle.
 
 Abrir `index.html` (funciona con doble clic, sin servidor). Con `?debug` se ve el perfil completo al final, útil para el pitch. Con `?siguiente=ruta` se cambia adónde lleva "Ir a la misión" (por defecto `../game.html`).
 
@@ -55,9 +55,8 @@ Abrir `index.html` (funciona con doble clic, sin servidor). Con `?debug` se ve e
 
 ## Cálculo
 
-1. Especialidad (pruebas 1 a 6): la letra con más puntos. Si hay empate, el niño elige entre las insignias empatadas.
-2. Riesgo (pruebas 7 y 8, 0 a 4): 0–1 cauteloso, 2 equilibrado, 3–4 audaz.
-3. Apoyo (pruebas 9 y 10, 0 a 4): 0–1 ligero, 2 medio, 3–4 alto.
+1. Especialidad (pruebas 1 a 5: cueva, día libre, premio, lo mejor de jugar y mensaje de la Tierra): la letra con más puntos. Si hay empate, el niño elige entre las insignias empatadas.
+2. Riesgo y apoyo: hoy no hay preguntas que los midan (se quitaron las de las capas 2 y 3), así que el perfil guarda 0 puntos en ambos (`cauteloso` y `ligero`). Si se vuelven a medir, basta con añadir preguntas con `capa: 2` (riesgo) o `capa: 3` (apoyo) en `preguntas.js`: 0–1 cauteloso / ligero, 2 equilibrado / medio, 3–4 audaz / alto.
 
 Al niño solo se le muestra la especialidad.
 
