@@ -56,47 +56,6 @@ input[type='text'] {
   margin-bottom: 18px;
 }
 
-.swatches {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 18px;
-}
-
-.swatch {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 3px solid transparent;
-}
-
-.swatch.selected {
-  border-color: #eaf0ff;
-}
-
-.icon-options {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.icon-option {
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  border-radius: 8px;
-  background: #0f1428;
-  border: 2px solid #2a335a;
-  cursor: pointer;
-}
-
-.icon-option.selected {
-  border-color: #33c6ff;
-}
-
 button.primary {
   background: #33c6ff;
   color: #06121f;
@@ -162,7 +121,9 @@ button.primary:disabled {
   margin-bottom: 20px;
 }
 
-#avatar-preview {
-  font-size: 40px;
-  margin-bottom: 10px;
+#avatar-preview-img {
+  width: 90px;
+  display: block;
+  margin: 0 auto 10px;
+  border-radius: 6px;
 }

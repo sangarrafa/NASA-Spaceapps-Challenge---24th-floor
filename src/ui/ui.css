@@ -41,6 +41,15 @@ body {
 #crew-badge {
   font-size: 13px;
   margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#crew-badge img {
+  width: 28px;
+  height: auto;
+  border-radius: 4px;
 }
 
 #data-badge {

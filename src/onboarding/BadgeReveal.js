@@ -4,7 +4,7 @@ export class BadgeReveal {
   constructor({ onStartMission }) {
     this.onStartMission = onStartMission;
 
-    this.avatarPreview = document.getElementById('avatar-preview');
+    this.avatarImg = document.getElementById('avatar-preview-img');
     this.badgeIcon = document.querySelector('#badge-reveal .badge-icon');
     this.badgeTitle = document.querySelector('#badge-reveal .badge-title');
     this.badgeTagline = document.querySelector('#badge-reveal .badge-tagline');
@@ -17,8 +17,7 @@ export class BadgeReveal {
   show(profile) {
     const archetype = ARCHETYPES[profile.archetype];
 
-    this.avatarPreview.textContent = profile.helmetIcon;
-    this.avatarPreview.style.color = profile.suitColor;
+    this.avatarImg.src = archetype.portrait;
 
     this.badgeIcon.textContent = archetype.icon;
     this.badgeTitle.textContent = `${profile.name} the ${archetype.title}`;

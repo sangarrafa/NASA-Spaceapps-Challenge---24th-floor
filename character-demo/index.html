@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>SVG Character Builder - Demo</title>
+<style>
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: #0b0e1a;
+    font-family: sans-serif;
+    color: #eaf0ff;
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px;
+    box-sizing: border-box;
+  }
+
+  h1 { font-size: 16px; margin: 0 0 4px; }
+  p.note { font-size: 12px; color: #9fb3d9; margin: 0 0 20px; max-width: 420px; }
+
+  #preview-panel {
+    background: #141a30;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  #preview {
+    width: 220px;
+    height: 320px;
+  }
+
+  #controls {
+    background: #141a30;
+    border-radius: 12px;
+    padding: 20px;
+    width: 300px;
+  }
+
+  .control-group { margin-bottom: 18px; }
+  .control-group label { display: block; font-size: 12px; color: #cdd9f5; margin-bottom: 8px; }
+
+  .swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+  .swatch {
+    width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+    border: 3px solid transparent;
+  }
+  .swatch.selected { border-color: #fff; }
+
+  .option-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+  .option-buttons button {
+    font-family: inherit; font-size: 12px; background: #0f1428; color: #eaf0ff;
+    border: 2px solid #2a335a; border-radius: 6px; padding: 6px 10px; cursor: pointer;
+  }
+  .option-buttons button.selected { border-color: #33c6ff; }
+</style>
+</head>
+<body>
+
+<div id="preview-panel">
+  <h1>Live preview</h1>
+  <svg id="preview" viewBox="0 0 200 300">
+    <!-- legs -->
+    <g id="legs-pants">
+      <rect x="78" y="190" width="18" height="70" rx="6" class="clothing-fill" />
+      <rect x="104" y="190" width="18" height="70" rx="6" class="clothing-fill" />
+    </g>
+    <g id="legs-skirt" style="display:none">
+      <path d="M 75 190 L 125 190 L 135 240 L 65 240 Z" class="clothing-fill" />
+      <rect x="82" y="235" width="14" height="25" rx="5" class="skin-fill" />
+      <rect x="104" y="235" width="14" height="25" rx="5" class="skin-fill" />
+    </g>
+
+    <!-- shoes -->
+    <rect x="74" y="255" width="26" height="12" rx="4" fill="#2a2f45" />
+    <rect x="100" y="255" width="26" height="12" rx="4" fill="#2a2f45" />
+
+    <!-- torso -->
+    <rect x="65" y="120" width="70" height="80" rx="18" class="clothing-fill" />
+
+    <!-- arms -->
+    <rect x="45" y="125" width="20" height="60" rx="10" class="skin-fill" />
+    <rect x="135" y="125" width="20" height="60" rx="10" class="skin-fill" />
+
+    <!-- head -->
+    <circle cx="100" cy="85" r="38" class="skin-fill" />
+
+    <!-- blush -->
+    <g id="blush">
+      <ellipse cx="76" cy="98" rx="7" ry="4" fill="#ff8ba7" opacity="0.55" />
+      <ellipse cx="124" cy="98" rx="7" ry="4" fill="#ff8ba7" opacity="0.55" />
+    </g>
+
+    <!-- eyebrows -->
+    <path id="brow-left" d="M 76 70 Q 84 65 93 70" class="brow-stroke" fill="none" stroke-linecap="round" />
+    <path id="brow-right" d="M 107 70 Q 116 65 124 70" class="brow-stroke" fill="none" stroke-linecap="round" />
+
+    <!-- eyes -->
+    <g transform="translate(84,85)">
+      <ellipse rx="7.5" ry="8.5" fill="#fff" />
+      <circle class="eye-fill" r="5" cy="1" />
+      <circle fill="#17141f" r="2.4" cy="1" />
+      <circle fill="#fff" r="1.4" cx="-1.8" cy="-2" />
+    </g>
+    <g transform="translate(116,85)">
+      <ellipse rx="7.5" ry="8.5" fill="#fff" />
+      <circle class="eye-fill" r="5" cy="1" />
+      <circle fill="#17141f" r="2.4" cy="1" />
+      <circle fill="#fff" r="1.4" cx="-1.8" cy="-2" />
+    </g>
+
+    <!-- mouth -->
+    <path id="mouth-smile" d="M 89 102 Q 100 111 111 102" stroke="#a84a4a" stroke-width="3" fill="none" stroke-linecap="round" />
+    <g id="mouth-grin" style="display:none">
+      <path d="M 88 101 Q 100 113 112 101 Q 100 107 88 101 Z" fill="#7a2f2f" />
+      <path d="M 91 102 Q 100 106 109 102 L 109 104 Q 100 108 91 104 Z" fill="#fff" />
+    </g>
+
+    <!-- hairstyles (only one visible at a time) -->
+    <g id="hair-short" class="hairstyle">
+      <path d="M 60 80 Q 62 40 100 38 Q 138 40 140 80 Q 130 55 100 55 Q 70 55 60 80 Z" class="hair-fill" />
+    </g>
+    <g id="hair-ponytail" class="hairstyle" style="display:none">
+      <path d="M 58 78 Q 60 38 100 36 Q 140 38 142 78 Q 130 52 100 52 Q 70 52 58 78 Z" class="hair-fill" />
+      <path d="M 138 60 Q 165 70 160 110 Q 150 95 136 85 Z" class="hair-fill" />
+    </g>
+    <g id="hair-curly" class="hairstyle" style="display:none">
+      <circle cx="68" cy="55" r="14" class="hair-fill" />
+      <circle cx="85" cy="42" r="15" class="hair-fill" />
+      <circle cx="105" cy="38" r="16" class="hair-fill" />
+      <circle cx="124" cy="42" r="15" class="hair-fill" />
+      <circle cx="136" cy="58" r="14" class="hair-fill" />
+      <circle cx="100" cy="55" r="20" class="hair-fill" />
+    </g>
+    <g id="hair-cap" class="hairstyle" style="display:none">
+      <path d="M 60 78 Q 62 42 100 40 Q 138 42 140 78 L 140 68 L 60 68 Z" fill="#3a4568" />
+      <rect x="58" y="62" width="84" height="10" rx="5" fill="#2a3458" />
+    </g>
+  </svg>
+</div>
+
+<div id="controls">
+  <h1>Build-a-character controls</h1>
+  <p class="note">
+    All proportions here are plain SVG shapes (circles + rounded rects + paths).
+    Every swatch below just repaints a CSS class or swaps which hair group is visible —
+    nothing here is a fixed pre-made image, so skin tone, hair, and clothing are fully
+    independent knobs.
+  </p>
+
+  <div class="control-group">
+    <label>Skin tone</label>
+    <div class="swatches" id="skin-swatches"></div>
+  </div>
+
+  <div class="control-group">
+    <label>Hairstyle</label>
+    <div class="option-buttons" id="hairstyle-buttons"></div>
+  </div>
+
+  <div class="control-group">
+    <label>Hair color</label>
+    <div class="swatches" id="hair-swatches"></div>
+  </div>
+
+  <div class="control-group">
+    <label>Clothing color</label>
+    <div class="swatches" id="clothing-swatches"></div>
+  </div>
+
+  <div class="control-group">
+    <label>Bottom style</label>
+    <div class="option-buttons" id="bottom-buttons"></div>
+  </div>
+
+  <div class="control-group">
+    <label>Eye color</label>
+    <div class="swatches" id="eye-swatches"></div>
+  </div>
+
+  <div class="control-group">
+    <label>Mouth</label>
+    <div class="option-buttons" id="mouth-buttons"></div>
+  </div>
+
+  <div class="control-group">
+    <label>Blush</label>
+    <div class="option-buttons" id="blush-buttons"></div>
+  </div>
+</div>
+
+<script>
+  const SKIN_TONES = ['#ffe0bd', '#f1c27d', '#e0ac69', '#c68642', '#8d5524'];
+  const HAIR_COLORS = ['#2b1b12', '#6b4226', '#caa04d', '#e8e8e8', '#b23b3b'];
+  const CLOTHING_COLORS = ['#33c6ff', '#ffcc33', '#7cf29c', '#ff6b6b', '#c58bff', '#ff9b3f'];
+  const EYE_COLORS = ['#6b4226', '#3b7dd8', '#4a9b5e', '#caa04d', '#8a4ca8'];
+  const HAIRSTYLES = ['short', 'ponytail', 'curly', 'cap'];
+
+  function buildSwatchRow(container, colors, cssVar, defaultIndex) {
+    colors.forEach((color, i) => {
+      const swatch = document.createElement('div');
+      swatch.className = 'swatch' + (i === defaultIndex ? ' selected' : '');
+      swatch.style.background = color;
+      swatch.addEventListener('click', () => {
+        document.documentElement.style.setProperty(cssVar, color);
+        [...container.children].forEach((c) => c.classList.remove('selected'));
+        swatch.classList.add('selected');
+      });
+      container.appendChild(swatch);
+    });
+    document.documentElement.style.setProperty(cssVar, colors[defaultIndex]);
+  }
+
+  buildSwatchRow(document.getElementById('skin-swatches'), SKIN_TONES, '--skin', 0);
+  buildSwatchRow(document.getElementById('hair-swatches'), HAIR_COLORS, '--hair', 0);
+  buildSwatchRow(document.getElementById('clothing-swatches'), CLOTHING_COLORS, '--clothing', 0);
+  buildSwatchRow(document.getElementById('eye-swatches'), EYE_COLORS, '--eye', 0);
+
+  const hairstyleButtons = document.getElementById('hairstyle-buttons');
+  HAIRSTYLES.forEach((style, i) => {
+    const button = document.createElement('button');
+    button.textContent = style;
+    if (i === 0) button.classList.add('selected');
+    button.addEventListener('click', () => {
+      HAIRSTYLES.forEach((s) => (document.getElementById('hair-' + s).style.display = 'none'));
+      document.getElementById('hair-' + style).style.display = '';
+      [...hairstyleButtons.children].forEach((b) => b.classList.remove('selected'));
+      button.classList.add('selected');
+    });
+    hairstyleButtons.appendChild(button);
+  });
+
+  const bottomButtons = document.getElementById('bottom-buttons');
+  ['pants', 'skirt'].forEach((style, i) => {
+    const button = document.createElement('button');
+    button.textContent = style;
+    if (i === 0) button.classList.add('selected');
+    button.addEventListener('click', () => {
+      document.getElementById('legs-pants').style.display = style === 'pants' ? '' : 'none';
+      document.getElementById('legs-skirt').style.display = style === 'skirt' ? '' : 'none';
+      [...bottomButtons.children].forEach((b) => b.classList.remove('selected'));
+      button.classList.add('selected');
+    });
+    bottomButtons.appendChild(button);
+  });
+
+  const mouthButtons = document.getElementById('mouth-buttons');
+  ['smile', 'grin'].forEach((style, i) => {
+    const button = document.createElement('button');
+    button.textContent = style;
+    if (i === 0) button.classList.add('selected');
+    button.addEventListener('click', () => {
+      document.getElementById('mouth-smile').style.display = style === 'smile' ? '' : 'none';
+      document.getElementById('mouth-grin').style.display = style === 'grin' ? '' : 'none';
+      [...mouthButtons.children].forEach((b) => b.classList.remove('selected'));
+      button.classList.add('selected');
+    });
+    mouthButtons.appendChild(button);
+  });
+
+  const blushButtons = document.getElementById('blush-buttons');
+  ['on', 'off'].forEach((state, i) => {
+    const button = document.createElement('button');
+    button.textContent = state;
+    if (i === 0) button.classList.add('selected');
+    button.addEventListener('click', () => {
+      document.getElementById('blush').style.display = state === 'on' ? '' : 'none';
+      [...blushButtons.children].forEach((b) => b.classList.remove('selected'));
+      button.classList.add('selected');
+    });
+    blushButtons.appendChild(button);
+  });
+</script>
+
+<style>
+  .skin-fill { fill: var(--skin); }
+  .hair-fill { fill: var(--hair); }
+  .clothing-fill { fill: var(--clothing); }
+  .eye-fill { fill: var(--eye); }
+  .brow-stroke { stroke: var(--hair); stroke-width: 3; }
+</style>
+
+</body>
+</html>

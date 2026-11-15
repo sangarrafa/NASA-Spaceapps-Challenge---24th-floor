@@ -11,17 +11,11 @@
 <div id="onboarding-card">
 
   <div id="step-avatar" class="step">
-    <h1>Build your astronaut</h1>
+    <h1>Welcome, astronaut</h1>
     <p class="subtitle">Before you run the space base, let's meet you.</p>
 
     <label for="avatar-name">What's your astronaut name?</label>
     <input type="text" id="avatar-name" placeholder="e.g. Astro Mia" maxlength="20" />
-
-    <label>Pick a suit color</label>
-    <div id="avatar-colors" class="swatches"></div>
-
-    <label>Pick a helmet buddy</label>
-    <div id="avatar-icons" class="icon-options"></div>
 
     <button id="avatar-continue" class="primary">Continue</button>
   </div>
@@ -37,7 +31,8 @@
 
   <div id="step-badge" class="step">
     <div id="badge-reveal">
-      <div id="avatar-preview"></div>
+      <h1>You've been matched!</h1>
+      <img id="avatar-preview-img" alt="" />
       <div class="badge-icon"></div>
       <div class="badge-title"></div>
       <div class="badge-tagline"></div>

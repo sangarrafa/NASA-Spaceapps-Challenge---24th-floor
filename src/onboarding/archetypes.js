@@ -11,6 +11,7 @@ export const ARCHETYPES = {
     tagline: 'Goal crusher',
     description:
       "You love setting goals and checking them off. Progress bars, badges, and finished checklists are what keep you going.",
+    portrait: 'src/onboarding/assets/criminalMaleA.png',
   },
   explorer: {
     id: 'explorer',
@@ -20,6 +21,7 @@ export const ARCHETYPES = {
     tagline: 'Secret finder',
     description:
       "You love figuring out how things work and poking at the edges. Hidden data and 'what happens if...' questions are your favorite part.",
+    portrait: 'src/onboarding/assets/cyborgFemaleA.png',
   },
   socializer: {
     id: 'socializer',
@@ -29,6 +31,7 @@ export const ARCHETYPES = {
     tagline: 'Crew builder',
     description:
       "You care most about your crew. Teamwork, sharing discoveries, and making sure everyone's okay is what makes a mission feel good.",
+    portrait: 'src/onboarding/assets/skaterFemaleA.png',
   },
   challenger: {
     id: 'challenger',
@@ -38,5 +41,6 @@ export const ARCHETYPES = {
     tagline: 'Record breaker',
     description:
       "You love a good fight — against the clock, against your own best record, against the planet itself. The outpost is your arena.",
+    portrait: 'src/onboarding/assets/skaterMaleA.png',
   },
 };

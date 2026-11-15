@@ -17,8 +17,8 @@ if (!profile) {
 
 const crewBadge = document.getElementById('crew-badge');
 const archetype = ARCHETYPES[profile.archetype];
-crewBadge.textContent = `${profile.helmetIcon} ${profile.name} the ${archetype.title} ${archetype.icon}`;
-crewBadge.style.color = profile.suitColor;
+crewBadge.innerHTML = `<img src="${archetype.portrait}" alt="" /><span>${profile.name} the ${archetype.title} ${archetype.icon}</span>`;
+crewBadge.style.color = archetype.color;
 
 const gameState = new GameState();
 const rulesEngine = new RulesEngine(gameState, bus);
