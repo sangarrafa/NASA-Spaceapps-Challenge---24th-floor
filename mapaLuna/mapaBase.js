@@ -36,7 +36,7 @@ const ST=[
   {id:'comunica', nom:L('Comunicaciones','Communications'),       icon:'📡', col:P.violet, x:860,y:355, c:{x:760,y:380}, desc:L('Envía y recibe mensajes de la Tierra… aunque tarden en llegar.','Send and receive messages from Earth… even if they take a while to arrive.')},
 ];
 // Pantalla a la que lleva "Entrar" en cada estación (las que aún no tienen misión solo emiten el evento)
-const MISSION_SCREENS={ soporte:'../mision1-soportevital/index.html' };
+const MISSION_SCREENS={ soporte:'../soporteVital/index.html' };
 const PAD={x:150,y:420}, PADC={x:380,y:460};   // pista del cohete (Misión 1, ya hecha)
 const MARS={x:1120,y:118,r:50};
 const done={}; ST.forEach(s=>done[s.id]=false);

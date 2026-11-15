@@ -3,7 +3,7 @@
    directo con file://, igual que la cinemática.
 
    Uso desde el juego o una misión:
-     <script src="../test-habilidades/perfil-astronauta.js"></script>
+     <script src="../testHabilidades/perfilAstronauta.js"></script>
      const perfil = EquilibriaPerfil.cargar();          // null si no hay test
      perfil.especialidad.id                             // 'E' | 'T' | 'G' | 'S'
      perfil.oculto.riesgo.estilo                        // 'cauteloso' | 'equilibrado' | 'audaz'

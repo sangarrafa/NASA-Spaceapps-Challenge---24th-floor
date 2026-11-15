@@ -186,7 +186,7 @@
   $('bCasco').onclick = () => { cfg.casco = !cfg.casco; decir(cfg.casco ? L('Casco puesto: listo para salir.', 'Helmet on: ready to go out.') : L('Sin casco, solo dentro de la base.', 'No helmet, only inside the base.')); reproducirCambio(); pintar(false); triggerSalto(); };
 
   // "¡Listo, a la misión!": guarda el avatar y pasa a la cinemática del despegue desde la Tierra
-  const CINEMATICA = '../despegue-tierra/index.html';
+  const CINEMATICA = '../despegueTierra/index.html';
   let tAviso;
   $('bGuardar').onclick = () => {
     const ok = A.guardar(cfg);

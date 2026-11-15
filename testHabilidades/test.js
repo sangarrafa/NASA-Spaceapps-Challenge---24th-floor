@@ -6,7 +6,7 @@ const ESP = window.EQ_ESPECIALIDADES;
 const REACCIONES = window.EQ_REACCIONES;
 
 /* Adónde va el botón "Ir a la misión". Se puede cambiar con ?siguiente=ruta */
-const SIGUIENTE = new URLSearchParams(location.search).get('siguiente') || '../../personalizar-avatar/index.html';
+const SIGUIENTE = new URLSearchParams(location.search).get('siguiente') || '../personalizarAvatar/index.html';
 const DEPURAR = new URLSearchParams(location.search).has('debug');
 const PAUSA_REACCION = 2000;
 const reducirMovimiento = matchMedia('(prefers-reduced-motion: reduce)').matches;
