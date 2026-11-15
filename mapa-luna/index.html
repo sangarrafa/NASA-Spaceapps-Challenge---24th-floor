@@ -23,6 +23,13 @@
   <div id="tip"><h3 id="tNom"></h3><p id="tDesc"></p><div class="estado" id="tEst"></div><button id="tGo">Entrar ▶</button></div>
   <div id="aviso">🚀 ¡Tu cohete ya puede viajar a Marte!</div>
 
+  <button id="btnSonido" aria-label="Silenciar sonido ambiental" title="Sonido ambiental">🔊</button>
+  <!-- El navegador usa el primer formato que sepa reproducir y no descarga los demás -->
+  <audio id="ambiente" loop preload="auto">
+    <source src="sonido-ambiental.m4a" type="audio/mp4">
+    <source src="sonido-ambiental.wav" type="audio/wav">
+  </audio>
+
   <div id="demo">
     <button id="dComp" title="Solo para la presentación">Demo: completar misiones</button>
     <button id="dReset">Reiniciar</button>

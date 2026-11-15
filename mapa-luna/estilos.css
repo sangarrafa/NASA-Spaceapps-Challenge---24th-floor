@@ -15,11 +15,17 @@ button{font-family:inherit;cursor:pointer;border:0}
 
 #tip{position:absolute;width:calc(var(--s)*270px);background:rgba(11,15,58,.95);border:2px solid var(--aqua);border-radius:calc(var(--s)*16px);padding:calc(var(--s)*12px) calc(var(--s)*16px);pointer-events:auto;opacity:0;transform:translate(-50%,calc(-100% - var(--s)*14px)) scale(.95);transition:opacity .2s,transform .2s;pointer-events:none}
 #tip.on{opacity:1;transform:translate(-50%,calc(-100% - var(--s)*18px)) scale(1);pointer-events:auto}
+/* Variante que se abre hacia abajo (para Marte, que está pegado al borde superior) */
+#tip.abajo{transform:translate(-50%,calc(var(--s)*14px)) scale(.95)}
+#tip.abajo.on{transform:translate(-50%,calc(var(--s)*18px)) scale(1)}
 #tip h3{font-weight:900;font-size:calc(var(--s)*19px);margin-bottom:calc(var(--s)*4px)}
 #tip p{font-weight:700;font-size:calc(var(--s)*14px);line-height:1.35;opacity:.9}
 #tip .estado{font-weight:800;font-size:calc(var(--s)*13px);margin-top:calc(var(--s)*6px)}
 #tip button{margin-top:calc(var(--s)*10px);width:100%;background:linear-gradient(135deg,var(--pink),var(--magenta));color:#fff;font-weight:900;font-size:calc(var(--s)*17px);padding:calc(var(--s)*9px);border-radius:999px}
 
+#btnSonido{position:absolute;right:calc(var(--s)*16px);top:calc(var(--s)*16px);width:calc(var(--s)*44px);height:calc(var(--s)*44px);border-radius:50%;background:rgba(11,15,58,.82);border:1.5px solid rgba(111,227,232,.35);color:var(--white);font-size:calc(var(--s)*20px);line-height:1}
+#btnSonido:hover{border-color:var(--aqua)}
+#btnSonido.mudo{opacity:.6}
 #demo{position:absolute;right:calc(var(--s)*16px);bottom:calc(var(--s)*14px);display:flex;gap:calc(var(--s)*8px)}
 #demo button{background:rgba(11,15,58,.7);color:var(--white);font-weight:800;font-size:calc(var(--s)*13px);padding:calc(var(--s)*7px) calc(var(--s)*12px);border-radius:999px;border:1px solid rgba(111,227,232,.3);opacity:.75}
 #demo button:hover{opacity:1}

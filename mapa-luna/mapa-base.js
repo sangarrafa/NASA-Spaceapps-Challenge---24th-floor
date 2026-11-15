@@ -243,14 +243,63 @@ function rocketSign(A,u){
   if(u>0){ const g=ctx.createRadialGradient(x,PAD.y,4,x,PAD.y,70); g.addColorStop(0,`rgba(63,209,122,${.35*u*(.7+.3*Math.sin(A*4))})`); g.addColorStop(1,'rgba(63,209,122,0)'); ctx.fillStyle=g; ell(x,PAD.y,70,26); ctx.fill(); }
 }
 
-/* ---------------- Rover que pasea ---------------- */
+/* ---------------- Rover que pasea ----------------
+   Recorre la red de caminos: camino de una estación → anillo alrededor de la base
+   (siempre por delante del domo) → camino de la estación destino.
+   Pasea al azar entre las 5 estaciones; al hacer clic en una, va directo hacia ella
+   y se queda ahí mientras la ficha esté abierta. */
+const RING={rx:150,ry:58};          // anillo de la plataforma central por donde cambia de camino
+const T_PARADA=.8;                  // dónde se estaciona en cada camino (0 = base, 1 = estación)
+const VEL_PASEO=95, VEL_DIRECTO=200; // px/s
+// Ángulo en [-π/2, 3π/2): al interpolar entre dos caminos el rover pasa por abajo (delante de la base)
+const ringAng=p=>{ let a=Math.atan2((p.y-HUB.y)/RING.ry,(p.x-HUB.x)/RING.rx); if(a<-Math.PI/2) a+=TAU; return a; };
+const ringPt=a=>({x:HUB.x+Math.cos(a)*RING.rx, y:HUB.y+Math.sin(a)*RING.ry});
+// Punto donde cada camino cruza el anillo
+ST.forEach(s=>{ let lo=0,hi=1; for(let i=0;i<30;i++){ const m=(lo+hi)/2, p=q(HUB,s.c,s,m); if(((p.x-HUB.x)/RING.rx)**2+((p.y-HUB.y)/RING.ry)**2<1) lo=m; else hi=m; }
+  s.tRing=(lo+hi)/2; s.aRing=ringAng(q(HUB,s.c,s,s.tRing)); });
+
+function tramoCamino(s,t0,t1,out){ const n=Math.max(2,Math.ceil(Math.abs(t1-t0)*40)); for(let i=0;i<=n;i++){ const t=lerp(t0,t1,i/n); out.push({...q(HUB,s.c,s,t),s,t}); } }
+function tramoAnillo(a0,a1,out){ const n=Math.max(2,Math.ceil(Math.abs(a1-a0)*12)); for(let i=0;i<=n;i++){ const a=lerp(a0,a1,i/n); out.push({...ringPt(a),a}); } }
+// Ruta desde la posición actual (en un camino {s,t} o en el anillo {a}) hasta la estación destino
+function ruta(desde,dest){
+  const pts=[];
+  if(desde.s===dest){ tramoCamino(dest,desde.t,T_PARADA,pts); }
+  else {
+    if(desde.s){ tramoCamino(desde.s,desde.t,desde.s.tRing,pts); tramoAnillo(desde.s.aRing,dest.aRing,pts); }
+    else tramoAnillo(desde.a,dest.aRing,pts);
+    tramoCamino(dest,dest.tRing,T_PARADA,pts);
+  }
+  let L=0; pts.forEach((p,i)=>{ if(i) L+=Math.hypot(p.x-pts[i-1].x,p.y-pts[i-1].y); p.L=L; });
+  return pts;
+}
+
+const rover=(()=>{ const s=ST[Math.floor(Math.random()*ST.length)]; return {pos:{...q(HUB,s.c,s,T_PARADA),s,t:T_PARADA}, pts:null, d:0, vel:VEL_PASEO, espera:1+Math.random(), fija:null, dir:1}; })();
+function roverIrA(dest,directo){
+  rover.vel=directo?VEL_DIRECTO:VEL_PASEO;
+  if(!rover.pts && rover.pos.s===dest && rover.pos.t===T_PARADA) return;   // ya está ahí
+  rover.pts=ruta(rover.pos,dest); rover.d=0;
+}
+function updateRover(dt){
+  if(rover.pts){
+    const pts=rover.pts, tot=pts[pts.length-1].L;
+    rover.d+=rover.vel*dt;
+    if(rover.d>=tot){ rover.pos=pts[pts.length-1]; rover.pts=null; rover.espera=1.2+Math.random()*1.8; return; }
+    let i=1; while(pts[i].L<rover.d) i++;
+    const a=pts[i-1], b=pts[i], k=(rover.d-a.L)/((b.L-a.L)||1);
+    const pos={x:lerp(a.x,b.x,k), y:lerp(a.y,b.y,k)};
+    if(a.s&&a.s===b.s){ pos.s=a.s; pos.t=lerp(a.t,b.t,k); }
+    else if(a.a!==undefined&&b.a!==undefined) pos.a=lerp(a.a,b.a,k);
+    else Object.assign(pos,b.s?{s:b.s,t:b.t}:{a:b.a});           // unión camino/anillo (mismo punto)
+    if(Math.abs(pos.x-rover.pos.x)>.05) rover.dir=Math.sign(pos.x-rover.pos.x);
+    rover.pos=pos;
+  } else if(!rover.fija){
+    rover.espera-=dt;
+    if(rover.espera<=0){ const otras=ST.filter(s=>s!==rover.pos.s); roverIrA(otras[Math.floor(Math.random()*otras.length)],false); }
+  }
+}
 function drawRover(A){
-  const t=(A*.05)%1, leg=Math.floor(t*4), k=(t*4)%1;
-  const s=[ST[1],ST[1],ST[3],ST[3]][leg], out=leg%2===0, c=s.c;
-  const kk=out?k:1-k;
-  const p=q(HUB,c,s,.3+kk*.45), p2=q(HUB,c,s,.3+Math.min(1,kk+.01)*.45);
-  const dir=(out?1:-1)*Math.sign(p2.x-p.x||1);
-  ctx.save(); ctx.translate(p.x,p.y-8); ctx.scale(dir,1);
+  const p=rover.pos, bump=rover.pts?Math.sin(A*22)*.8:0, dir=rover.dir;
+  ctx.save(); ctx.translate(p.x,p.y-8+bump); ctx.scale(dir,1);
   ctx.fillStyle='rgba(0,0,0,.3)'; ell(0,10,16,4); ctx.fill();
   rr(-14,-6,28,10,4); ctx.fillStyle='#E3E6F5'; ctx.fill(); ctx.fillStyle=P.amber; ctx.fillRect(-14,-2,28,3);
   rr(-6,-14,12,8,3); ctx.fillStyle=P.cyan; ctx.fill();
@@ -266,17 +315,26 @@ function toLocal(e){ const r=cv.getBoundingClientRect(); return {x:(e.clientX-r.
 function hit(p){
   for(const s of ST) if(Math.hypot(p.x-s.x,(p.y-(s.y-14))*1.4)<70) return s;
   if(Math.hypot(p.x-MARS.x,p.y-MARS.y)<MARS.r+10) return 'marte';
-  if(Math.hypot(p.x-PAD.x,(p.y-(PAD.y-40))*.8)<60) return 'marte';
+  if(Math.hypot(p.x-PAD.x,(p.y-(PAD.y-40))*.8)<60) return 'cohete';
   return null;
 }
-cv.addEventListener('mousemove',e=>{ const h=hit(toLocal(e)); cv.style.cursor=h?'pointer':'default'; hover=h&&h!=='marte'?h:null; });
-cv.addEventListener('click',e=>{ const h=hit(toLocal(e)); if(!h){ tip.classList.remove('on'); return; } showTip(h); });
+const esEstacion=h=>h&&typeof h==='object';
+cv.addEventListener('mousemove',e=>{ const h=hit(toLocal(e)); cv.style.cursor=h?'pointer':'default'; hover=esEstacion(h)?h:null; });
+// Al cerrar la ficha, el rover vuelve a pasear
+function cerrarTip(){ tip.classList.remove('on'); if(rover.fija){ rover.fija=null; rover.espera=1.5; } }
+cv.addEventListener('click',e=>{ const h=hit(toLocal(e)); if(!h){ cerrarTip(); return; }
+  if(esEstacion(h)){ rover.fija=h; roverIrA(h,true); }   // el rover va directo a la estación elegida
+  showTip(h); });
 function showTip(h){
   const r=cv.getBoundingClientRect(), sc=r.width/W;
   const tN=document.getElementById('tNom'), tD=document.getElementById('tDesc'), tE=document.getElementById('tEst'), tG=document.getElementById('tGo');
-  let x,y,col;
-  if(h==='marte'){
-    const ok=unlockT>=0; x=MARS.x; y=MARS.y-MARS.r; col=P.coral;
+  let x,y,col,abajo=false;
+  if(h==='marte'||h==='cohete'){
+    const ok=unlockT>=0; col=P.coral;
+    // La ficha aparece junto a lo que se pulsó: sobre el letrero del cohete, o debajo de Marte
+    // (Marte está pegado al borde superior, así que encima no cabe)
+    if(h==='cohete'){ x=PAD.x+4; y=PAD.y-112; }
+    else { x=MARS.x; y=MARS.y+MARS.r+52; abajo=true; }
     tN.textContent='Marte · Misión 2'; tD.textContent=ok?'¡Tu cohete está listo! Súbete y viaja a Marte: la segunda parte de la misión te espera en el planeta rojo.':'A Marte se viaja en el cohete. Para que pueda despegar, primero tienes que completar las 5 misiones de la base lunar.';
     tE.textContent=ok?'🔓 Disponible':`🔒 Bloqueado · ${ST.filter(s=>done[s.id]).length} de 5 misiones`; tE.style.color=ok?P.green:P.coral;
     tG.style.display=ok?'':'none'; tG.textContent='🚀 Despegar hacia Marte'; tG.onclick=()=>dispatchEvent(new CustomEvent('mapa:marte'));
@@ -287,7 +345,8 @@ function showTip(h){
     tG.style.display=''; tG.textContent=done[h.id]?'Jugar otra vez ▶':'Entrar ▶';
     tG.onclick=()=>{ dispatchEvent(new CustomEvent('mapa:entrar',{detail:{id:h.id}})); try{ if(parent!==window) parent.postMessage({type:'mapa-entrar',id:h.id},'*'); }catch(e){} };
   }
-  tip.style.borderColor=col; tip.style.left=(x*sc)+'px'; tip.style.top=(Math.max(140,y)*sc)+'px'; tip.classList.add('on');
+  tip.classList.toggle('abajo',abajo);
+  tip.style.borderColor=col; tip.style.left=(x*sc)+'px'; tip.style.top=((abajo?y:Math.max(140,y))*sc)+'px'; tip.classList.add('on');
 }
 
 /* ---------------- Progreso ---------------- */
@@ -302,9 +361,53 @@ function updateProgress(){
 function completar(id){ if(id in done){ done[id]=true; updateProgress(); } }
 try{ const g=JSON.parse(localStorage.getItem('equilibria_misiones')||'{}'); for(const k in g) if(k in done) done[k]=!!g[k]; }catch(e){}
 function save(){ try{ localStorage.setItem('equilibria_misiones',JSON.stringify(done)); }catch(e){} }
-window.EquilibriaMapa={ completar:id=>{completar(id);save();}, estado:()=>({...done}), reiniciar:()=>{ ST.forEach(s=>done[s.id]=false); updateProgress(); save(); } };
-document.getElementById('dComp').onclick=()=>{ tip.classList.remove('on'); ST.forEach((s,i)=>setTimeout(()=>{ completar(s.id); save(); },i*450)); };
-document.getElementById('dReset').onclick=()=>{ tip.classList.remove('on'); window.EquilibriaMapa.reiniciar(); };
+window.EquilibriaMapa={ completar:id=>{completar(id);save();}, estado:()=>({...done}), reiniciar:()=>{ ST.forEach(s=>done[s.id]=false); updateProgress(); save(); },
+  // El juego que contiene el mapa avisa cuándo se muestra u oculta (p. ej. al entrar a una misión)
+  mostrar:()=>{ visibleMapa=true; sonar(); }, ocultar:()=>{ visibleMapa=false; callar(); } };
+document.getElementById('dComp').onclick=()=>{ cerrarTip(); ST.forEach((s,i)=>setTimeout(()=>{ completar(s.id); save(); },i*450)); };
+document.getElementById('dReset').onclick=()=>{ cerrarTip(); window.EquilibriaMapa.reiniciar(); };
+
+/* ---------------- Sonido ambiental ----------------
+   Suena en bucle mientras se ve la base. Los navegadores bloquean el audio
+   automático: si pasa, arranca con el primer clic o tecla del usuario.
+   Se pausa al cambiar de pestaña y el botón 🔊 lo silencia (se recuerda). */
+const ambiente=document.getElementById('ambiente'), btnSonido=document.getElementById('btnSonido');
+const VOL_AMBIENTE=.45;
+let mudo=false, visibleMapa=true, fundido=null;
+try{ mudo=localStorage.getItem('equilibria_sonido_mudo')==='1'; }catch(e){}
+function fundirA(obj,ms,alTerminar){
+  clearInterval(fundido); const ini=ambiente.volume, t0=performance.now();
+  fundido=setInterval(()=>{ const k=clamp((performance.now()-t0)/ms); ambiente.volume=lerp(ini,obj,k); if(k>=1){ clearInterval(fundido); alTerminar&&alTerminar(); } },30);
+}
+function sonar(){
+  if(mudo||!visibleMapa||document.hidden) return;
+  if(ambiente.paused){
+    ambiente.volume=0;
+    const p=ambiente.play();
+    if(p&&p.then) p.then(quitarGestos,err=>{ if(err.name!=='NotAllowedError') console.warn('Sonido ambiental:',err.name,err.message); });
+  }
+  fundirA(VOL_AMBIENTE,1500);
+}
+function callar(){ fundirA(0,400,()=>ambiente.pause()); }
+// El botón refleja si de verdad está sonando (no solo la preferencia)
+function pintarBoton(){ const on=!ambiente.paused&&!mudo; btnSonido.textContent=on?'🔊':'🔇'; btnSonido.classList.toggle('mudo',!on); btnSonido.setAttribute('aria-label',on?'Silenciar sonido ambiental':'Activar sonido ambiental'); }
+ambiente.addEventListener('play',pintarBoton); ambiente.addEventListener('pause',pintarBoton);
+ambiente.addEventListener('error',()=>console.warn('Sonido ambiental: no se pudo cargar',ambiente.currentSrc,ambiente.error&&ambiente.error.code));
+btnSonido.onclick=e=>{
+  e.stopPropagation();
+  const sonando=!ambiente.paused&&!mudo;
+  mudo=sonando;   // si no estaba sonando (silenciado o bloqueado por el navegador), el botón lo enciende
+  try{ localStorage.setItem('equilibria_sonido_mudo',mudo?'1':'0'); }catch(err){}
+  mudo?callar():sonar(); pintarBoton();
+};
+// Primer gesto del usuario: se escuchan varios eventos porque cada navegador cuenta distintos
+// (Safari no acepta pointerdown). Se siguen escuchando hasta que el audio arranque de verdad.
+const GESTOS=['pointerdown','mousedown','touchend','click','keydown'];
+function alGesto(e){ if(e.target!==btnSonido && ambiente.paused) sonar(); }   // el botón tiene su propia lógica
+function quitarGestos(){ GESTOS.forEach(g=>document.removeEventListener(g,alGesto,true)); }
+GESTOS.forEach(g=>document.addEventListener(g,alGesto,true));
+document.addEventListener('visibilitychange',()=>document.hidden?callar():sonar());
+pintarBoton(); sonar();
 
 /* ---------------- Bucle ---------------- */
 let A=0, last=performance.now();
@@ -323,7 +426,7 @@ function frame(now){
   const items=[...ST.map(s=>({y:s.y,f:()=>drawStation(s,A,hover===s)})),{y:HUB.y,f:()=>drawHub(A)},{y:PAD.y,f:()=>drawLandingPad(A)}].sort((a,b)=>a.y-b.y);
   for(const it of items) it.f();
   rocketSign(A,u);
-  drawRover(A);
+  updateRover(dt); drawRover(A);
   const vg=ctx.createRadialGradient(640,400,300,640,400,820); vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,.45)'); ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
   requestAnimationFrame(frame);
 }
