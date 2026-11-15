@@ -591,18 +591,17 @@ function coheteLunar() {
   const v = juego.viaje, Lu = LUNAR, phi = v.phiE;
   const lt = Math.min(v.extra, Lu.tFin), tr = trayLunar(lt), p = posLunar(lt, phi);
   const f = (a, b) => suave(clamp((lt - a) / (b - a), 0, 1));
-  // El cohete se pone de cola (motor hacia adelante) para frenar: captura, encendido de descenso y frenado final
-  let flip = f(Math.max(0, Lu.tP - .8), Lu.tP - .1) * (1 - f(Lu.tP + Lu.TL0, Lu.tP + Lu.TL0 + .6));
-  flip = Math.max(flip, f(Lu.tDoi - .5, Lu.tDoi - .05) * (1 - f(Lu.tDoi + .45, Lu.tDoi + .95)));
-  flip = Math.max(flip, f(Lu.tPdi - .6, Lu.tPdi - .05));
+  // El cohete apunta siempre hacia donde se mueve; solo al final se endereza (de pie, motor al suelo) para aterrizar
   let rumbo;
-  if (lt < Lu.tFrenadoFin) rumbo = rumboLunar(lt, phi) + Math.PI * flip;
-  else {   // después del frenado se pone de pie: motor hacia el suelo, patas abajo
-    const retro = rumboLunar(Lu.tFrenadoFin - .05, phi) + Math.PI, vertical = -(phi + Lu.sentido * tr.a);
-    rumbo = retro + envolver(vertical - retro) * f(Lu.tFrenadoFin, Lu.tPitchFin);
+  if (lt < Lu.tFrenadoFin) rumbo = rumboLunar(lt, phi);
+  else {
+    // La cámara gira para dejar el horizonte plano. Para que ese giro no se sume al del cohete, el ángulo se maneja
+    // en pantalla: se mantiene el que traía y luego se endereza por el camino más corto hasta quedar de pie (-90°).
+    if (v.anguloFijo == null) v.anguloFijo = rumboLunar(Lu.tFrenadoFin - .05, phi) + cam.rot;
+    const pantalla = v.anguloFijo + envolver(-Math.PI / 2 - v.anguloFijo) * f(Lu.tFrenadoFin + .2, Lu.tPitchFin);
+    rumbo = pantalla - cam.rot;
   }
-  const en = (a, b) => lt >= a && lt < b;
-  const fuego = en(Lu.tP - .05, Lu.tP + Lu.TL0) || en(Lu.tDoi, Lu.tDoi + .45) || en(Lu.tPdi, Lu.tToque - .05);
+  const fuego = lt >= Lu.tPitchFin - .3 && lt < Lu.tToque - .05;   // el motor solo se ve en el frenado final, ya de pie
   return { x: p.x, y: p.y, rumbo, fuego, retro: lt >= Lu.tFrenadoFin, patas: lt >= Lu.tPitchFin - .2,
            escala: 1 + (ESCALA_NAVE_CERCA - 1) * cam.wb };
 }
@@ -975,5 +974,5 @@ empezarIntento();   // sin pantalla de inicio: el juego arranca de inmediato
 requestAnimationFrame(bucle);
 
 // Solo para pruebas del equipo: window.__mision1.despegarAhora(true) fuerza un despegue perfecto
-window.__mision1 = { juego, lunar: () => LUNAR, rpUlt: () => construirLunar.rp, apuntado, anguloIdealDespegue, estadoRelativo, elementosHiperbola, rLuna: () => rLuna, Rl: () => Rl, despegarAhora(perfecto) { if (perfecto) juego.anguloLuna = anguloIdealDespegue(); despegar(); } };
+window.__mision1 = { juego, lunar: () => LUNAR, cohete: () => cohete(), cam, rpUlt: () => construirLunar.rp, apuntado, anguloIdealDespegue, estadoRelativo, elementosHiperbola, rLuna: () => rLuna, Rl: () => Rl, despegarAhora(perfecto) { if (perfecto) juego.anguloLuna = anguloIdealDespegue(); despegar(); } };
 })();
