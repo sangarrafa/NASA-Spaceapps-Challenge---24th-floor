@@ -34,7 +34,7 @@ h2{font-weight:900;font-size:clamp(24px,4vw,34px);line-height:1.15;text-wrap:bal
   font-weight:900;font-size:11px;letter-spacing:.06em;padding:2px 8px;border-radius:6px}
 .burbuja{position:relative;flex:1;background:rgba(26,28,63,.9);border:1px solid rgba(232,65,140,.4);border-radius:18px;
   padding:14px 18px;font-weight:700;font-size:clamp(17px,2.4vw,21px);line-height:1.35}
-.retrato.lunia + .burbuja{border-color:rgba(111,227,232,.4)}
+.retrato.lunia + .burbuja,#mensajeLunia{border-color:rgba(111,227,232,.4)}
 
 /* Bienvenida: ficha de instrucciones (escucha o lee) */
 .pantalla.bienvenida{background:none;border:0;box-shadow:none;gap:22px}
