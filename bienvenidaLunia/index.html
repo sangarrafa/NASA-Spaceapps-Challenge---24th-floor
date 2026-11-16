@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LUNIA te da la bienvenida — Cinemática interactiva</title>
+<title data-en="LUNIA welcomes you — Interactive cinematic">LUNIA te da la bienvenida — Cinemática interactiva</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
@@ -11,7 +11,7 @@
 </head>
 <body>
 <div id="stage">
-  <canvas id="c" width="1280" height="720" aria-label="LUNIA aparece en la pantalla de la base"></canvas>
+  <canvas id="c" width="1280" height="720" aria-label="LUNIA aparece en la pantalla de la base" data-en-aria="LUNIA appears on the base screen"></canvas>
   <div id="dialogo" aria-live="polite">
     <span id="quien">LUNIA</span>
     <div id="texto"></div>
@@ -22,10 +22,11 @@
     <div class="vel" id="vel" role="group" aria-label="Velocidad" data-en-aria="Speed" title="Velocidad" data-en-title="Speed">
       <button data-v="1" aria-pressed="true">1x</button><button data-v="1.5" aria-pressed="false">1.5x</button><button data-v="2" aria-pressed="false">2x</button>
     </div>
-    <button id="bVoz">🔇 Silenciar</button>
+    <button id="bVoz" data-en="🔇 Mute">🔇 Silenciar</button>
   </div>
 </div>
 
+<script src="../shared/language.js"></script>
 <script src="../audio/sfx.js" data-sin-clic data-sin-hover></script>
 <script src="sonido.js"></script>
 <script src="bienvenida-lunia.js"></script>
