@@ -9,13 +9,13 @@
      translatePage()  -> in English, swaps every element that has data-en / data-en-html /
                          data-en-title / data-en-aria / data-en-placeholder / data-en-alt
      speechLang()     -> 'es-MX' | 'en-US' for speechSynthesis
-   A ?lang=en or ?lang=es query parameter overrides and saves the choice. */
+   A ?lang=en or ?lang=es query parameter overrides and saves the choice. With no saved choice, English. */
 (() => {
   const KEY = 'equilibria:lang';
   const valid = (l) => (l === 'en' || l === 'es' ? l : null);
   let current = 'es';
   try {
-    current = valid(new URLSearchParams(location.search).get('lang')) || valid(localStorage.getItem(KEY)) || 'es';
+    current = valid(new URLSearchParams(location.search).get('lang')) || valid(localStorage.getItem(KEY)) || 'en';
     localStorage.setItem(KEY, current);
   } catch (e) { /* storage blocked: keep the default */ }
 

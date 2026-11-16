@@ -10,7 +10,11 @@
    ------------------------------------------------------------------- */
 const VOZ = {};
 
-let NOMBRE='astronauta';
+// Idioma del juego (shared/language.js): inglés por defecto, o el que se eligió en la cinemática
+const L=window.EqLang?window.EqLang.L:(es)=>es;
+const EN=!!(window.EqLang && window.EqLang.get()==='en');
+
+let NOMBRE=L('astronauta','astronaut');
 try{ const n=(localStorage.getItem('equilibria_nombre')||'').trim(); if(n) NOMBRE=n.split(' ')[0]; }catch(e){}
 
 /* ---------- Guion ---------- */
@@ -19,17 +23,17 @@ let eleccion='';
 const MAPA = '../mapa-luna/index.html';   // a dónde lleva "Ir al mapa"
 const PASOS=[
  {mood:'timida', vis:'energia', animo:0,
-  lineas:()=>[`¿Ho… hola? ¡Llegaste, ${NOMBRE}! Pensé que nadie iba a venir…`,
-             'Soy LUNIA, una inteligencia artificial y el corazón de esta base. Cuido el aire, el agua y las plantas… pero casi no me queda energía.'],
-  ops:[{t:'¿Qué te pasó?',v:'que'},{t:'¿Estás bien?',v:'bien',alt:true}]},
+  lineas:()=>[L(`¿Ho… hola? ¡Llegaste, ${NOMBRE}! Pensé que nadie iba a venir…`, `H… hello? You made it, ${NOMBRE}! I thought no one was coming…`),
+             L('Soy LUNIA, una inteligencia artificial y el corazón de esta base. Cuido el aire, el agua y las plantas… pero casi no me queda energía.', 'I’m LUNIA, an artificial intelligence and the heart of this base. I look after the air, the water and the plants… but I have almost no energy left.')],
+  ops:[{t:L('¿Qué te pasó?','What happened to you?'),v:'que'},{t:L('¿Estás bien?','Are you okay?'),v:'bien',alt:true}]},
  {mood:'triste', vis:'polvo', animo:0,
-  lineas:()=>[(eleccion==='bien'?'Gracias por preguntar… ':'')+'Mi energía viene del Sol, pero aquí, en el polo sur de la Luna, el Sol siempre está bajito y su luz llega de ladito.',
-             'Y el polvo lunar tapó mis paneles. Mis baterías se fueron gastando… y apagué casi todo para no apagarme yo.'],
-  ops:[{t:'¿Cómo te ayudo?'}]},
+  lineas:()=>[(eleccion==='bien'?L('Gracias por preguntar… ','Thank you for asking… '):'')+L('Mi energía viene del Sol, pero aquí, en el polo sur de la Luna, el Sol siempre está bajito y su luz llega de ladito.', 'My energy comes from the Sun, but here, at the Moon’s south pole, the Sun always sits very low and its light comes in sideways.'),
+             L('Y el polvo lunar tapó mis paneles. Mis baterías se fueron gastando… y apagué casi todo para no apagarme yo.', 'And moon dust covered my panels. My batteries slowly ran down… so I turned almost everything off so I wouldn’t shut down myself.')],
+  ops:[{t:L('¿Cómo te ayudo?','How can I help you?')}]},
  {mood:'timida', vis:'sims', animo:1,
-  lineas:()=>['Aquí solo estamos tú y yo. Pero guardo 5 simuladores de prácticas con astronautas, como si fuera un videojuego, para preparar la base para una tripulación de verdad.',
-             `Cada simulador que completes me recargará un poquito. ¿Me ayudas, ${NOMBRE}? Escoge en el mapa por cuál empezar… yo te espero aquí.`],
-  ops:[{t:'¡Sí, te ayudo! Ir al mapa ▶',fin:true}]}
+  lineas:()=>[L('Aquí solo estamos tú y yo. Pero guardo 5 simuladores de prácticas con astronautas, como si fuera un videojuego, para preparar la base para una tripulación de verdad.', 'It’s just you and me here. But I keep 5 practice simulators with astronauts, like a video game, to get the base ready for a real crew.'),
+             L(`Cada simulador que completes me recargará un poquito. ¿Me ayudas, ${NOMBRE}? Escoge en el mapa por cuál empezar… yo te espero aquí.`, `Every simulator you complete will recharge me a little. Will you help me, ${NOMBRE}? Pick on the map where to start… I’ll wait for you here.`)],
+  ops:[{t:L('¡Sí, te ayudo! Ir al mapa ▶','Yes, I’ll help! Go to the map ▶'),fin:true}]}
 ];
 
 /* ---------- Lienzo ---------- */
@@ -92,11 +96,11 @@ function vis(c,kind,x,y,k){
   c.font='800 15px Nunito, sans-serif'; c.textAlign='center'; c.textBaseline='middle';
   const label=(t,yy,col=P.aqua)=>{ c.fillStyle=col; c.fillText(t,0,yy); };
   if(kind==='energia'){
-    label('ENERGÍA DE LA BASE',-80,P.aqua);
+    label(L('ENERGÍA DE LA BASE','BASE ENERGY'),-80,P.aqua);
     rr(c,-150,-50,300,60,14); c.strokeStyle=P.aqua; c.lineWidth=3; c.stroke(); rr(c,150,-30,12,20,4); c.fillStyle=P.aqua; c.fill();
     const blink=Math.sin(A*5)>0; rr(c,-144,-44,288*energiaVis/100,48,10); c.fillStyle=blink?P.coral:'rgba(255,122,92,.4)'; c.fill();
     c.font='900 34px Nunito, sans-serif'; c.fillStyle=P.coral; c.fillText(Math.round(energiaVis)+'%',0,50);
-    c.font='700 14px Nunito, sans-serif'; c.fillStyle='rgba(232,233,242,.7)'; c.fillText('Modo ahorro: casi todo apagado',0,84);
+    c.font='700 14px Nunito, sans-serif'; c.fillStyle='rgba(232,233,242,.7)'; c.fillText(L('Modo ahorro: casi todo apagado','Power saving: almost everything off'),0,84);
   }
   if(kind==='sol'||kind==='polvo'){
     // horizonte con Sol rasante
@@ -113,7 +117,7 @@ function vis(c,kind,x,y,k){
     c.restore();
     if(kind==='polvo'){ for(let i=0;i<14;i++){ const ph=((A*.25)+i/14)%1; c.fillStyle=`rgba(200,200,220,${.6*(1-ph)})`; circle(c,40+Math.sin(i*3+A)*40,-90+ph*90,1.6); c.fill(); } }
     c.restore();
-    label(kind==='sol'?'El Sol del polo sur: siempre bajito':'Sol bajito + polvo en los paneles = poca energía',112,kind==='sol'?P.amber:'#C9CBD8');
+    label(kind==='sol'?L('El Sol del polo sur: siempre bajito','The south pole Sun: always low'):L('Sol bajito + polvo en los paneles = poca energía','Low Sun + dust on the panels = little energy'),112,kind==='sol'?P.amber:'#C9CBD8');
     if(kind==='polvo'){ // batería que se gasta
       c.save(); c.translate(0,0); c.restore();
     }
@@ -123,12 +127,12 @@ function vis(c,kind,x,y,k){
     const fig=(fx,dashed,col)=>{ c.save(); c.translate(fx,20); c.strokeStyle=col; c.fillStyle=dashed?'transparent':col; c.lineWidth=3; if(dashed) c.setLineDash([5,5]);
       circle(c,0,-46,14); dashed?c.stroke():c.fill(); rr(c,-14,-30,28,34,10); dashed?c.stroke():c.fill(); rr(c,-12,4,10,22,5); dashed?c.stroke():c.fill(); rr(c,2,4,10,22,5); dashed?c.stroke():c.fill(); c.restore(); };
     fig(-120,false,'#FF8A3D'); circle(c,-60,-6,22); c.strokeStyle=P.aqua; c.lineWidth=3; c.stroke(); c.fillStyle=P.white; ell(c,-67,-9,3,5); c.fill(); ell(c,-53,-9,3,5); c.fill();
-    c.font='800 13px Nunito, sans-serif'; c.fillStyle=P.white; c.fillText('Tú',-120,64); c.fillText('LUNIA',-60,64);
+    c.font='800 13px Nunito, sans-serif'; c.fillStyle=P.white; c.fillText(L('Tú','You'),-120,64); c.fillText('LUNIA',-60,64);
     const a=.35+.35*Math.sin(A*1.5); c.globalAlpha=k*a; [30,80,130].forEach(fx=>fig(fx,true,'#C9CBD8')); c.globalAlpha=k;
-    c.fillStyle='#C9CBD8'; c.fillText('Algún día: la tripulación',80,64);
+    c.fillStyle='#C9CBD8'; c.fillText(L('Algún día: la tripulación','Someday: the crew'),80,64);
   }
   if(kind==='sims'||kind==='plan'){
-    const items=[['O₂','Aire',P.aqua],['🛡','Radiación',P.pink],['⚡','Energía',P.amber],['🌱','Comida',P.green],['📡','Mensajes',P.violet]];
+    const items=[['O₂',L('Aire','Air'),P.aqua],['🛡',L('Radiación','Radiation'),P.pink],['⚡',L('Energía','Energy'),P.amber],['🌱',L('Comida','Food'),P.green],['📡',L('Mensajes','Messages'),P.violet]];
     items.forEach(([ic,nm,col],i)=>{ const ix=-150+i*75, iy=kind==='plan'?-40:-20, on=kind==='plan'?(Math.floor(A*1.2)%6>i):true, pop=easeOut(clamp(k*3-i*.3));
       c.save(); c.translate(ix,iy); c.scale(pop,pop);
       rr(c,-30,-34,60,68,12); c.fillStyle='rgba(11,15,58,.9)'; c.fill(); c.strokeStyle=col; c.lineWidth=2.5; if(kind==='sims') c.setLineDash([5,4]); c.stroke(); c.setLineDash([]);
@@ -137,13 +141,13 @@ function vis(c,kind,x,y,k){
       if(kind==='plan'){ rr(c,ix-30,50,60,14,5); c.fillStyle=on?col:'rgba(255,255,255,.1)'; c.fill(); }
     });
     c.font='900 14px "Space Mono", monospace'; c.fillStyle=P.amber;
-    c.fillText(kind==='sims'?'5 SIMULADORES · PRÁCTICAS':'CADA SIMULADOR = MÁS ENERGÍA',0,kind==='sims'?-86:-100);
-    if(kind==='sims'){ c.font='800 13px Nunito, sans-serif'; c.fillStyle='rgba(232,233,242,.75)'; c.fillText('Los astronautas que verás son simulados',0,52); }
+    c.fillText(kind==='sims'?L('5 SIMULADORES · PRÁCTICAS','5 SIMULATORS · PRACTICE'):L('CADA SIMULADOR = MÁS ENERGÍA','EACH SIMULATOR = MORE ENERGY'),0,kind==='sims'?-86:-100);
+    if(kind==='sims'){ c.font='800 13px Nunito, sans-serif'; c.fillStyle='rgba(232,233,242,.75)'; c.fillText(L('Los astronautas que verás son simulados','The astronauts you’ll see are simulated'),0,52); }
   }
   if(kind==='gracias'){
     for(let i=0;i<10;i++){ const ph=((A*.4)+i/10)%1, ang=i/10*TAU+A*.2; c.fillStyle=`rgba(232,65,140,${1-ph})`; c.font=`900 ${14+ph*12}px Nunito`; c.fillText('♥',Math.cos(ang)*(40+ph*110),Math.sin(ang)*(30+ph*70)); }
     rr(c,-120,-16,240,32,10); c.strokeStyle=P.aqua; c.lineWidth=2; c.stroke(); rr(c,-116,-12,232*energiaVis/100,24,7); c.fillStyle=P.aqua; c.fill();
-    c.font='900 18px Nunito'; c.fillStyle=P.aqua; c.fillText('ENERGÍA '+Math.round(energiaVis)+'%  ↑',0,40);
+    c.font='900 18px Nunito'; c.fillStyle=P.aqua; c.fillText(L('ENERGÍA ','ENERGY ')+Math.round(energiaVis)+'%  ↑',0,40);
   }
   c.restore();
 }
@@ -163,7 +167,7 @@ function drawMonitor(){
     c.globalAlpha=encendido; drawFace(c,fx,h/2-8,1.12,st.mood,hablando,st.vis?.6:0); c.globalAlpha=1;
     if(st.vis) vis(c,st.vis,w*.7,h/2-10,visK*encendido);
     // barra de energía pequeña
-    c.font='700 14px "Space Mono", monospace'; c.textAlign='left'; c.textBaseline='middle'; c.fillStyle=P.aqua; c.fillText('ENERGÍA',22,h-26);
+    c.font='700 14px "Space Mono", monospace'; c.textAlign='left'; c.textBaseline='middle'; c.fillStyle=P.aqua; c.fillText(L('ENERGÍA','ENERGY'),22,h-26);
     rr(c,110,h-34,120,14,5); c.strokeStyle=P.aqua; c.lineWidth=2; c.stroke(); rr(c,113,h-31,114*energiaVis/100,8,3); c.fillStyle=energiaVis<10?(Math.sin(A*5)>0?P.coral:'rgba(255,122,92,.4)'):P.aqua; c.fill();
     c.fillStyle=energiaVis<10?P.coral:P.aqua; c.fillText(Math.round(energiaVis)+'%',240,h-26);
   }
@@ -214,7 +218,7 @@ function mostrarOpciones(){
   PASOS[paso].ops.forEach((o,i)=>{ const b=document.createElement('button'); b.className='op'+(o.alt?' alt':''); b.textContent=o.t;
     b.onclick=e=>{ e.stopPropagation(); detenerVoz(); if(o.v) eleccion=o.v; Sonido.desbloquear();
       if(o.fin){ Sonido.animo(2); Sonido.efecto('activar');   // LUNIA siente esperanza: la música pasa a acordes mayores
- dispatchEvent(new CustomEvent('lunia:mapa')); try{ if(parent!==window) parent.postMessage({type:'lunia-mapa'},'*'); }catch(err){} b.textContent='Abriendo el mapa…'; setTimeout(()=>{ location.href=MAPA; },700); return; }
+ dispatchEvent(new CustomEvent('lunia:mapa')); try{ if(parent!==window) parent.postMessage({type:'lunia-mapa'},'*'); }catch(err){} b.textContent=L('Abriendo el mapa…','Opening the map…'); setTimeout(()=>{ location.href=MAPA; },700); return; }
       Sonido.efecto('siguiente'); irA(paso+1); };
     ops.appendChild(b); setTimeout(()=>b.classList.add('on'),(80+i*120)/speed); });
 }
@@ -223,17 +227,18 @@ dlg.addEventListener('click',()=>{ if(typing){ clearInterval(typing); typing=nul
 
 /* ---------- Voz de LUNIA ---------- */
 let vozOn=true, vozBloqueada=false, voice=null, tok=0, oyo=false, curAudio=null;
-/* Misma voz de LUNIA que en la cinemática (cinematic/cinematic.js · pickVoices): español de México,
-   mismas voces preferidas y en el mismo orden. La cinemática primero reserva una voz para Ríos y otra
+/* Misma voz de LUNIA que en la cinemática (cinematic/cinematic.js · pickVoices): en español, de México;
+   en inglés, de EE. UU. y prefiriendo una voz instalada en el equipo. Mismas voces preferidas y en el mismo orden. La cinemática primero reserva una voz para Ríos y otra
    para el narrador, y LUNIA toma una distinta; aquí se repite ese cálculo para que salga la misma. */
 const LUNIA_TONO = { pitch: 1.2, rate: .94 };
 let luniaPitch = LUNIA_TONO.pitch;
 function pickVoice(){
   if(!('speechSynthesis' in window)) return;
-  const all=speechSynthesis.getVoices().filter(v=>v.lang.toLowerCase().replace('_','-').startsWith('es'));
+  const idioma=EN?'en':'es';
+  const all=speechSynthesis.getVoices().filter(v=>v.lang.toLowerCase().replace('_','-').startsWith(idioma));
   if(!all.length) return;
   const inRegion=re=>all.filter(v=>re.test(v.lang.replace('_','-')));
-  const regional = inRegion(/es-mx/i).length ? inRegion(/es-mx/i) : inRegion(/es-(419|us)/i);
+  const regional = EN ? inRegion(/en-us/i) : (inRegion(/es-mx/i).length ? inRegion(/es-mx/i) : inRegion(/es-(419|us)/i));
   const pool = regional.length ? regional : all;
   const FEMENINA=/female|mujer|helena|m[oó]nica|laura|elvira|luc[ií]a|paloma|ximena|camila|elena|paulina|samantha|susan|karen|moira|tessa|victoria|hazel|google/i;
   const MASCULINA=/\bmale\b|hombre|pablo|diego|juan|carlos|enrique|[aá]lvaro|george|daniel|james|alex|fred|\btom\b|andrew|brian/i;
@@ -241,9 +246,18 @@ function pickVoice(){
     for(const nm of names){ const v=pool.find(x=>!exclude.includes(x) && new RegExp('\\b'+nm+'\\b','i').test(x.name)); if(v) return v; }
     return pool.find(x=>!exclude.includes(x) && fallback.test(x.name)) || pool.find(x=>!exclude.includes(x)) || null;
   };
-  const rios=prefer(['Dalia','Beatriz','Candela','Carlota','Marina','Renata','Larissa','Nuria'],[],FEMENINA);
-  const narr=prefer(['Jorge','Raul','Raúl','Gerardo','Cecilio','Liberto','Luciano','Pelayo','Yago'],[rios],MASCULINA);
-  const lunia=prefer(['Sabina','Larissa','Renata','Marina','Candela','Carlota','Nuria'],[rios,narr],FEMENINA);
+  const PREF = EN
+    ? { rios:['Jenny','Aria','Michelle','Ana','Sonia','Libby'], narr:['Guy','Davis','Christopher','Eric','Roger','Ryan','David','Mark'], lunia:['Zira','Ana','Michelle','Jenny'] }
+    : { rios:['Dalia','Beatriz','Candela','Carlota','Marina','Renata','Larissa','Nuria'], narr:['Jorge','Raul','Raúl','Gerardo','Cecilio','Liberto','Luciano','Pelayo','Yago'], lunia:['Sabina','Larissa','Renata','Marina','Candela','Carlota','Nuria'] };
+  const rios=prefer(PREF.rios,[],FEMENINA);
+  const narr=prefer(PREF.narr,[rios],MASCULINA);
+  // En inglés, igual que la cinemática: primero una voz instalada (las voces en línea tardan en arrancar)
+  const preferLocal=(names,exclude,fallback)=>{
+    const local=pool.filter(x=>x.localService && !exclude.includes(x));
+    for(const nm of names){ const v=local.find(x=>new RegExp('\\b'+nm+'\\b','i').test(x.name)); if(v) return v; }
+    return local.find(x=>fallback.test(x.name)) || null;
+  };
+  const lunia=(EN && preferLocal(PREF.lunia,[rios,narr],FEMENINA)) || prefer(PREF.lunia,[rios,narr],FEMENINA);
   voice = lunia || rios;
   // Si LUNIA terminó con la misma voz que Ríos o el narrador, el tono más alto la distingue (igual que en la cinemática)
   luniaPitch = (voice===rios || voice===(narr||rios)) ? 1.4 : LUNIA_TONO.pitch;
@@ -257,7 +271,7 @@ function hablar(t,fin){
   const key=`p${paso}-${li}`;
   if(VOZ[key]){ curAudio=new Audio(VOZ[key]); curAudio.playbackRate=speed; curAudio.onplaying=()=>oyo=true; curAudio.onended=done; curAudio.onerror=done; curAudio.play().catch(()=>bloqueada()); return; }
   if(!('speechSynthesis' in window)){ vozBloqueada=true; setTimeout(()=>{ if(my===tok) hablando=false; }, (t.length*32+200)/speed); return; }
-  const u=new SpeechSynthesisUtterance(t.replace(/LUNIA/g,'Lunia').replace(/…/g,'... ')); if(voice){u.voice=voice;u.lang=voice.lang;} else u.lang='es-MX';
+  const u=new SpeechSynthesisUtterance(t.replace(/LUNIA/g,'Lunia').replace(/…/g,'... ')); if(voice){u.voice=voice;u.lang=voice.lang;} else u.lang=EN?'en-US':'es-MX';
   u.pitch=luniaPitch; u.rate=Math.min(2,LUNIA_TONO.rate*speed);   // la misma voz de LUNIA que en la cinemática
   u.onstart=()=>oyo=true; u.onend=()=>{ if(oyo) done(); }; u.onerror=e=>{ if(e.error==='not-allowed') bloqueada(); else if(oyo) done(); };
   speechSynthesis.speak(u);
@@ -274,7 +288,7 @@ stage.addEventListener('pointerdown',desbloquear);
 stage.addEventListener('pointerdown',()=>{ if(vozOn) Sonido.desbloquear(); });
 addEventListener('keydown',()=>{ if(vozOn) Sonido.desbloquear(); });
 const bVoz=document.getElementById('bVoz');
-bVoz.onclick=e=>{ e.stopPropagation(); vozOn=!vozOn; bVoz.textContent=vozOn?'🔇 Silenciar':'🔊 Activar sonido'; bVoz.classList.toggle('mute',!vozOn);
+bVoz.onclick=e=>{ e.stopPropagation(); vozOn=!vozOn; bVoz.textContent=vozOn?L('🔇 Silenciar','🔇 Mute'):L('🔊 Activar sonido','🔊 Turn sound on'); bVoz.classList.toggle('mute',!vozOn);
   if(Sonido.activo!==vozOn) Sonido.alternar();
   if(!vozOn){ detenerVoz(); const my=listo; if(my.escrito) setTimeout(()=>marcar(my,'hablado'),600/speed); }
   else { vozBloqueada=false; oyo=false; pickVoice(); } };
@@ -282,7 +296,6 @@ bVoz.onclick=e=>{ e.stopPropagation(); vozOn=!vozOn; bVoz.textContent=vozOn?'�
 /* ---------- Velocidad: 1x · 1.5x · 2x ---------- */
 // La línea que ya se está diciendo sigue a su ritmo; la escritura y lo que sigue usan la nueva velocidad.
 const velBtns=[...document.querySelectorAll('#vel button')];
-const L=window.EqLang?window.EqLang.L:(es)=>es;
 document.getElementById('vel').setAttribute('aria-label',L('Velocidad','Speed'));
 function setSpeed(v){ speed=v; velBtns.forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.v===v)));
   if(typing) arrancarTipeo(); if(curAudio) curAudio.playbackRate=v; }

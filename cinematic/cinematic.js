@@ -39,7 +39,7 @@ const STR = {
     origin:'ORIGIN: SOUTH POLE', contact:'CONTACT: 214 DAYS', energyPct:'ENERGY: 6%', backSmall:'MISSION', backBig:'CONTROL'
   }
 };
-let lang = (window.EqLang && EqLang.get()) || 'es';
+let lang = (window.EqLang && EqLang.get()) || 'en';
 const t = k => STR[lang][k];
 
 const stage = document.getElementById('stage');
